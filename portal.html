@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RADEUS — My Account</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="theme.css" rel="stylesheet">
+<style>
+  :root{
+    --cyan:#00f5ff;--green:#00ff88;--red:#ff2244;--orange:#ff8800;--yellow:#e8b400;
+    --bg:#020810;--bg2:#030c16;
+    --border:rgba(0,245,255,.15);--border-hi:rgba(0,245,255,.42);
+    --text:#c0e8f8;--text-dim:#1a4a6a;--text-mid:#3a7a9a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;overflow:hidden;height:100vh;width:100vw;}
+  body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:1000;}
+  .corner{position:fixed;width:36px;height:36px;border-color:var(--cyan);border-style:solid;opacity:.3;z-index:999;}
+  .tl{top:6px;left:6px;border-width:2px 0 0 2px}.tr{top:6px;right:6px;border-width:2px 2px 0 0}
+  .bl{bottom:6px;left:6px;border-width:0 0 2px 2px}.br{bottom:6px;right:6px;border-width:0 2px 2px 0}
+
+  /* TOPBAR */
+  .topbar{position:fixed;top:0;left:0;right:0;height:50px;background:linear-gradient(90deg,#030c16,#020810,#030c16);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;}
+  .logo{font-family:'Orbitron',monospace;font-weight:900;font-size:19px;color:var(--cyan);letter-spacing:8px;text-shadow:0 0 20px rgba(0,245,255,.4);text-decoration:none;}
+  .portal-label{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-mid);letter-spacing:3px;}
+  .user-info{display:flex;align-items:center;gap:12px;}
+  .user-name{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--cyan);}
+  .acct-badge{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-mid);padding:2px 8px;border:1px solid rgba(0,245,255,.2);}
+  .signout-btn{font-family:'Orbitron',monospace;font-size:7px;padding:4px 9px;border:1px solid rgba(0,245,255,.25);color:rgba(0,245,255,.45);background:transparent;cursor:pointer;letter-spacing:1px;transition:all .15s;}
+  .signout-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+  #clock{color:var(--text-mid);font-size:11px;letter-spacing:2px;font-family:'Share Tech Mono',monospace;}
+
+  /* STAT STRIP */
+  .statstrip{position:fixed;top:50px;left:0;right:0;height:70px;background:rgba(3,12,22,.97);border-bottom:1px solid var(--border);display:grid;grid-template-columns:repeat(4,1fr);z-index:99;}
+  .stat{display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid var(--border);padding:0 12px;}
+  .stat:last-child{border-right:none;}
+  .stat-label{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-mid);letter-spacing:2px;margin-bottom:4px;}
+  .stat-val{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:22px;}
+  .sv-c{color:var(--cyan)}.sv-g{color:var(--green)}.sv-o{color:var(--orange)}.sv-r{color:var(--red)}.sv-m{color:var(--text-mid)}
+  .stat-sub{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-dim);margin-top:2px;}
+
+  /* MAIN GRID */
+  .main{position:fixed;top:120px;bottom:0;left:0;right:0;display:grid;grid-template-columns:280px 1fr;gap:10px;padding:10px;overflow:hidden;}
+  .col{display:flex;flex-direction:column;gap:10px;overflow:hidden;}
+
+  /* PANELS */
+  .panel{background:rgba(0,245,255,.02);border:1px solid var(--border);position:relative;flex-shrink:0;}
+  .panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,245,255,.3),transparent);}
+  .panel-title{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2.5px;color:var(--text-mid);padding:9px 14px 7px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+
+  /* ACCOUNT INFO */
+  .info-row{display:flex;justify-content:space-between;align-items:center;padding:7px 14px;border-bottom:1px solid rgba(0,245,255,.04);}
+  .info-row:last-child{border-bottom:none;}
+  .info-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-mid);letter-spacing:1px;}
+  .info-val{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);}
+
+  /* PHONE EDIT */
+  .phone-edit-wrap{padding:10px 14px;border-bottom:1px solid rgba(0,245,255,.06);}
+  .phone-row{display:flex;gap:6px;align-items:center;}
+  .phone-input{background:rgba(0,245,255,.05);border:1px solid rgba(0,245,255,.2);color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:11px;padding:6px 10px;outline:none;flex:1;transition:all .15s;}
+  .phone-input:focus{border-color:var(--border-hi);}
+  .phone-save{font-family:'Orbitron',monospace;font-size:7px;padding:7px 10px;border:1px solid var(--cyan);color:var(--cyan);background:rgba(0,245,255,.06);cursor:pointer;letter-spacing:1px;white-space:nowrap;transition:all .15s;}
+  .phone-save:hover{background:rgba(0,245,255,.14);}
+
+  /* TOGGLES */
+  .toggle-section{padding:10px 14px;}
+  .toggle-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .toggle-row:last-child{margin-bottom:0;}
+  .toggle-label{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-mid);letter-spacing:1px;}
+  .toggle{position:relative;width:36px;height:18px;cursor:pointer;flex-shrink:0;}
+  .toggle input{opacity:0;width:0;height:0;}
+  .toggle-track{position:absolute;inset:0;background:rgba(0,245,255,.08);border:1px solid rgba(0,245,255,.2);transition:.2s;}
+  .toggle input:checked+.toggle-track{background:rgba(0,245,255,.25);border-color:var(--cyan);}
+  .toggle-thumb{position:absolute;height:12px;width:12px;top:2px;left:2px;background:var(--text-dim);transition:.2s;}
+  .toggle input:checked~.toggle-thumb{transform:translateX(18px);background:var(--cyan);}
+  .save-alerts-btn{width:100%;margin-top:10px;padding:8px;font-family:'Orbitron',monospace;font-size:7px;letter-spacing:2px;border:1px solid var(--cyan);color:var(--cyan);background:rgba(0,245,255,.05);cursor:pointer;transition:all .15s;}
+  .save-alerts-btn:hover{background:rgba(0,245,255,.12);}
+
+  /* TABLES */
+  .tbl-wrap{overflow-y:auto;flex:1;}
+  .ptable{width:100%;border-collapse:collapse;}
+  .ptable thead{position:sticky;top:0;z-index:5;}
+  .ptable th{font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1.5px;color:var(--text-dim);padding:7px 12px;border-bottom:2px solid var(--border);text-align:left;font-weight:400;background:var(--bg);}
+  .ptable td{padding:7px 12px;border-bottom:1px solid rgba(0,245,255,.04);font-size:12px;vertical-align:middle;}
+  .ptable tr:hover td{background:rgba(0,245,255,.02);}
+  .td-date{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-mid);}
+  .td-amt{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--green);}
+  .td-ref{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);}
+  .spill{font-family:'Orbitron',monospace;font-size:6px;padding:2px 6px;border:1px solid;letter-spacing:1px;white-space:nowrap;}
+  .s-paid{border-color:rgba(0,255,136,.4);color:var(--green);}
+  .s-due{border-color:rgba(232,180,0,.4);color:var(--yellow);}
+  .s-over{border-color:rgba(255,34,68,.4);color:var(--red);}
+  .s-open{border-color:rgba(0,245,255,.4);color:var(--cyan);}
+  .s-prog{border-color:rgba(255,136,0,.4);color:var(--orange);}
+
+  /* INVOICE ROW — clickable */
+  .inv-row{cursor:pointer;}
+  .inv-row:hover td{background:rgba(0,245,255,.04)!important;}
+  .pdf-icon{font-size:12px;opacity:.5;transition:opacity .15s;}
+  .inv-row:hover .pdf-icon{opacity:1;}
+
+  /* SERVICE REQUESTS */
+  .sr-panel{background:rgba(255,136,0,.03);border:1px solid rgba(255,136,0,.2);position:relative;flex-shrink:0;}
+  .sr-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,136,0,.35),transparent);}
+  .sr-title{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2.5px;color:rgba(255,136,0,.7);padding:9px 14px 7px;border-bottom:1px solid rgba(255,136,0,.15);}
+  .sr-item{padding:10px 14px;border-bottom:1px solid rgba(255,136,0,.08);}
+  .sr-item:last-child{border-bottom:none;}
+  .sr-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+  .sr-cat{font-family:'Orbitron',monospace;font-size:8px;color:var(--orange);letter-spacing:1px;}
+  .sr-date{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-dim);}
+  .sr-status{font-family:'Orbitron',monospace;font-size:7px;padding:2px 6px;border:1px solid;letter-spacing:1px;}
+  .sr-s-open{border-color:rgba(0,245,255,.4);color:var(--cyan);}
+  .sr-s-prog{border-color:rgba(255,136,0,.4);color:var(--orange);}
+
+  /* HELP TICKET BUTTON */
+  .ticket-btn{width:calc(100% - 28px);margin:10px 14px;padding:10px;font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;border:1px solid var(--orange);color:var(--orange);background:rgba(255,136,0,.05);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .ticket-btn:hover{background:rgba(255,136,0,.12);box-shadow:0 0 16px rgba(255,136,0,.15);}
+
+  /* MODAL */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:600;align-items:center;justify-content:center;}
+  .modal-overlay.show{display:flex;}
+  .modal{background:#020810;border:1px solid var(--border-hi);width:480px;max-width:94vw;box-shadow:0 0 60px rgba(0,245,255,.1);}
+  .modal-head{padding:16px 20px;border-bottom:1px solid var(--border);background:linear-gradient(90deg,rgba(0,245,255,.05),transparent);display:flex;justify-content:space-between;align-items:center;}
+  .modal-title{font-family:'Orbitron',monospace;font-size:10px;color:var(--cyan);letter-spacing:3px;}
+  .modal-x{background:transparent;border:none;color:var(--text-mid);font-size:20px;cursor:pointer;line-height:1;}
+  .modal-x:hover{color:var(--red);}
+  .modal-body{padding:20px;}
+  .m-field{display:flex;flex-direction:column;gap:5px;margin-bottom:16px;}
+  .m-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-mid);letter-spacing:2px;}
+  .m-select{background:rgba(0,245,255,.04);border:1px solid rgba(0,245,255,.2);color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:11px;padding:9px 12px;outline:none;width:100%;}
+  .m-select option{background:#020810;color:var(--cyan);}
+  .m-textarea{background:rgba(0,245,255,.04);border:1px solid rgba(0,245,255,.2);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px;padding:9px 12px;outline:none;width:100%;resize:none;height:100px;line-height:1.5;transition:all .15s;}
+  .m-textarea:focus{border-color:var(--border-hi);}
+  .m-textarea::placeholder{color:var(--text-dim);}
+  .modal-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;}
+  .m-btn{flex:1;padding:11px;font-family:'Orbitron',monospace;font-size:8px;letter-spacing:1.5px;cursor:pointer;border:1px solid;background:transparent;transition:all .15s;}
+  .m-btn-submit{border-color:var(--cyan);color:var(--cyan);}
+  .m-btn-submit:hover{background:rgba(0,245,255,.1);}
+  .m-btn-cancel{border-color:rgba(0,245,255,.2);color:var(--text-mid);}
+  .m-btn-cancel:hover{border-color:var(--cyan);color:var(--cyan);}
+
+  /* CONFIRMATION */
+  .confirm-body{padding:36px 24px;text-align:center;}
+  .confirm-icon{font-size:40px;margin-bottom:14px;}
+  .confirm-title{font-family:'Orbitron',monospace;font-size:12px;color:var(--green);letter-spacing:3px;margin-bottom:10px;}
+  .confirm-msg{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-mid);letter-spacing:1px;line-height:1.8;}
+  .confirm-close{margin-top:20px;padding:10px 24px;font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;border:1px solid var(--green);color:var(--green);background:transparent;cursor:pointer;transition:all .15s;}
+  .confirm-close:hover{background:rgba(0,255,136,.08);}
+
+  /* LOGIN GATE */
+  .gate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:2000;}
+  .gate-card{background:rgba(3,12,22,.97);border:1px solid var(--border-hi);width:400px;max-width:94vw;box-shadow:0 0 60px rgba(0,245,255,.07);}
+  .gate-top{padding:30px 30px 22px;border-bottom:1px solid var(--border);text-align:center;background:linear-gradient(135deg,rgba(0,245,255,.05),transparent);}
+  .gate-logo{font-family:'Orbitron',monospace;font-weight:900;font-size:26px;color:var(--cyan);letter-spacing:10px;text-shadow:0 0 25px rgba(0,245,255,.5);display:block;margin-bottom:8px;}
+  .gate-sub{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-dim);letter-spacing:3px;}
+  .gate-body{padding:26px 30px;}
+  .g-field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+  .g-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-mid);letter-spacing:2px;}
+  .g-input{background:rgba(0,245,255,.04);border:1px solid rgba(0,245,255,.2);color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:11px;padding:10px 12px;outline:none;width:100%;transition:all .15s;}
+  .g-input:focus{border-color:var(--border-hi);}
+  .g-input::placeholder{color:var(--text-dim);}
+  .g-btn{width:100%;padding:12px;font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2.5px;border:1px solid var(--cyan);color:var(--cyan);background:rgba(0,245,255,.05);cursor:pointer;transition:all .2s;margin-top:4px;}
+  .g-btn:hover:not(:disabled){background:rgba(0,245,255,.12);}
+  .g-btn:disabled{opacity:.5;cursor:not-allowed;}
+  .g-error{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--red);margin-top:10px;display:none;letter-spacing:1px;}
+  .g-error.show{display:block;}
+  .gate-foot{padding:12px 30px;border-top:1px solid var(--border);text-align:center;}
+  .op-link{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-dim);letter-spacing:1px;text-decoration:none;}
+  .op-link:hover{color:var(--cyan);}
+
+  .empty{text-align:center;padding:28px 12px;font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-dim);letter-spacing:2px;}
+  .toast{position:fixed;bottom:20px;right:20px;background:#020810;border:1px solid var(--cyan);padding:9px 16px;font-family:'Orbitron',monospace;font-size:8px;color:var(--cyan);letter-spacing:2px;z-index:900;opacity:0;transition:opacity .3s;pointer-events:none;}
+  .toast.show{opacity:1;}
+  .toast.t-ok{border-color:var(--green);color:var(--green);}
+  .toast.t-err{border-color:var(--red);color:var(--red);}
+
+  ::-webkit-scrollbar{width:3px;height:3px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:rgba(0,245,255,.2);}
+</style>
+</head>
+<body>
+<div class="corner tl"></div><div class="corner tr"></div>
+<div class="corner bl"></div><div class="corner br"></div>
+
+<!-- LOGIN GATE -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="gate-top">
+      <span class="gate-logo">RADEUS</span>
+      <div class="gate-sub">CUSTOMER ACCOUNT PORTAL</div>
+    </div>
+    <div class="gate-body">
+      <div class="g-field">
+        <label class="g-label">EMAIL ADDRESS</label>
+        <input class="g-input" id="gEmail" type="email" placeholder="your@email.com" autocomplete="email">
+      </div>
+      <div class="g-field">
+        <label class="g-label">PASSWORD</label>
+        <input class="g-input" id="gPassword" type="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="g-btn" id="gBtn" onclick="portalLogin()">ACCESS MY ACCOUNT</button>
+      <div class="g-error" id="gError"></div>
+    </div>
+    <div class="gate-foot">
+      <a class="op-link" href="login.html">← OPERATOR LOGIN</a>
+    </div>
+  </div>
+</div>
+
+<!-- PORTAL UI -->
+<div id="portalUI" style="display:none">
+
+  <div class="topbar">
+    <span class="logo">RADEUS</span>
+    <div class="portal-label">CUSTOMER PORTAL</div>
+    <div class="user-info">
+      <span class="user-name" id="p-name">—</span>
+      <span class="acct-badge" id="p-acctbadge">—</span>
+      <span id="clock">--:--:--</span>
+      <button class="signout-btn" onclick="portalLogout()">SIGN OUT</button>
+    </div>
+  </div>
+
+  <!-- STAT STRIP -->
+  <div class="statstrip">
+    <div class="stat">
+      <div class="stat-label">CURRENT BALANCE</div>
+      <div class="stat-val sv-o" id="s-bal">—</div>
+      <div class="stat-sub">AS OF TODAY</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">LAST PAYMENT</div>
+      <div class="stat-val sv-g" id="s-lastpay">—</div>
+      <div class="stat-sub" id="s-lastdate">—</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">INVOICES (YTD)</div>
+      <div class="stat-val sv-c" id="s-invoices">—</div>
+      <div class="stat-sub" id="s-billed">—</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">ACCOUNT STATUS</div>
+      <div class="stat-val" id="s-status" style="font-size:16px;margin-top:4px">—</div>
+      <div class="stat-sub" id="s-system">—</div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- LEFT: Account Info + Alerts -->
+    <div class="col">
+
+      <div class="panel">
+        <div class="panel-title">⬡ ACCOUNT INFORMATION</div>
+        <div class="info-row"><span class="info-label">ACCOUNT #</span><span class="info-val" id="d-acct">—</span></div>
+        <div class="info-row"><span class="info-label">SERVICE ADDRESS</span><span class="info-val" id="d-addr" style="max-width:160px;text-align:right;font-size:9px">—</span></div>
+        <div class="info-row"><span class="info-label">METER #</span><span class="info-val" id="d-meter">—</span></div>
+        <div class="info-row"><span class="info-label">WATER SYSTEM</span><span class="info-val" id="d-system" style="font-size:9px;text-align:right;max-width:150px">—</span></div>
+        <div class="info-row"><span class="info-label">ACCOUNT TYPE</span><span class="info-val" id="d-type">—</span></div>
+
+        <!-- Phone edit -->
+        <div class="phone-edit-wrap">
+          <div class="info-label" style="margin-bottom:6px">PHONE NUMBER</div>
+          <div class="phone-row">
+            <input class="phone-input" id="d-phone" type="tel" placeholder="(000) 000-0000">
+            <button class="phone-save" onclick="savePhone()">SAVE</button>
+          </div>
+        </div>
+
+        <!-- Alert toggles -->
+        <div class="toggle-section">
+          <div class="info-label" style="margin-bottom:8px">NOTIFICATION PREFERENCES</div>
+          <div class="toggle-row">
+            <span class="toggle-label">SMS ALERTS</span>
+            <label class="toggle">
+              <input type="checkbox" id="smsToggle">
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <span class="toggle-label">EMAIL ALERTS</span>
+            <label class="toggle">
+              <input type="checkbox" id="emailToggle">
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+          <button class="save-alerts-btn" onclick="saveAlerts()">✓ SAVE PREFERENCES</button>
+        </div>
+      </div>
+
+      <!-- Active Service Requests -->
+      <div id="srPanel" style="display:none">
+        <div class="sr-panel">
+          <div class="sr-title">⬡ ACTIVE SERVICE REQUESTS</div>
+          <div id="srList"></div>
+        </div>
+      </div>
+
+      <!-- Help Ticket Button -->
+      <button class="ticket-btn" onclick="openTicket()">
+        ＋ SUBMIT A SERVICE REQUEST
+      </button>
+
+    </div>
+
+    <!-- REGISTRY: Unified invoices + payments -->
+    <div class="col" style="overflow:hidden;display:flex;flex-direction:column;">
+      <div class="panel" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+        <div class="panel-title">⬡ ACCOUNT TRANSACTION HISTORY
+          <span style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-dim);letter-spacing:0">Invoices: click row to view PDF</span>
+        </div>
+        <div class="tbl-wrap">
+          <table class="ptable">
+            <thead><tr>
+              <th>DATE</th><th>TYPE</th><th>DESCRIPTION</th><th style="text-align:right">AMOUNT</th><th>STATUS</th><th></th>
+            </tr></thead>
+            <tbody id="registryTable"><tr><td colspan="6" class="empty">LOADING...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TICKET MODAL -->
+<div class="modal-overlay" id="ticketOverlay">
+  <div class="modal" id="ticketModal">
+    <div class="modal-head">
+      <div class="modal-title">⬡ SUBMIT SERVICE REQUEST</div>
+      <button class="modal-x" onclick="closeTicket()">✕</button>
+    </div>
+    <div class="modal-body" id="ticketBody">
+      <div class="m-field">
+        <label class="m-label">CATEGORY</label>
+        <select class="m-select" id="t-cat">
+          <option value="BILLING_QUESTION">Billing Question</option>
+          <option value="NO_WATER">No Water / Outage</option>
+          <option value="WATER_QUALITY">Water Quality Issue</option>
+          <option value="PRESSURE_ISSUE">Low / High Pressure</option>
+          <option value="LEAK_REPORT">Leak Report</option>
+          <option value="SERVICE_REQUEST">General Service Request</option>
+          <option value="OTHER">Other</option>
+        </select>
+      </div>
+      <div class="m-field">
+        <label class="m-label">DESCRIBE YOUR ISSUE</label>
+        <textarea class="m-textarea" id="t-desc" placeholder="Please describe the issue in as much detail as possible..."></textarea>
+      </div>
+    </div>
+    <div class="modal-foot" id="ticketFoot">
+      <button class="m-btn m-btn-cancel" onclick="closeTicket()">CANCEL</button>
+      <button class="m-btn m-btn-submit" onclick="submitTicket()">SUBMIT REQUEST</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPA_URL='https://bvpesxpptgdwkhsewhke.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2cGVzeHBwdGdkd2toc2V3aGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNzcwNTksImV4cCI6MjA5MTk1MzA1OX0._th9UdQKqIWvqgTrxxpd5IfTlexCUeyWC5aGwRJYZj8';
+const PORTAL_KEY='radeus_portal_session';
+const CUST_KEY='radeus_customer';
+
+let currentCustomer=null, currentAccount=null;
+
+// ── CLOCK ──────────────────────────────────────────────────
+function tick(){document.getElementById('clock').textContent=new Date().toTimeString().slice(0,8);}
+setInterval(tick,1000);tick();
+
+// ── HELPERS ────────────────────────────────────────────────
+function fmtMoney(n){return'$'+parseFloat(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtDate(s){if(!s)return'—';const d=new Date(s+'T00:00:00');return`${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}/${d.getFullYear()}`;}
+function fmtPeriod(y,m){if(!y||!m)return'—';const mn=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];return`${mn[m-1]} ${y}`;}
+function catLabel(c){const m={'BILLING_QUESTION':'Billing Question','NO_WATER':'No Water / Outage','WATER_QUALITY':'Water Quality','PRESSURE_ISSUE':'Low/High Pressure','LEAK_REPORT':'Leak Report','SERVICE_REQUEST':'Service Request','OTHER':'Other'};return m[c]||c;}
+
+function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(type?' t-'+type:'')+' show';setTimeout(()=>t.classList.remove('show'),3000);}
+
+// ── SUPABASE ───────────────────────────────────────────────
+function getPortalSession(){try{const s=JSON.parse(localStorage.getItem(PORTAL_KEY)||'null');if(!s||s.expires_at<Date.now()/1000)return null;return s;}catch{return null;}}
+function getStoredCustomer(){try{return JSON.parse(localStorage.getItem(CUST_KEY)||'null');}catch{return null;}}
+
+async function pFetch(table,params='',opts={}){
+  const s=getPortalSession();
+  const r=await fetch(`${SUPA_URL}/rest/v1/${table}${params}`,{
+    headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${s?.access_token||SUPA_KEY}`,'Content-Type':'application/json',...(opts.headers||{})},
+    ...opts
+  });
+  if(opts.method&&opts.method!=='GET'){return r;}
+  if(!r.ok)return null;
+  const txt=await r.text();return txt?JSON.parse(txt):null;
+}
+
+// ── AUTH GATE ──────────────────────────────────────────────
+document.getElementById('gPassword').addEventListener('keydown',e=>{if(e.key==='Enter')portalLogin();});
+document.getElementById('gEmail').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('gPassword').focus();});
+
+async function portalLogin(){
+  const email=document.getElementById('gEmail').value.trim();
+  const pw=document.getElementById('gPassword').value;
+  const err=document.getElementById('gError');
+  err.classList.remove('show');
+  if(!email||!pw){err.textContent='EMAIL AND PASSWORD REQUIRED';err.classList.add('show');return;}
+  const btn=document.getElementById('gBtn');btn.disabled=true;btn.textContent='SIGNING IN...';
+  try{
+    const r=await fetch(`${SUPA_URL}/auth/v1/token?grant_type=password`,{
+      method:'POST',headers:{'apikey':SUPA_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({email,password:pw})
+    });
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.error_description||'SIGN IN FAILED');
+    const cr=await fetch(`${SUPA_URL}/rest/v1/customers?auth_user_id=eq.${d.user.id}&select=customer_id,full_name,email,phone_primary,sms_opt_in,email_opt_in&limit=1`,
+      {headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${d.access_token}`}});
+    const cd=await cr.json();
+    if(!cd?.length)throw new Error('NO CUSTOMER ACCOUNT FOUND FOR THIS EMAIL');
+    localStorage.setItem(PORTAL_KEY,JSON.stringify({access_token:d.access_token,expires_at:d.expires_at||Math.floor(Date.now()/1000)+3600,user:d.user}));
+    localStorage.setItem(CUST_KEY,JSON.stringify({...cd[0],_user_id:d.user.id}));
+    currentCustomer=cd[0];
+    showPortal();
+  }catch(e){err.textContent=e.message||'SIGN IN FAILED';err.classList.add('show');}
+  finally{btn.disabled=false;btn.textContent='ACCESS MY ACCOUNT';}
+}
+
+function portalLogout(){localStorage.removeItem(PORTAL_KEY);localStorage.removeItem(CUST_KEY);document.getElementById('gate').style.display='flex';document.getElementById('portalUI').style.display='none';}
+
+// ── SHOW PORTAL ────────────────────────────────────────────
+function showPortal(){
+  document.getElementById('gate').style.display='none';
+  document.getElementById('portalUI').style.display='block';
+  loadPortal();
+}
+
+async function loadPortal(){
+  try{await _loadPortal();}catch(e){console.error('Portal load error:',e);showToast('ERROR LOADING ACCOUNT DATA','err');}}
+
+async function _loadPortal(){
+  const cust=currentCustomer||getStoredCustomer();
+  if(!cust){portalLogout();return;}
+  currentCustomer=cust;
+
+  // Populate name
+  document.getElementById('p-name').textContent=cust.full_name||cust.email||'—';
+  document.getElementById('d-phone').value=cust.phone_primary||'';
+  document.getElementById('smsToggle').checked=!!cust.sms_opt_in;
+  document.getElementById('emailToggle').checked=!!cust.email_opt_in;
+
+  // Load account
+  const accts=await pFetch('accounts',`?customer_id=eq.${cust.customer_id}&select=account_id,account_number,status,account_type,meter_id,system_id,service_addresses(street,city,state),water_systems(system_name)&limit=1`);
+  if(!accts?.length){showToast('NO ACCOUNT FOUND','err');return;}
+  currentAccount=accts[0];
+  const acct=accts[0];
+
+  document.getElementById('p-acctbadge').textContent=acct.account_number||'—';
+  document.getElementById('d-acct').textContent=acct.account_number||'—';
+  document.getElementById('d-type').textContent=acct.account_type||'—';
+  document.getElementById('d-meter').textContent=acct.meter_id||'—';
+  document.getElementById('d-system').textContent=acct.water_systems?.system_name||'—';
+  const addr=acct.service_addresses;
+  document.getElementById('d-addr').textContent=addr?`${addr.street}, ${addr.city||''}`:'—';
+
+  const statusEl=document.getElementById('s-status');
+  const st=acct.status||'';
+  statusEl.textContent=st;
+  statusEl.style.color=st==='ACTIVE'?'var(--green)':st==='DISCONNECTED'?'var(--red)':'var(--orange)';
+  document.getElementById('s-system').textContent=acct.water_systems?.system_name||'—';
+
+  // Balance — account_balances is a view (no RLS), use anon key
+  const balRes=await fetch(`${SUPA_URL}/rest/v1/account_balances?account_id=eq.${acct.account_id}&select=current_balance&limit=1`,
+    {headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`}});
+  const balData=balRes.ok?await balRes.json():null;
+  const bal=parseFloat(balData?.[0]?.current_balance||0);
+  const balEl=document.getElementById('s-bal');
+  balEl.textContent=fmtMoney(bal);
+  balEl.style.color=bal>0?'var(--orange)':bal<0?'var(--green)':'var(--text-mid)';
+  // Last payment — from payments table (has auth RLS policy)
+  const lastPayData=await pFetch('payments',`?account_id=eq.${acct.account_id}&returned=eq.false&select=amount,payment_date&order=payment_date.desc&limit=1`);
+  if(lastPayData?.[0]){
+    document.getElementById('s-lastpay').textContent=fmtMoney(lastPayData[0].amount||0);
+    document.getElementById('s-lastdate').textContent=fmtDate(lastPayData[0].payment_date);
+  }
+
+  // Load all three in parallel
+  await Promise.all([loadRegistry(acct),loadServiceRequests(acct)]);
+}
+
+// ── INVOICES ───────────────────────────────────────────────
+// ── UNIFIED REGISTRY ───────────────────────────────────────
+async function loadRegistry(acct){
+  const tbody=document.getElementById('registryTable');
+  try{
+    const [bills, pays] = await Promise.all([
+      pFetch('bills',`?account_id=eq.${acct.account_id}&select=bill_id,cycle_year,cycle_month,statement_date,due_date,total_amount,bill_pdf_url,in_closed_cycle&order=statement_date.desc&limit=36`),
+      pFetch('payments',`?account_id=eq.${acct.account_id}&select=payment_date,amount,payment_method,deposited,returned&order=payment_date.desc&limit=36`)
+    ]);
+
+    // YTD invoice stats
+    const yr=new Date().getFullYear();
+    const ytd=(bills||[]).filter(b=>b.cycle_year===yr);
+    document.getElementById('s-invoices').textContent=ytd.length||'0';
+    const ytdAmt=ytd.reduce((s,b)=>s+parseFloat(b.total_amount||0),0);
+    document.getElementById('s-billed').textContent=ytd.length?fmtMoney(ytdAmt)+' BILLED':'NO BILLS THIS YEAR';
+
+    // Last payment stat
+    const lastPay=(pays||[]).find(p=>!p.returned);
+    if(lastPay){
+      document.getElementById('s-lastpay').textContent=fmtMoney(lastPay.amount||0);
+      document.getElementById('s-lastdate').textContent=fmtDate(lastPay.payment_date);
+    }
+
+    // Build unified row list — tag each entry with type and sort by date desc
+    const rows=[];
+    (bills||[]).forEach(b=>{
+      rows.push({date:b.statement_date, type:'INVOICE', data:b});
+    });
+    (pays||[]).forEach(p=>{
+      rows.push({date:p.payment_date, type:'PAYMENT', data:p});
+    });
+    rows.sort((a,b)=>new Date(b.date)-new Date(a.date));
+
+    if(!rows.length){tbody.innerHTML='<tr><td colspan="6" class="empty">NO TRANSACTIONS ON FILE</td></tr>';return;}
+
+    const today=new Date();
+    tbody.innerHTML=rows.map(r=>{
+      if(r.type==='INVOICE'){
+        const b=r.data;
+        const due=b.due_date?new Date(b.due_date+'T00:00:00'):null;
+        let sc,st;
+        if(b.in_closed_cycle){sc='s-paid';st='PAID';}
+        else if(due&&due<today){sc='s-over';st='OVERDUE';}
+        else{sc='s-due';st='DUE '+fmtDate(b.due_date);}
+        const click=b.bill_pdf_url?`onclick="window.open('${b.bill_pdf_url}','_blank')"`:
+          `onclick="showToast('PDF not available yet','err')"`;
+        return`<tr class="inv-row" ${click}>
+          <td class="td-date">${fmtDate(b.statement_date)}</td>
+          <td><span class="spill" style="border-color:rgba(0,245,255,.4);color:var(--cyan)">INVOICE</span></td>
+          <td class="td-ref">${fmtPeriod(b.cycle_year,b.cycle_month)} STATEMENT</td>
+          <td class="td-amt" style="text-align:right;color:var(--cyan)">${fmtMoney(b.total_amount)}</td>
+          <td><span class="spill ${sc}">${st}</span></td>
+          <td class="pdf-icon">${b.bill_pdf_url?'📄':'—'}</td>
+        </tr>`;
+      } else {
+        const p=r.data;
+        let sc,st;
+        if(p.returned){sc='s-over';st='RETURNED';}
+        else if(p.deposited){sc='s-paid';st='DEPOSITED';}
+        else{sc='s-due';st='PENDING';}
+        return`<tr>
+          <td class="td-date">${fmtDate(p.payment_date)}</td>
+          <td><span class="spill" style="border-color:rgba(0,255,136,.4);color:var(--green)">PAYMENT</span></td>
+          <td class="td-ref">${(p.payment_method||'—').replace(/_/g,' ')}</td>
+          <td class="td-amt" style="text-align:right;${p.returned?'color:var(--red)':''}">${p.returned?'<span style="font-size:8px;margin-right:4px">RTN</span>':''}${fmtMoney(p.amount)}</td>
+          <td><span class="spill ${sc}">${st}</span></td>
+          <td></td>
+        </tr>`;
+      }
+    }).join('');
+  }catch(e){
+    tbody.innerHTML='<tr><td colspan="6" class="empty">COULD NOT LOAD TRANSACTIONS</td></tr>';
+    console.error('loadRegistry:',e);
+  }
+}
+
+// ── SERVICE REQUESTS ───────────────────────────────────────
+async function loadServiceRequests(acct){
+  const wos=await pFetch('work_orders',`?account_id=eq.${acct.account_id}&source=eq.PORTAL&status=neq.CLOSED&status=neq.COMPLETED&select=wo_id,portal_category,status,created_at&order=created_at.desc`);
+  const panel=document.getElementById('srPanel');
+  const list=document.getElementById('srList');
+  if(!wos?.length){panel.style.display='none';return;}
+  panel.style.display='block';
+  list.innerHTML=wos.map(w=>{
+    const sc=w.status==='IN_PROGRESS'||w.status==='ASSIGNED'?'sr-s-prog':'sr-s-open';
+    const st=w.status==='IN_PROGRESS'?'IN PROGRESS':w.status==='ASSIGNED'?'ASSIGNED':'OPEN';
+    return`<div class="sr-item">
+      <div class="sr-top">
+        <span class="sr-cat">${catLabel(w.portal_category||'OTHER')}</span>
+        <span class="sr-status ${sc}">${st}</span>
+      </div>
+      <div class="sr-date">SUBMITTED ${fmtDate(w.created_at?.split('T')[0])}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── PHONE SAVE ─────────────────────────────────────────────
+async function savePhone(){
+  const phone=document.getElementById('d-phone').value.trim();
+  if(!phone){showToast('ENTER A PHONE NUMBER','err');return;}
+  const r=await pFetch('customers',`?customer_id=eq.${currentCustomer.customer_id}`,{
+    method:'PATCH',
+    headers:{'Prefer':'return=minimal'},
+    body:JSON.stringify({phone_primary:phone})
+  });
+  if(r&&r.ok){showToast('PHONE UPDATED','ok');currentCustomer.phone_primary=phone;localStorage.setItem(CUST_KEY,JSON.stringify(currentCustomer));}
+  else showToast('UPDATE FAILED','err');
+}
+
+// ── ALERT PREFERENCES ──────────────────────────────────────
+async function saveAlerts(){
+  const sms=document.getElementById('smsToggle').checked;
+  const email=document.getElementById('emailToggle').checked;
+  const r=await pFetch('customers',`?customer_id=eq.${currentCustomer.customer_id}`,{
+    method:'PATCH',
+    headers:{'Prefer':'return=minimal'},
+    body:JSON.stringify({sms_opt_in:sms,email_opt_in:email})
+  });
+  if(r&&r.ok){showToast('PREFERENCES SAVED','ok');currentCustomer.sms_opt_in=sms;currentCustomer.email_opt_in=email;localStorage.setItem(CUST_KEY,JSON.stringify(currentCustomer));}
+  else showToast('SAVE FAILED','err');
+}
+
+// ── HELP TICKET ────────────────────────────────────────────
+function openTicket(){
+  document.getElementById('t-desc').value='';
+  document.getElementById('t-cat').value='BILLING_QUESTION';
+  document.getElementById('ticketBody').innerHTML=`
+    <div class="m-field">
+      <label class="m-label">CATEGORY</label>
+      <select class="m-select" id="t-cat">
+        <option value="BILLING_QUESTION">Billing Question</option>
+        <option value="NO_WATER">No Water / Outage</option>
+        <option value="WATER_QUALITY">Water Quality Issue</option>
+        <option value="PRESSURE_ISSUE">Low / High Pressure</option>
+        <option value="LEAK_REPORT">Leak Report</option>
+        <option value="SERVICE_REQUEST">General Service Request</option>
+        <option value="OTHER">Other</option>
+      </select>
+    </div>
+    <div class="m-field">
+      <label class="m-label">DESCRIBE YOUR ISSUE</label>
+      <textarea class="m-textarea" id="t-desc" placeholder="Please describe the issue in as much detail as possible..."></textarea>
+    </div>`;
+  document.getElementById('ticketFoot').innerHTML=`
+    <button class="m-btn m-btn-cancel" onclick="closeTicket()">CANCEL</button>
+    <button class="m-btn m-btn-submit" onclick="submitTicket()">SUBMIT REQUEST</button>`;
+  document.getElementById('ticketOverlay').classList.add('show');
+}
+
+function closeTicket(){document.getElementById('ticketOverlay').classList.remove('show');}
+
+async function submitTicket(){
+  const cat=document.getElementById('t-cat').value;
+  const desc=document.getElementById('t-desc').value.trim();
+  if(!desc){showToast('PLEASE DESCRIBE YOUR ISSUE','err');return;}
+  if(!currentAccount){showToast('ACCOUNT NOT LOADED','err');return;}
+
+  const btn=document.querySelector('.m-btn-submit');
+  btn.disabled=true;btn.textContent='SUBMITTING...';
+
+  const woNum='WO-'+Date.now().toString().slice(-8);
+  const titleMap={'BILLING_QUESTION':'Billing Question','NO_WATER':'No Water / Outage','WATER_QUALITY':'Water Quality Issue','PRESSURE_ISSUE':'Pressure Issue','LEAK_REPORT':'Leak Report','SERVICE_REQUEST':'Service Request','OTHER':'Customer Request'};
+
+  const r=await pFetch('work_orders','',{
+    method:'POST',
+    headers:{'Prefer':'return=minimal'},
+    body:JSON.stringify({
+      wo_id: crypto.randomUUID(),
+      org_id: '00000000-0000-0000-0000-000000000001',
+      system_id: currentAccount.system_id||null,
+      account_id: currentAccount.account_id,
+      wo_number: woNum,
+      title: titleMap[cat]||'Customer Request',
+      description: desc,
+      category: 'CUSTOMER_REQUEST',
+      portal_category: cat,
+      priority: cat==='NO_WATER'||cat==='LEAK_REPORT'?'HIGH':'NORMAL',
+      status: 'OPEN',
+      source: 'PORTAL',
+      created_at: new Date().toISOString()
+    })
+  });
+
+  if(r&&(r.ok||r.status===201)){
+    // Show confirmation
+    document.getElementById('ticketBody').innerHTML=`
+      <div class="confirm-body">
+        <div class="confirm-icon">✓</div>
+        <div class="confirm-title">REQUEST SUBMITTED</div>
+        <div class="confirm-msg">YOUR SERVICE REQUEST HAS BEEN SUBMITTED.<br>OUR TEAM WILL REVIEW IT SHORTLY.<br>YOU CAN TRACK THE STATUS IN YOUR PORTAL.</div>
+      </div>`;
+    document.getElementById('ticketFoot').innerHTML=`<button class="confirm-close" style="margin:0 auto" onclick="closeTicket();loadServiceRequests(currentAccount)">CLOSE</button>`;
+  } else {
+    showToast('SUBMISSION FAILED — PLEASE TRY AGAIN','err');
+    btn.disabled=false;btn.textContent='SUBMIT REQUEST';
+  }
+}
+
+// ── RLS FIX — customers can update their own record ────────
+// Portal reads use anon key; writes need the auth token
+// pFetch already uses auth token when session exists ✓
+
+// ── INIT ───────────────────────────────────────────────────
+(function init(){
+  const s=getPortalSession();
+  const cust=getStoredCustomer();
+  if(s&&cust){
+    currentCustomer=cust;
+    showPortal();
+  }
+})();
+</script>
+</body>
+</html>

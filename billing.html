@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RADEUS — Billing</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="theme.css" rel="stylesheet">
+<style>
+  :root {
+    --yellow:#e8b400;--yellow-dim:rgba(232,180,0,.4);
+    --cyan:#00f5ff;--green:#00ff88;--red:#ff2244;
+    --orange:#ff8800;--blue:#0088ff;--purple:#aa00ff;
+    --bg:#0c0900;--bg2:#181200;--bg3:#100b00;
+    --panel:rgba(232,180,0,.03);--border:rgba(232,180,0,.15);
+    --border-hi:rgba(232,180,0,.45);--text:#f0e8c0;--text-dim:#3a2c00;
+    --text-mid:#6a5a20;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-weight:400;overflow:hidden;height:100vh;width:100vw;}
+  body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:1000;}
+
+  .corner{position:fixed;width:36px;height:36px;border-color:var(--yellow);border-style:solid;opacity:.3;z-index:999;}
+  .tl{top:6px;left:6px;border-width:2px 0 0 2px}.tr{top:6px;right:6px;border-width:2px 2px 0 0}
+  .bl{bottom:6px;left:6px;border-width:0 0 2px 2px}.br{bottom:6px;right:6px;border-width:0 2px 2px 0}
+
+  .topbar{position:fixed;top:0;left:0;right:0;height:46px;background:linear-gradient(90deg,#1a1200,#0c0900,#1a1200);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:100;}
+  .logo{font-family:'Orbitron',monospace;font-weight:900;font-size:20px;color:var(--yellow);letter-spacing:8px;text-shadow:0 0 20px var(--yellow),0 0 50px rgba(232,180,0,.2);text-decoration:none;}
+  .sys-select{background:rgba(232,180,0,.05);border:1px solid var(--border-hi);color:var(--yellow);font-family:'Share Tech Mono',monospace;font-size:11px;padding:4px 12px;letter-spacing:1px;cursor:pointer;outline:none;}
+  .sys-select option{background:#1a1200;color:#e8b400;font-family:'Share Tech Mono',monospace;letter-spacing:1px;}
+  .sdot{width:7px;height:7px;border-radius:50%;background:var(--yellow);box-shadow:0 0 8px var(--yellow);animation:blink 2s infinite;}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+  #clock{color:var(--yellow);font-size:13px;letter-spacing:2px;font-family:'Share Tech Mono',monospace;}
+
+  .cyclebar{position:fixed;top:46px;left:0;right:0;height:52px;background:rgba(15,10,0,.98);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:10px;z-index:99;overflow-x:auto;}
+  .cycle-select{background:rgba(232,180,0,.07);border:1px solid var(--border-hi);color:var(--yellow);font-family:'Orbitron',monospace;font-size:10px;padding:6px 14px;letter-spacing:1px;cursor:pointer;outline:none;min-width:190px;flex-shrink:0;}
+  .cycle-select option{background:#1a1200;color:#e8b400;font-family:'Share Tech Mono',monospace;letter-spacing:1px;}
+  .cbar-divider{width:1px;height:32px;background:var(--border);flex-shrink:0;margin:0 2px;}
+  .abtn{font-family:'Orbitron',monospace;font-size:8px;padding:7px 13px;border:1px solid;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap;background:transparent;flex-shrink:0;}
+  .abtn:disabled{opacity:.28;cursor:not-allowed;pointer-events:none;}
+  .abtn-primary{border-color:var(--yellow);color:var(--yellow);}
+  .abtn-primary:hover{background:rgba(232,180,0,.12);}
+  .abtn-success{border-color:var(--green);color:var(--green);}
+  .abtn-success:hover{background:rgba(0,255,136,.1);}
+  .abtn-danger{border-color:var(--red);color:var(--red);}
+  .abtn-danger:hover{background:rgba(255,34,68,.1);}
+  .abtn-dim{border-color:rgba(232,180,0,.28);color:rgba(232,180,0,.42);}
+  .abtn-dim:hover{border-color:var(--yellow);color:var(--yellow);background:rgba(232,180,0,.08);}
+  .abtn-cyan{border-color:var(--cyan);color:var(--cyan);}
+  .abtn-cyan:hover{background:rgba(0,245,255,.08);}
+
+  .statsbar{position:fixed;top:98px;left:0;right:0;height:56px;background:rgba(20,14,0,.95);border-bottom:1px solid var(--border);display:flex;align-items:stretch;z-index:98;}
+  .stat-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 20px;border-right:1px solid var(--border);flex:1;min-width:0;overflow:hidden;}
+  .stat-cell:last-child{border-right:none;}
+  .stat-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-mid);letter-spacing:2px;white-space:nowrap;}
+  .stat-val{font-family:'Orbitron',monospace;font-size:18px;letter-spacing:1px;white-space:nowrap;text-shadow:0 0 10px currentColor;}
+  .sv-yellow{color:var(--yellow);}
+  .sv-green{color:var(--green);}
+  .sv-red{color:var(--red);}
+  .sv-cyan{color:var(--cyan);}
+  .sv-dim{color:var(--text-mid);}
+  .status-badge{font-family:'Orbitron',monospace;font-size:9px;padding:4px 12px;border:1px solid;letter-spacing:2px;}
+  .sb-open{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.08);box-shadow:0 0 8px rgba(0,255,136,.15);}
+  .sb-closed{border-color:var(--text-mid);color:var(--text-mid);}
+
+  .filterbar{position:fixed;top:154px;left:0;right:0;height:36px;background:rgba(10,7,0,.98);border-bottom:1px solid rgba(232,180,0,.07);display:flex;align-items:center;padding:0 18px;gap:6px;z-index:97;}
+  .fbtn{font-size:8px;padding:4px 10px;border:1px solid rgba(232,180,0,.2);color:var(--text-mid);background:transparent;cursor:pointer;font-family:'Share Tech Mono',monospace;letter-spacing:1px;transition:all .15s;}
+  .fbtn:hover,.fbtn.active{border-color:var(--yellow);color:var(--yellow);background:rgba(232,180,0,.06);}
+  .filter-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+  .search-input{background:rgba(232,180,0,.04);border:1px solid rgba(232,180,0,.14);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:12px;padding:4px 10px;outline:none;width:210px;}
+  .search-input::placeholder{color:var(--text-dim);}
+  .search-input:focus{border-color:var(--border-hi);}
+  .row-count{font-family:'Orbitron',monospace;font-size:9px;color:var(--text-mid);letter-spacing:1px;}
+
+  .main{position:fixed;top:190px;bottom:78px;left:0;right:0;overflow-y:auto;}
+
+  .btable{width:100%;border-collapse:collapse;}
+  .btable thead{position:sticky;top:0;z-index:10;}
+  .btable th{font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1.5px;color:var(--text-dim);padding:8px 12px;border-bottom:2px solid var(--border);text-align:left;font-weight:400;background:var(--bg);white-space:nowrap;}
+  .btable th.r{text-align:right;}
+  .btable td{padding:7px 12px;border-bottom:1px solid rgba(232,180,0,.04);vertical-align:middle;font-size:13px;}
+  .btable tr:hover td{background:rgba(232,180,0,.025);}
+  .btable tr.row-paid td{opacity:.6;}
+
+  .td-acct{color:var(--cyan);font-family:'Orbitron',monospace;font-size:9px;letter-spacing:.5px;white-space:nowrap;}
+  .td-name{color:var(--text);font-size:13px;font-weight:600;white-space:nowrap;}
+  .td-num{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;text-align:right;white-space:nowrap;}
+  .td-money{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--yellow);text-align:right;white-space:nowrap;}
+  .td-total{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;color:var(--yellow);text-align:right;white-space:nowrap;text-shadow:0 0 8px rgba(232,180,0,.3);}
+  .td-dim{color:var(--text-dim);text-align:right;}
+
+  .pill{font-family:'Orbitron',monospace;font-size:7px;padding:3px 8px;border:1px solid;letter-spacing:1.5px;white-space:nowrap;display:inline-block;}
+  .pill-unbilled{border-color:rgba(232,180,0,.35);color:rgba(232,180,0,.55);}
+  .pill-billed{border-color:var(--cyan);color:var(--cyan);background:rgba(0,245,255,.05);}
+  .pill-paid{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.05);}
+  .pill-overdue{border-color:var(--red);color:var(--red);background:rgba(255,34,68,.06);box-shadow:0 0 6px rgba(255,34,68,.15);}
+  .pill-unread{border-color:var(--orange);color:var(--orange);background:rgba(255,136,0,.05);}
+  .pill-pending{border-color:rgba(232,180,0,.5);color:rgba(232,180,0,.7);background:rgba(232,180,0,.04);}
+  .pill-credit{border-color:var(--purple);color:var(--purple);background:rgba(170,0,255,.05);}
+
+  .pay-quick{background:transparent;border:1px solid rgba(0,255,136,.25);color:rgba(0,255,136,.45);font-family:'Orbitron',monospace;font-size:7px;padding:3px 7px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap;}
+  .pay-quick:hover{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.08);}
+
+  .gallery{padding:18px;}
+  .gallery-header{font-family:'Orbitron',monospace;font-size:9px;color:var(--text-mid);letter-spacing:3px;margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:10px;}
+  .cycle-card{display:flex;align-items:center;gap:24px;padding:14px 20px;border:1px solid var(--border);background:rgba(232,180,0,.025);margin-bottom:6px;cursor:pointer;transition:all .2s;}
+  .cycle-card:hover{border-color:var(--border-hi);background:rgba(232,180,0,.06);}
+  .cycle-card.is-open{border-color:rgba(0,255,136,.4);background:rgba(0,255,136,.03);}
+  .cycle-card.is-open:hover{background:rgba(0,255,136,.07);}
+  .cc-month{font-family:'Orbitron',monospace;font-size:20px;color:var(--yellow);letter-spacing:2px;min-width:130px;text-shadow:0 0 10px rgba(232,180,0,.25);}
+  .cc-month.open-text{color:var(--green);text-shadow:0 0 10px rgba(0,255,136,.3);}
+  .cc-meta{display:flex;flex-direction:column;gap:3px;flex:1;}
+  .cc-dates{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-mid);letter-spacing:1px;}
+  .cc-stat-group{display:flex;gap:24px;margin-left:auto;}
+  .cc-stat{display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
+  .cc-stat-label{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-dim);letter-spacing:2px;}
+  .cc-stat-val{font-family:'Orbitron',monospace;font-size:13px;color:var(--text);}
+  .cc-arrow{color:var(--text-dim);font-size:18px;margin-left:10px;}
+
+  .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:14px;}
+  .empty-icon{font-size:52px;opacity:.15;}
+  .empty-msg{font-family:'Orbitron',monospace;font-size:11px;color:var(--text-dim);letter-spacing:3px;}
+  .empty-sub{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:1px;opacity:.6;}
+
+  .loading-row td{color:var(--text-dim);font-size:10px;letter-spacing:2px;text-align:center;padding:60px;font-family:'Share Tech Mono',monospace;}
+
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:500;align-items:center;justify-content:center;}
+  .modal-overlay.show{display:flex;}
+  .modal{background:#111000;border:1px solid var(--border-hi);width:460px;max-width:94vw;box-shadow:0 0 60px rgba(232,180,0,.08);}
+  .modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+  .modal-title{font-family:'Orbitron',monospace;font-size:11px;color:var(--yellow);letter-spacing:3px;}
+  .modal-x{background:transparent;border:none;color:var(--text-mid);font-size:20px;cursor:pointer;line-height:1;padding:0 4px;}
+  .modal-x:hover{color:var(--red);}
+  .modal-body{padding:20px;}
+  .modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;}
+
+  .frow{display:flex;flex-direction:column;gap:4px;margin-bottom:14px;}
+  .frow2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+  .flabel{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-mid);letter-spacing:2px;}
+  .finput{background:rgba(232,180,0,.05);border:1px solid rgba(232,180,0,.22);color:var(--yellow);font-family:'Share Tech Mono',monospace;font-size:12px;padding:8px 10px;outline:none;width:100%;transition:all .15s;}
+  .finput:focus{border-color:var(--border-hi);background:rgba(232,180,0,.09);}
+  .finput option{background:#1a1200;color:#e8b400;font-family:'Share Tech Mono',monospace;}
+  .finput::placeholder{color:var(--text-dim);}
+  .fnote{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;padding:8px 12px;border:1px solid rgba(255,136,0,.25);background:rgba(255,136,0,.04);color:var(--orange);line-height:1.5;}
+
+  .btn{font-family:'Orbitron',monospace;font-size:8px;padding:9px 18px;border:1px solid;cursor:pointer;letter-spacing:1px;transition:all .15s;background:transparent;}
+  .btn-y{border-color:var(--yellow);color:var(--yellow);}
+  .btn-y:hover{background:rgba(232,180,0,.1);}
+  .btn-g{border-color:var(--green);color:var(--green);}
+  .btn-g:hover{background:rgba(0,255,136,.1);}
+  .btn-r{border-color:var(--red);color:var(--red);}
+  .btn-r:hover{background:rgba(255,34,68,.1);}
+  .btn-ghost{border-color:var(--border);color:var(--text-mid);}
+  .btn-ghost:hover{border-color:var(--yellow);color:var(--yellow);}
+
+  .confirm-body{padding:24px 20px;}
+  .confirm-text{font-family:'Rajdhani',sans-serif;font-size:15px;color:var(--text);line-height:1.6;margin-bottom:12px;}
+  .confirm-warn{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--orange);letter-spacing:1px;line-height:1.5;}
+
+  .bill-detail{background:rgba(232,180,0,.03);border:1px solid var(--border);padding:14px 16px;margin-bottom:16px;}
+  .bd-row{display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;font-size:11px;padding:3px 0;border-bottom:1px solid rgba(232,180,0,.05);}
+  .bd-row:last-child{border-bottom:none;margin-top:4px;padding-top:8px;}
+  .bd-label{color:var(--text-mid);letter-spacing:1px;}
+  .bd-val{color:var(--yellow);}
+  .bd-total{color:var(--yellow);font-family:'Orbitron',monospace;font-size:13px;}
+
+  ::-webkit-scrollbar{width:3px;height:3px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:rgba(232,180,0,.2);}
+
+  .toast{position:fixed;bottom:88px;right:20px;background:#1a1200;border:1px solid var(--yellow);padding:10px 18px;font-family:'Orbitron',monospace;font-size:9px;color:var(--yellow);letter-spacing:2px;z-index:900;opacity:0;transition:opacity .3s;pointer-events:none;max-width:320px;line-height:1.5;}
+  .toast.show{opacity:1;}
+  .toast.t-err{border-color:var(--red);color:var(--red);background:#180005;}
+  .toast.t-ok{border-color:var(--green);color:var(--green);background:#001a08;}
+
+  /* BOTTOM NAV */
+  .botnav{position:fixed;bottom:0;left:0;right:0;height:78px;background:linear-gradient(90deg,#1a1200,#0c0900,#1a1200);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:5px;padding:0 14px;z-index:100;}
+  .navbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:58px;height:68px;background:rgba(232,180,0,.04);border:1px solid rgba(232,180,0,.25);color:rgba(232,180,0,.58);cursor:pointer;transition:all .2s;font-size:8px;letter-spacing:.8px;text-transform:uppercase;font-family:'Share Tech Mono',monospace;position:relative;overflow:hidden;text-decoration:none;flex-shrink:0;}
+  .navbtn::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--yellow);transform:scaleX(0);transition:transform .2s;}
+  .navbtn:hover::after,.navbtn.active::after{transform:scaleX(1);}
+  .navbtn:hover{color:rgba(232,180,0,.88);border-color:rgba(232,180,0,.5);background:rgba(232,180,0,.08);}
+  .navbtn.active{color:var(--yellow);border-color:var(--yellow);background:rgba(232,180,0,.11);box-shadow:0 0 16px rgba(232,180,0,.28),inset 0 0 14px rgba(232,180,0,.07);}
+  .navicon{font-size:20px;line-height:1;}
+</style>
+</head>
+<body>
+
+<div class="corner tl"></div><div class="corner tr"></div>
+<div class="corner bl"></div><div class="corner br"></div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <a class="logo" href="index.html">RADEUS</a>
+  <div style="display:flex;align-items:center;gap:14px">
+    <div class="sdot"></div>
+    <span style="font-size:12px;color:var(--text-mid);letter-spacing:3px;font-family:'Share Tech Mono',monospace">BILLING</span>
+    <select class="sys-select" id="sysSelect" onchange="switchSystem(this.value)">
+      <option value="">⬡ LOADING...</option>
+    </select>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px">
+    <span style="font-size:9px;color:var(--text-dim);font-family:'Share Tech Mono',monospace">OPERATOR: <span style="color:var(--yellow)">ADMIN</span></span>
+    <span id="clock">--:--:--</span>
+  </div>
+</div>
+
+<!-- CYCLE ACTION BAR -->
+<div class="cyclebar">
+  <select class="cycle-select" id="cycleSelect" onchange="selectCycleById(this.value)">
+    <option value="">— NO CYCLES —</option>
+  </select>
+  <div class="cbar-divider"></div>
+  <button class="abtn abtn-primary" id="btnNewCycle" onclick="openModal('newCycleModal')">+ NEW CYCLE</button>
+  <button class="abtn abtn-success" id="btnRunBills" onclick="confirmRunBills()" disabled>▶ RUN BILLS</button>
+  <button class="abtn abtn-danger" id="btnCloseCycle" onclick="openModal('closeModal')" disabled>⬛ CLOSE CYCLE</button>
+  <button class="abtn abtn-cyan" id="btnEmailBills" onclick="emailBillsStub()" disabled>✉ EMAIL BILLS</button>
+  <div class="cbar-divider"></div>
+  <button class="abtn abtn-dim" id="btnPostPay" onclick="openPayModal(null)">$ POST PAYMENT</button>
+</div>
+
+<!-- STATS BAR -->
+<div class="statsbar" id="statsbar">
+  <div class="stat-cell"><div class="stat-label">ACCOUNTS</div><div class="stat-val sv-dim" id="stat-accounts">—</div></div>
+  <div class="stat-cell"><div class="stat-label">TOTAL BILLED</div><div class="stat-val sv-yellow" id="stat-billed">—</div></div>
+  <div class="stat-cell"><div class="stat-label">COLLECTED</div><div class="stat-val sv-green" id="stat-collected">—</div></div>
+  <div class="stat-cell"><div class="stat-label">OUTSTANDING</div><div class="stat-val sv-red" id="stat-outstanding">—</div></div>
+  <div class="stat-cell"><div class="stat-label">UNREAD</div><div class="stat-val sv-yellow" id="stat-unread">—</div></div>
+  <div class="stat-cell"><div class="stat-label">CYCLE STATUS</div><div class="stat-val sv-dim" id="stat-status">—</div></div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filterbar">
+  <button class="fbtn active" id="fAll"      onclick="setFilter('ALL',this)">ALL</button>
+  <button class="fbtn"        id="fUnpaid"   onclick="setFilter('UNPAID',this)">UNPAID</button>
+  <button class="fbtn"        id="fPaid"     onclick="setFilter('PAID',this)">PAID</button>
+  <button class="fbtn"        id="fOverdue"  onclick="setFilter('OVERDUE',this)">OVERDUE</button>
+  <button class="fbtn"        id="fCredit"   onclick="setFilter('CREDIT',this)">CREDIT</button>
+  <button class="fbtn"        id="fUnread"   onclick="setFilter('UNREAD',this)">UNREAD</button>
+  <div class="filter-right">
+    <input class="search-input" id="searchInput" type="text" placeholder="Search account or name..." oninput="renderRegister()">
+    <span class="row-count" id="rowCount">— ROWS</span>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main" id="mainArea">
+  <div class="empty-state">
+    <div class="empty-icon">🧾</div>
+    <div class="empty-msg">LOADING BILLING...</div>
+    <div class="empty-sub">CONNECTING TO SUPABASE</div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="botnav">
+  <a class="navbtn" href="index.html"><span class="navicon">⬡</span>COMMAND</a>
+  <a class="navbtn" href="accounts.html"><span class="navicon">👤</span>ACCOUNTS</a>
+  <a class="navbtn" href="readings.html"><span class="navicon">⏱️</span>READINGS</a>
+  <a class="navbtn active" href="billing.html"><span class="navicon">🧾</span>BILLING</a>
+  <a class="navbtn" href="compliance.html"><span class="navicon">📋</span>COMPLY</a>
+  <a class="navbtn" href="payments.html"><span class="navicon">💵</span>PAYMENTS</a>
+  <a class="navbtn" href="workorders.html"><span class="navicon">🔧</span>WO's</a>
+  <a class="navbtn" href="reports.html"><span class="navicon">📊</span>REPORTS</a>
+  <a class="navbtn" href="comms.html"><span class="navicon">📡</span>COMMS</a>
+  <a class="navbtn" href="system.html"><span class="navicon">⚙</span>SYSTEM</a>
+</div>
+
+<!-- NEW CYCLE MODAL -->
+<div class="modal-overlay" id="newCycleModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">+ NEW BILLING CYCLE</div>
+      <button class="modal-x" onclick="closeModal('newCycleModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="frow2">
+        <div><div class="flabel">YEAR</div><input class="finput" type="number" id="nc-year" min="2020" max="2040" placeholder="2026"></div>
+        <div><div class="flabel">MONTH</div>
+          <select class="finput" id="nc-month">
+            <option value="1">JANUARY</option><option value="2">FEBRUARY</option>
+            <option value="3">MARCH</option><option value="4">APRIL</option>
+            <option value="5">MAY</option><option value="6">JUNE</option>
+            <option value="7">JULY</option><option value="8">AUGUST</option>
+            <option value="9">SEPTEMBER</option><option value="10">OCTOBER</option>
+            <option value="11">NOVEMBER</option><option value="12">DECEMBER</option>
+          </select>
+        </div>
+      </div>
+      <div class="frow2">
+        <div><div class="flabel">STATEMENT DATE</div><input class="finput" type="date" id="nc-stmt-date"></div>
+        <div><div class="flabel">DUE DATE</div><input class="finput" type="date" id="nc-due-date"></div>
+      </div>
+      <div class="frow2">
+        <div><div class="flabel">LATE DATE</div><input class="finput" type="date" id="nc-late-date"></div>
+        <div></div>
+      </div>
+      <div class="frow2">
+        <div><div class="flabel">READ START</div><input class="finput" type="date" id="nc-read-start"></div>
+        <div><div class="flabel">READ END</div><input class="finput" type="date" id="nc-read-end"></div>
+      </div>
+      <div class="fnote">⚠ ONLY ONE OPEN CYCLE PER SYSTEM IS ALLOWED. CREATING A NEW CYCLE WILL LOCK THE PRIOR CYCLE FROM EDITING.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('newCycleModal')">CANCEL</button>
+      <button class="btn btn-y" onclick="submitNewCycle()">CREATE CYCLE</button>
+    </div>
+  </div>
+</div>
+
+<!-- POST PAYMENT MODAL -->
+<div class="modal-overlay" id="payModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">$ POST PAYMENT</div>
+      <button class="modal-x" onclick="closeModal('payModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="frow">
+        <div class="flabel">ACCOUNT # <span style="color:var(--red)">*</span></div>
+        <input class="finput" type="text" id="pay-acct" list="acct-list" placeholder="e.g. WS-001" oninput="onPayAcctInput(this.value)" autocomplete="off">
+        <datalist id="acct-list"></datalist>
+        <div id="pay-acct-name" style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--green);letter-spacing:1px;margin-top:4px;min-height:14px;"></div>
+      </div>
+      <div class="frow2">
+        <div><div class="flabel">PAYMENT DATE <span style="color:var(--red)">*</span></div><input class="finput" type="date" id="pay-date"></div>
+        <div><div class="flabel">AMOUNT <span style="color:var(--red)">*</span></div><input class="finput" type="number" id="pay-amount" step="0.01" min="0" placeholder="0.00"></div>
+      </div>
+      <div class="frow2">
+        <div><div class="flabel">METHOD</div>
+          <select class="finput" id="pay-method">
+            <option value="CHECK">CHECK</option><option value="CASH">CASH</option>
+            <option value="SQUARE">SQUARE</option><option value="MONEY ORDER">MONEY ORDER</option>
+            <option value="ACH">ACH</option><option value="OTHER">OTHER</option>
+          </select>
+        </div>
+        <div><div class="flabel">REFERENCE #</div><input class="finput" type="text" id="pay-ref" placeholder="Check# / confirmation..."></div>
+      </div>
+      <div class="frow"><div class="flabel">NOTES</div><input class="finput" type="text" id="pay-notes" placeholder="Optional notes..."></div>
+      <div id="pay-balance-row" style="display:none;margin-top:4px;" class="bill-detail">
+        <div class="bd-row"><span class="bd-label">CURRENT BALANCE</span><span class="bd-val" id="pay-prev-bal">—</span></div>
+        <div class="bd-row"><span class="bd-label">PAYMENT AMOUNT</span><span class="bd-val" id="pay-after-val">—</span></div>
+        <div class="bd-row"><span class="bd-label">BALANCE AFTER</span><span class="bd-total" id="pay-remaining">—</span></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('payModal')">CANCEL</button>
+      <button class="btn btn-g" onclick="submitPayment()">POST PAYMENT</button>
+    </div>
+  </div>
+</div>
+
+<!-- CLOSE CYCLE CONFIRM -->
+<div class="modal-overlay" id="closeModal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <div class="modal-title" style="color:var(--red)">⬛ CLOSE BILLING CYCLE</div>
+      <button class="modal-x" onclick="closeModal('closeModal')">✕</button>
+    </div>
+    <div class="confirm-body">
+      <div class="confirm-text" id="close-confirm-text">Close the current billing cycle?</div>
+      <div class="confirm-warn">⚠ THIS ACTION CANNOT BE UNDONE.<br>ALL BILLS IN THIS CYCLE WILL BE LOCKED.<br>NO FURTHER BILL EDITS WILL BE PERMITTED.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('closeModal')">CANCEL</button>
+      <button class="btn btn-r" onclick="submitCloseCycle()">CONFIRM CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPA_URL = 'https://bvpesxpptgdwkhsewhke.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2cGVzeHBwdGdkd2toc2V3aGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNzcwNTksImV4cCI6MjA5MTk1MzA1OX0._th9UdQKqIWvqgTrxxpd5IfTlexCUeyWC5aGwRJYZj8';
+const ORG_ID   = '00000000-0000-0000-0000-000000000001';
+
+const DEFAULT_BASE_RATE       = 40.00;
+const DEFAULT_USAGE_RATE      = 0.004;
+const DEFAULT_ENERGY_SURCHARGE = 6.00;
+const DEFAULT_LATE_FEE        = 10.00;
+const STATE_TAX_RATE          = 0.00;
+
+let activeSystemId   = null;
+let allSystems       = [];
+let allCycles        = [];
+let activeCycle      = null;
+let viewMode         = 'loading';
+let allAccounts      = [];
+let cycleBills       = {};
+let cycleReads       = {};
+let accountBalances  = {};
+let systemConfig     = {};
+let currentFilter    = 'ALL';
+
+const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+
+function tick(){document.getElementById('clock').textContent=new Date().toTimeString().slice(0,8);}
+setInterval(tick,1000); tick();
+
+async function supa(table, params='', method='GET', body=null) {
+  try {
+    const opts = {method,headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Content-Type':'application/json','Prefer':'return=representation','Accept':'application/json'}};
+    if (body) opts.body = JSON.stringify(body);
+    const r = await fetch(`${SUPA_URL}/rest/v1/${table}${params}`, opts);
+    if (!r.ok){ console.error('Supa',r.status,await r.text()); return null; }
+    if (method==='DELETE') return true;
+    const txt = await r.text();
+    return txt ? JSON.parse(txt) : null;
+  } catch(e){ console.warn('Supabase offline:',e.message); return null; }
+}
+
+function toast(msg, type='', duration=2800) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (type ? ' t-'+type : '');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.classList.remove('show'); }, duration);
+}
+
+function fmtMoney(n) {
+  if (n === null || n === undefined) return '—';
+  return '$' + Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+function fmtNum(n) { if (n===null||n===undefined||n==='') return '—'; return Number(n).toLocaleString(); }
+function monthLabel(yr, mo) { return `${MONTHS[(mo||1)-1]} ${yr}`; }
+function today() { return new Date().toISOString().split('T')[0]; }
+
+function calcBillAmounts(gallons, prevBalance, cfg) {
+  const baseRate        = parseFloat(cfg.base_rate        || DEFAULT_BASE_RATE);
+  const usageRate       = parseFloat(cfg.usage_rate       || DEFAULT_USAGE_RATE);
+  const energySurcharge = parseFloat(cfg.energy_surcharge || DEFAULT_ENERGY_SURCHARGE);
+  const lateFeeAmt      = parseFloat(cfg.late_fee_amount  || DEFAULT_LATE_FEE);
+  const usageCharge  = (parseFloat(gallons) || 0) * usageRate;
+  const subtotal     = baseRate + usageCharge + energySurcharge;
+  const stateTax     = subtotal * STATE_TAX_RATE;
+  const periodTotal  = subtotal + stateTax;
+  const lateFee      = (parseFloat(prevBalance) || 0) > 0.005 ? lateFeeAmt : 0;
+  const totalAmount  = periodTotal + lateFee + (parseFloat(prevBalance) || 0);
+  return { baseRate, usageRate, usageCharge, energySurcharge, stateTax, periodTotal, lateFee, totalAmount };
+}
+
+function computeStatus(acctId) {
+  const read = cycleReads[acctId];
+  const bill = cycleBills[acctId];
+  const bal  = accountBalances[acctId];
+  if (!read) return 'UNREAD';
+  if (!bill) return 'PENDING';
+  const amtDue = parseFloat(bal?.current_balance || 0);
+  if (amtDue < -0.005) return 'CREDIT';
+  if (amtDue <= 0.005) return 'PAID';
+  if (activeCycle?.late_date && today() > activeCycle.late_date) return 'OVERDUE';
+  if (bill.bill_emailed) return 'BILLED';
+  return 'UNBILLED';
+}
+
+function pillHtml(status) {
+  const map = {UNREAD:['pill-unread','UNREAD'],PENDING:['pill-pending','PENDING'],UNBILLED:['pill-unbilled','UNBILLED'],BILLED:['pill-billed','BILLED'],PAID:['pill-paid','PAID'],OVERDUE:['pill-overdue','OVERDUE'],CREDIT:['pill-credit','CREDIT']};
+  const [cls, label] = map[status] || ['pill-unbilled', status];
+  return `<span class="pill ${cls}">${label}</span>`;
+}
+
+async function loadSystems() {
+  const systems = await supa('water_systems',`?org_id=eq.${ORG_ID}&select=system_id,system_code,system_name,base_rate,usage_rate,energy_surcharge,late_fee_amount,statement_day,due_day,late_day&order=system_name`);
+  if (!systems || !systems.length) { showEmptyState('NO SYSTEMS FOUND','Create a water system in the System screen.'); return; }
+  allSystems = systems;
+  const sel = document.getElementById('sysSelect');
+  sel.innerHTML = systems.map(s=>`<option value="${s.system_id}">⬡ ${s.system_name.toUpperCase()}</option>`).join('');
+  activeSystemId = systems[0].system_id;
+  systemConfig   = systems[0];
+  await loadCycles();
+}
+
+function switchSystem(id) {
+  activeSystemId = id;
+  systemConfig   = allSystems.find(s => s.system_id === id) || {};
+  allCycles=[]; cycleBills={}; cycleReads={}; accountBalances={};
+  allAccounts=[]; activeCycle=null;
+  resetStats();
+  loadCycles();
+}
+
+async function loadCycles() {
+  const cycles = await supa('billing_cycles',`?system_id=eq.${activeSystemId}&order=cycle_year.desc,cycle_month.desc&select=*`);
+  allCycles = cycles || [];
+  const sel = document.getElementById('cycleSelect');
+  if (!allCycles.length) { sel.innerHTML='<option value="">— NO CYCLES —</option>'; setActionBtns(false,false); showGallery(); return; }
+  sel.innerHTML = allCycles.map(c=>{const label=monthLabel(c.cycle_year,c.cycle_month)+(c.status==='OPEN'?'  ▸ OPEN':'  ▸ CLOSED');return`<option value="${c.cycle_id}">${label}</option>`;}).join('');
+  const open = allCycles.find(c => c.status === 'OPEN');
+  if (open) { sel.value=open.cycle_id; await loadCycleRegister(open); } else { sel.value=''; showGallery(); }
+}
+
+async function selectCycleById(cycleId) {
+  if (!cycleId) { showGallery(); return; }
+  const cycle = allCycles.find(c => c.cycle_id === cycleId);
+  if (cycle) await loadCycleRegister(cycle);
+}
+
+async function loadCycleRegister(cycle) {
+  activeCycle = cycle;
+  viewMode    = 'register';
+  document.getElementById('mainArea').innerHTML='<table class="btable"><tbody><tr class="loading-row"><td colspan="9">LOADING BILL REGISTER...</td></tr></tbody></table>';
+  setActionBtns(cycle.status==='OPEN', cycle.status==='OPEN');
+  updateStatusBadge(cycle.status);
+  const [bills, accounts, reads, balances] = await Promise.all([
+    supa('bills',`?cycle_id=eq.${cycle.cycle_id}&select=*`),
+    supa('accounts',`?system_id=eq.${activeSystemId}&status=eq.ACTIVE&select=account_id,account_number,customers(full_name)&order=account_number`),
+    supa('meter_reads',`?system_id=eq.${activeSystemId}&cycle_year=eq.${cycle.cycle_year}&cycle_month=eq.${cycle.cycle_month}&select=read_id,account_id,current_read,previous_read,usage_gallons,read_date,cycle_year,cycle_month`),
+    supa('account_balances',`?system_id=eq.${activeSystemId}&select=*`)
+  ]);
+  cycleBills={}; (bills||[]).forEach(b=>{cycleBills[b.account_id]=b;});
+  allAccounts=accounts||[];
+  cycleReads={}; (reads||[]).forEach(r=>{cycleReads[r.account_id]=r;});
+  accountBalances={}; (balances||[]).forEach(b=>{accountBalances[b.account_id]=b;});
+  populateAcctList();
+  updateStats();
+  renderRegister();
+}
+
+function showGallery() {
+  viewMode=null; activeCycle=null;
+  setActionBtns(false,false); updateStatusBadge('—'); resetStats();
+  const area=document.getElementById('mainArea');
+  if (!allCycles.length){area.innerHTML='<div class="empty-state"><div class="empty-icon">🧾</div><div class="empty-msg">NO BILLING CYCLES</div><div class="empty-sub">CLICK + NEW CYCLE TO CREATE THE FIRST CYCLE</div></div>';return;}
+  let html=`<div class="gallery"><div class="gallery-header">🧾 BILLING CYCLES — ${allCycles.length} ON RECORD</div>`;
+  allCycles.forEach(c=>{const isOpen=c.status==='OPEN';html+=`<div class="cycle-card ${isOpen?'is-open':''}" onclick="selectCycleByIdDirect('${c.cycle_id}')"><div class="cc-month ${isOpen?'open-text':''}">${monthLabel(c.cycle_year,c.cycle_month)}</div><div class="cc-meta">${isOpen?'<span class="status-badge sb-open">OPEN</span>':'<span class="status-badge sb-closed">CLOSED</span>'}<div class="cc-dates" style="margin-top:4px">${c.statement_date?'STMT: '+c.statement_date:''}${c.due_date?' · DUE: '+c.due_date:''}${c.late_date?' · LATE: '+c.late_date:''}</div></div><div class="cc-stat-group"><div class="cc-stat"><div class="cc-stat-label">BILLED</div><div class="cc-stat-val" id="gc-billed-${c.cycle_id}">—</div></div><div class="cc-stat"><div class="cc-stat-label">STATUS</div><div class="cc-stat-val" style="${isOpen?'color:var(--green)':'color:var(--text-mid)'}">${c.status}</div></div></div><div class="cc-arrow">›</div></div>`;});
+  html+='</div>';
+  area.innerHTML=html;
+  loadGalleryTotals();
+}
+
+async function loadGalleryTotals(){for(const c of allCycles){const bills=await supa('bills',`?cycle_id=eq.${c.cycle_id}&select=total_amount`);const el=document.getElementById(`gc-billed-${c.cycle_id}`);if(el&&bills){const total=bills.reduce((s,b)=>s+parseFloat(b.total_amount||0),0);el.textContent=total>0?fmtMoney(total):'—';}}}
+function selectCycleByIdDirect(cycleId){const sel=document.getElementById('cycleSelect');sel.value=cycleId;selectCycleById(cycleId);}
+
+function renderRegister() {
+  const area=document.getElementById('mainArea');
+  const search=(document.getElementById('searchInput')?.value||'').toLowerCase();
+  let rows=allAccounts.map(a=>{const bill=cycleBills[a.account_id];const read=cycleReads[a.account_id];const bal=accountBalances[a.account_id];const status=computeStatus(a.account_id);return{a,bill,read,bal,status};});
+  rows=rows.filter(r=>{if(currentFilter==='UNPAID') return['UNBILLED','BILLED','OVERDUE','PENDING'].includes(r.status);if(currentFilter==='PAID') return r.status==='PAID';if(currentFilter==='OVERDUE') return r.status==='OVERDUE';if(currentFilter==='CREDIT') return r.status==='CREDIT';if(currentFilter==='UNREAD') return r.status==='UNREAD';return true;});
+  if(search) rows=rows.filter(r=>{const name=r.a.customers?.full_name||'';return r.a.account_number.toLowerCase().includes(search)||name.toLowerCase().includes(search);});
+  document.getElementById('rowCount').textContent=rows.length+' ROWS';
+  if(!rows.length){area.innerHTML='<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-msg">NO ROWS MATCH</div><div class="empty-sub">ADJUST FILTER OR SEARCH</div></div>';return;}
+  let html=`<table class="btable"><thead><tr><th>ACCT #</th><th>NAME</th><th class="r">PREV BAL</th><th class="r">READ</th><th class="r">USAGE (GAL)</th><th class="r">PERIOD TOTAL</th><th class="r">AMOUNT DUE</th><th>STATUS</th><th></th></tr></thead><tbody>`;
+  rows.forEach(({a,bill,read,bal,status})=>{const name=a.customers?.full_name||'—';const prevBal=bal?.current_balance!==undefined?parseFloat(bal.current_balance):null;const gallons=read?parseFloat(read.usage_gallons||0):null;const curRead=read?fmtNum(read.current_read):'—';const periodTot=bill?parseFloat(bill.period_total||0):null;const amtDue=bal?parseFloat(bal.current_balance||0):null;let amtClass='';if(amtDue!==null){if(amtDue<0)amtClass='style="color:var(--purple)"';else if(amtDue===0)amtClass='style="color:var(--green)"';else if(status==='OVERDUE')amtClass='style="color:var(--red)"';}const rowClass=status==='PAID'?'row-paid':'';const canPay=['UNBILLED','BILLED','OVERDUE','PENDING'].includes(status);html+=`<tr class="${rowClass}"><td class="td-acct">${a.account_number}</td><td class="td-name">${name}</td><td class="td-num" style="${prevBal!==null&&prevBal>0?'color:var(--orange)':''}">${prevBal!==null?fmtMoney(prevBal):'—'}</td><td class="td-num">${curRead}</td><td class="td-num">${gallons!==null?fmtNum(gallons):'<span style="color:var(--text-dim)">—</span>'}</td><td class="td-money">${periodTot!==null?fmtMoney(periodTot):'<span style="color:var(--text-dim)">—</span>'}</td><td class="td-total" ${amtClass}>${amtDue!==null?fmtMoney(amtDue):'—'}</td><td>${pillHtml(status)}</td><td>${canPay?`<button class="pay-quick" onclick="openPayModal('${a.account_number}')">PAY</button>`:''}</td></tr>`;});
+  html+='</tbody></table>';
+  area.innerHTML=html;
+}
+
+function updateStats(){
+  const billsArr=Object.values(cycleBills);const totalBilled=billsArr.reduce((s,b)=>s+parseFloat(b.total_amount||0),0);let outstanding=0;allAccounts.forEach(a=>{if(cycleBills[a.account_id]){const b=parseFloat(accountBalances[a.account_id]?.current_balance||0);if(b>0)outstanding+=b;}});const collected=Math.max(0,totalBilled-outstanding);const unread=allAccounts.filter(a=>!cycleReads[a.account_id]).length;
+  document.getElementById('stat-accounts').textContent=allAccounts.length||'—';
+  document.getElementById('stat-billed').textContent=totalBilled>0?fmtMoney(totalBilled):'$0.00';
+  document.getElementById('stat-collected').textContent=fmtMoney(collected);
+  document.getElementById('stat-outstanding').textContent=outstanding>0?fmtMoney(outstanding):'$0.00';
+  document.getElementById('stat-unread').textContent=unread;
+}
+function resetStats(){['stat-accounts','stat-billed','stat-collected','stat-outstanding','stat-unread'].forEach(id=>document.getElementById(id).textContent='—');updateStatusBadge('—');}
+function updateStatusBadge(status){const el=document.getElementById('stat-status');if(status==='OPEN'){el.className='stat-val sv-green';el.textContent='OPEN';}else if(status==='CLOSED'){el.className='stat-val sv-dim';el.textContent='CLOSED';}else{el.className='stat-val sv-dim';el.textContent='—';}}
+function setActionBtns(isOpen,hasRegister){document.getElementById('btnRunBills').disabled=!isOpen;document.getElementById('btnCloseCycle').disabled=!isOpen;document.getElementById('btnEmailBills').disabled=!hasRegister;}
+function setFilter(f,btn){currentFilter=f;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(viewMode==='register')renderRegister();}
+function showEmptyState(msg,sub){document.getElementById('mainArea').innerHTML=`<div class="empty-state"><div class="empty-icon">🧾</div><div class="empty-msg">${msg}</div><div class="empty-sub">${sub||''}</div></div>`;}
+
+function openModal(id){document.getElementById(id).classList.add('show');if(id==='newCycleModal')prefillNewCycle();if(id==='closeModal')prefillCloseConfirm();}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.show').forEach(m=>m.classList.remove('show'));});
+
+function prefillNewCycle(){const now=new Date();const yr=now.getFullYear();const mo=now.getMonth()+1;document.getElementById('nc-year').value=yr;document.getElementById('nc-month').value=mo;const stmtDay=parseInt(systemConfig.statement_day||15);const dueDay=parseInt(systemConfig.due_day||25);const lateDay=parseInt(systemConfig.late_day||28);document.getElementById('nc-stmt-date').value=new Date(yr,mo-1,stmtDay).toISOString().split('T')[0];document.getElementById('nc-due-date').value=new Date(yr,mo-1,dueDay).toISOString().split('T')[0];document.getElementById('nc-late-date').value=new Date(yr,mo-1,lateDay).toISOString().split('T')[0];document.getElementById('nc-read-start').value=new Date(yr,mo-1,1).toISOString().split('T')[0];document.getElementById('nc-read-end').value=new Date(yr,mo,0).toISOString().split('T')[0];}
+
+async function submitNewCycle(){const yr=parseInt(document.getElementById('nc-year').value);const mo=parseInt(document.getElementById('nc-month').value);const stmt=document.getElementById('nc-stmt-date').value;const due=document.getElementById('nc-due-date').value;const late=document.getElementById('nc-late-date').value;const rstart=document.getElementById('nc-read-start').value;const rend=document.getElementById('nc-read-end').value;if(!yr||!mo||!stmt||!due){toast('YEAR, MONTH, STMT DATE, AND DUE DATE REQUIRED','err');return;}const existingOpen=allCycles.find(c=>c.status==='OPEN');if(existingOpen){toast('CANNOT CREATE CYCLE — AN OPEN CYCLE EXISTS.\nCLOSE IT FIRST.','err',4000);return;}const dup=allCycles.find(c=>c.cycle_year===yr&&c.cycle_month===mo);if(dup){toast(`CYCLE ${monthLabel(yr,mo)} ALREADY EXISTS`,'err');return;}const result=await supa('billing_cycles','','POST',{system_id:activeSystemId,cycle_year:yr,cycle_month:mo,statement_date:stmt,due_date:due,late_date:late||null,read_start:rstart||null,read_end:rend||null,status:'OPEN'});if(result){toast(`CYCLE ${monthLabel(yr,mo)} CREATED`,'ok');closeModal('newCycleModal');await loadCycles();}else{toast('ERROR CREATING CYCLE','err');}}
+
+function confirmRunBills(){if(!activeCycle)return;const eligible=allAccounts.filter(a=>cycleReads[a.account_id]&&!cycleBills[a.account_id]);const unread=allAccounts.filter(a=>!cycleReads[a.account_id]);if(!eligible.length){toast(`NO ELIGIBLE ACCOUNTS.\n${unread.length} UNREAD · ${Object.keys(cycleBills).length} ALREADY BILLED`,'err',4000);return;}if(confirm(`GENERATE BILLS FOR ${eligible.length} ACCOUNTS?\n${unread.length} ACCOUNTS HAVE NO READ AND WILL BE SKIPPED.`)){runBills(eligible);}}
+
+async function runBills(eligibleAccounts){toast(`RUNNING BILLS FOR ${eligibleAccounts.length} ACCOUNTS...`,'',5000);let success=0,failed=0;for(const acct of eligibleAccounts){const read=cycleReads[acct.account_id];const bal=accountBalances[acct.account_id];const prevBal=parseFloat(bal?.current_balance||0);const gallons=parseFloat(read.usage_gallons||0);const calc=calcBillAmounts(gallons,prevBal,systemConfig);const sourceId=`${acct.account_number}-BILL-${activeCycle.cycle_year}-${String(activeCycle.cycle_month).padStart(2,'0')}`;const billRecord={account_id:acct.account_id,system_id:activeSystemId,cycle_id:activeCycle.cycle_id,read_id:read.read_id||null,cycle_year:activeCycle.cycle_year,cycle_month:activeCycle.cycle_month,statement_date:activeCycle.statement_date,due_date:activeCycle.due_date,previous_balance:prevBal,base_rate:calc.baseRate,usage_gallons:gallons,usage_charge:calc.usageCharge,surcharge_1_label:'Energy Surcharge',surcharge_1_amount:calc.energySurcharge,state_tax:calc.stateTax,total_tax:calc.stateTax,late_fee:calc.lateFee,period_total:calc.periodTotal,total_amount:calc.totalAmount,in_closed_cycle:false,bill_emailed:false,source_id:sourceId,log_date:new Date().toISOString()};const result=await supa('bills','','POST',billRecord);if(result){success++;const newBill=Array.isArray(result)?result[0]:result;if(newBill)cycleBills[acct.account_id]=newBill;}else{failed++;}}toast(`BILLS GENERATED: ${success}${failed?` · FAILED: ${failed}`:''}`,failed>0?'err':'ok',4000);updateStats();renderRegister();}
+
+function prefillCloseConfirm(){if(!activeCycle)return;const billCount=Object.keys(cycleBills).length;const unread=allAccounts.filter(a=>!cycleReads[a.account_id]).length;document.getElementById('close-confirm-text').textContent=`Close ${monthLabel(activeCycle.cycle_year,activeCycle.cycle_month)} billing cycle? ${billCount} bills on record. ${unread>0?unread+' accounts have no read.':''}`;}
+
+async function submitCloseCycle(){if(!activeCycle)return;const r1=await supa('billing_cycles',`?cycle_id=eq.${activeCycle.cycle_id}`,'PATCH',{status:'CLOSED',closed_at:new Date().toISOString(),closed_by:'ADMIN'});if(!r1){toast('ERROR CLOSING CYCLE','err');return;}if(Object.keys(cycleBills).length>0){await supa('bills',`?cycle_id=eq.${activeCycle.cycle_id}`,'PATCH',{in_closed_cycle:true});}toast(`CYCLE ${monthLabel(activeCycle.cycle_year,activeCycle.cycle_month)} CLOSED AND LOCKED`,'ok',3500);closeModal('closeModal');await loadCycles();}
+
+function emailBillsStub(){toast('EMAIL BILLS — COMING SOON\nSUPABASE EDGE FUNCTION NOT YET DEPLOYED','',4000);}
+
+function populateAcctList(){const dl=document.getElementById('acct-list');dl.innerHTML=allAccounts.map(a=>{const name=a.customers?.full_name||'';return`<option value="${a.account_number}">${a.account_number}${name?' — '+name:''}`;}).join('');}
+
+function openPayModal(acctNum){document.getElementById('pay-acct').value=acctNum||'';document.getElementById('pay-date').value=today();document.getElementById('pay-amount').value='';document.getElementById('pay-ref').value='';document.getElementById('pay-notes').value='';document.getElementById('pay-acct-name').textContent='';document.getElementById('pay-balance-row').style.display='none';openModal('payModal');if(acctNum){onPayAcctInput(acctNum);setTimeout(()=>document.getElementById('pay-amount').focus(),100);}}
+
+function onPayAcctInput(val){const acct=allAccounts.find(a=>a.account_number===val.trim());const nameEl=document.getElementById('pay-acct-name');const balRow=document.getElementById('pay-balance-row');if(acct){const name=acct.customers?.full_name||'';nameEl.textContent=name?'✓ '+name.toUpperCase():'✓ ACCOUNT FOUND';const bal=accountBalances[acct.account_id];if(bal!==undefined){const curBal=parseFloat(bal.current_balance||0);document.getElementById('pay-prev-bal').textContent=fmtMoney(curBal);document.getElementById('pay-after-val').textContent='—';document.getElementById('pay-remaining').textContent='—';balRow.style.display='block';document.getElementById('pay-amount').oninput=function(){const amt=parseFloat(this.value)||0;document.getElementById('pay-after-val').textContent=fmtMoney(amt);const after=curBal-amt;const remEl=document.getElementById('pay-remaining');remEl.textContent=fmtMoney(after);remEl.style.color=after<=0?'var(--green)':after>0?'var(--red)':'var(--yellow)';};};}else{nameEl.textContent=val.trim()?'✗ ACCOUNT NOT FOUND':'';nameEl.style.color=val.trim()?'var(--red)':'';balRow.style.display='none';}}
+
+async function submitPayment(){const acctNum=document.getElementById('pay-acct').value.trim();const date=document.getElementById('pay-date').value;const amount=parseFloat(document.getElementById('pay-amount').value);const method=document.getElementById('pay-method').value;const ref=document.getElementById('pay-ref').value.trim();const notes=document.getElementById('pay-notes').value.trim();if(!acctNum||!date||!amount||isNaN(amount)||amount<=0){toast('ACCOUNT, DATE, AND AMOUNT REQUIRED','err');return;}const acct=allAccounts.find(a=>a.account_number===acctNum);if(!acct){toast('ACCOUNT NOT FOUND: '+acctNum,'err');return;}const sourceId=`${acctNum}-PAY-${date}-${Date.now()}`;const result=await supa('payments','','POST',{account_id:acct.account_id,system_id:activeSystemId,payment_date:date,amount,payment_method:method,reference_number:ref||null,notes:notes||null,deposited:false,returned:false,in_closed_cycle:activeCycle?.status==='CLOSED',source_id:sourceId,posted_by:'ADMIN'});if(result){toast(`PAYMENT POSTED — ${acctNum} — ${fmtMoney(amount)}`,'ok',3500);closeModal('payModal');const fresh=await supa('account_balances',`?system_id=eq.${activeSystemId}&select=*`);if(fresh){accountBalances={};fresh.forEach(b=>accountBalances[b.account_id]=b);}updateStats();renderRegister();}else{toast('ERROR POSTING PAYMENT — CHECK CONSOLE','err');}}
+
+window.addEventListener('DOMContentLoaded', loadSystems);
+</script>
+</body>
+</html>

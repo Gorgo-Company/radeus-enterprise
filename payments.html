@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RADEUS — Payments</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="theme.css" rel="stylesheet">
+<style>
+  :root {
+    --green:#00ff88;--green-dim:rgba(0,255,136,.4);
+    --cyan:#00f5ff;--red:#ff2244;--orange:#ff8800;
+    --yellow:#e8b400;--blue:#0088ff;--purple:#aa00ff;
+    --bg:#020c14;--bg2:#020e0a;--bg3:#011a0a;
+    --panel:rgba(0,255,136,.03);--border:rgba(0,255,136,.15);
+    --border-hi:rgba(0,255,136,.4);--text:#c8f0d8;
+    --text-dim:#2a6a45;--text-mid:#5a9a75;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-weight:400;overflow:hidden;height:100vh;width:100vw;}
+  body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:1000;}
+  .corner{position:fixed;width:36px;height:36px;border-color:var(--green);border-style:solid;opacity:.35;z-index:999;}
+  .tl{top:6px;left:6px;border-width:2px 0 0 2px}.tr{top:6px;right:6px;border-width:2px 2px 0 0}
+  .bl{bottom:6px;left:6px;border-width:0 0 2px 2px}.br{bottom:6px;right:6px;border-width:0 2px 2px 0}
+  .topbar{position:fixed;top:0;left:0;right:0;height:46px;background:linear-gradient(90deg,#011a0a,#020c14,#011a0a);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:100;}
+  .logo{font-family:'Orbitron',monospace;font-weight:900;font-size:20px;color:var(--green);letter-spacing:8px;text-shadow:0 0 20px var(--green),0 0 50px rgba(0,255,136,.2);text-decoration:none;}
+  .sys-select{background:rgba(0,255,136,.05);border:1px solid var(--border-hi);color:var(--green);font-family:'Share Tech Mono',monospace;font-size:11px;padding:4px 12px;letter-spacing:1px;cursor:pointer;outline:none;}
+  .sys-select option{background:#011a0a;color:var(--green);font-family:'Share Tech Mono',monospace;letter-spacing:1px;}
+  .sdot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 2s infinite;}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+  #clock{color:var(--green);font-size:13px;letter-spacing:2px;font-family:'Share Tech Mono',monospace;}
+  .controlbar{position:fixed;top:46px;left:0;right:0;height:52px;background:rgba(0,15,8,.98);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:10px;z-index:99;overflow-x:auto;}
+  .ctrl-group{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+  .ctrl-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-dim);letter-spacing:2px;white-space:nowrap;}
+  .ctrl-divider{width:1px;height:32px;background:var(--border);margin:0 4px;flex-shrink:0;}
+  .date-input{background:rgba(0,255,136,.05);border:1px solid var(--border);color:var(--green);font-family:'Share Tech Mono',monospace;font-size:11px;padding:5px 8px;outline:none;width:132px;flex-shrink:0;}
+  .date-input:focus{border-color:var(--border-hi);}
+  .range-btn{font-family:'Orbitron',monospace;font-size:7px;padding:5px 10px;border:1px solid rgba(0,255,136,.25);color:rgba(0,255,136,.55);background:transparent;cursor:pointer;letter-spacing:1px;transition:all .15s;flex-shrink:0;white-space:nowrap;}
+  .range-btn:hover,.range-btn.active{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.08);}
+  .search-wrap{flex:1;min-width:180px;position:relative;}
+  .search-wrap::before{content:'⌕';position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--green);font-size:16px;pointer-events:none;opacity:.6;}
+  .search-input{width:100%;background:rgba(0,255,136,.04);border:1px solid var(--border);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:12px;padding:6px 10px 6px 32px;outline:none;letter-spacing:.5px;}
+  .search-input::placeholder{color:var(--text-dim);}
+  .search-input:focus{border-color:var(--border-hi);}
+  .ctrl-btn{font-family:'Orbitron',monospace;font-size:8px;padding:7px 13px;border:1px solid;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap;background:transparent;flex-shrink:0;}
+  .ctrl-btn-primary{border-color:var(--green);color:var(--green);}
+  .ctrl-btn-primary:hover{background:rgba(0,255,136,.1);}
+  .ctrl-btn-dim{border-color:var(--border);color:var(--text-mid);}
+  .ctrl-btn-dim:hover{border-color:var(--green);color:var(--green);}
+  .statsbar{position:fixed;top:98px;left:0;right:0;height:56px;background:rgba(0,12,6,.95);border-bottom:1px solid var(--border);display:flex;align-items:stretch;z-index:98;}
+  .stat-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 18px;border-right:1px solid var(--border);flex:1;min-width:0;overflow:hidden;}
+  .stat-cell:last-child{border-right:none;}
+  .stat-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-mid);letter-spacing:2px;white-space:nowrap;}
+  .stat-val{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:22px;letter-spacing:.5px;white-space:nowrap;text-shadow:0 0 10px currentColor;}
+  .sv-green{color:var(--green);}.sv-yellow{color:var(--yellow);}.sv-red{color:var(--red);}.sv-cyan{color:var(--cyan);}.sv-orange{color:var(--orange);}.sv-dim{color:var(--text-mid);}
+  .filterbar{position:fixed;top:154px;left:0;right:0;height:36px;background:rgba(2,10,6,.98);border-bottom:1px solid rgba(0,255,136,.07);display:flex;align-items:center;padding:0 18px;gap:6px;z-index:97;}
+  .fbtn{font-size:8px;padding:4px 10px;border:1px solid rgba(0,255,136,.2);color:var(--text-mid);background:transparent;cursor:pointer;font-family:'Share Tech Mono',monospace;letter-spacing:1px;transition:all .15s;white-space:nowrap;}
+  .fbtn:hover,.fbtn.active{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.06);}
+  .method-select{background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.2);color:var(--text-mid);font-family:'Share Tech Mono',monospace;font-size:8px;padding:3px 8px;letter-spacing:1px;cursor:pointer;outline:none;}
+  .method-select:focus,.method-select:hover{border-color:var(--green);color:var(--green);}
+  .method-select option{background:#011a0a;color:var(--green);}
+  .filter-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+  .row-count{font-family:'Orbitron',monospace;font-size:9px;color:var(--text-mid);letter-spacing:1px;}
+  .main{position:fixed;top:190px;bottom:78px;left:0;right:0;overflow-y:auto;transition:right .25s ease;}
+  .main.panel-open{right:520px;}
+  .ptable{width:100%;border-collapse:collapse;}
+  .ptable thead{position:sticky;top:0;z-index:10;}
+  .ptable th{font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1.5px;color:var(--text-dim);padding:8px 12px;border-bottom:2px solid var(--border);text-align:left;font-weight:400;background:var(--bg);white-space:nowrap;cursor:pointer;user-select:none;}
+  .ptable th:hover{color:var(--green);}
+  .ptable th.sort-asc::after{content:' ▲';color:var(--green);}
+  .ptable th.sort-desc::after{content:' ▼';color:var(--green);}
+  .ptable th.r{text-align:right;}
+  .ptable td{padding:7px 12px;border-bottom:1px solid rgba(0,255,136,.04);vertical-align:middle;font-size:13px;}
+  .ptable tr:hover td{background:rgba(0,255,136,.03);cursor:pointer;}
+  .ptable tr.selected td{background:rgba(0,255,136,.06);border-left:2px solid var(--green);}
+  .ptable tr.row-returned td{opacity:.65;}
+  .td-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;display:inline-block;}
+  .dot-dep{background:var(--green);box-shadow:0 0 6px var(--green);}
+  .dot-undep{background:rgba(232,180,0,.5);border:1px solid var(--yellow);}
+  .dot-ret{background:var(--red);box-shadow:0 0 6px var(--red);}
+  .td-date{color:var(--text-mid);font-family:'Share Tech Mono',monospace;font-size:11px;white-space:nowrap;}
+  .td-acct{color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:10px;white-space:nowrap;max-width:90px;overflow:hidden;text-overflow:ellipsis;}
+  .td-name{color:var(--text);font-size:13px;font-weight:600;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis;}
+  .td-amount{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--green);text-align:right;white-space:nowrap;text-shadow:0 0 8px rgba(0,255,136,.3);}
+  .td-method{font-family:'Share Tech Mono',monospace;font-size:9px;white-space:nowrap;}
+  .td-ref{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-mid);white-space:nowrap;max-width:180px;overflow:hidden;text-overflow:ellipsis;}
+  .td-flag{text-align:center;}
+  .flag-yes{color:var(--green);font-size:11px;}
+  .flag-no{color:var(--text-dim);font-size:11px;}
+  .flag-ret{color:var(--red);font-size:11px;}
+  .img-indicator{width:24px;height:24px;border:1px solid rgba(0,255,136,.2);background:transparent;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text-dim);cursor:pointer;transition:all .15s;}
+  .img-indicator.has-img{border-color:var(--cyan);color:var(--cyan);background:rgba(0,245,255,.08);}
+  .img-indicator:hover{border-color:var(--green);color:var(--green);}
+  .open-btn{background:transparent;border:1px solid rgba(0,255,136,.2);color:var(--text-dim);font-family:'Orbitron',monospace;font-size:8px;padding:3px 7px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap;}
+  .open-btn:hover{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.06);}
+  .mpill{font-family:'Orbitron',monospace;font-size:7px;padding:2px 7px;border:1px solid;letter-spacing:1px;white-space:nowrap;}
+  .mp-check{border-color:rgba(0,245,255,.4);color:var(--cyan);}
+  .mp-cash{border-color:rgba(0,255,136,.4);color:var(--green);}
+  .mp-square{border-color:rgba(0,136,255,.4);color:var(--blue);}
+  .mp-ach{border-color:rgba(170,0,255,.4);color:var(--purple);}
+  .mp-mo{border-color:rgba(255,136,0,.4);color:var(--orange);}
+  .mp-other{border-color:rgba(255,255,255,.2);color:var(--text-mid);}
+  .loading-row td{color:var(--text-dim);font-size:10px;letter-spacing:2px;text-align:center;padding:60px;font-family:'Share Tech Mono',monospace;}
+  .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:14px;}
+  .empty-icon{font-size:52px;opacity:.12;}
+  .empty-msg{font-family:'Orbitron',monospace;font-size:11px;color:var(--text-dim);letter-spacing:3px;}
+  .empty-sub{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:1px;opacity:.6;}
+  .detail-panel{position:fixed;top:0;right:-520px;bottom:78px;width:520px;background:#020e0a;border-left:1px solid var(--border-hi);z-index:300;display:flex;flex-direction:column;transition:right .25s ease;box-shadow:-20px 0 60px rgba(0,0,0,.7);}
+  .detail-panel.open{right:0;}
+  .dp-header{padding:14px 18px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(0,255,136,.07),transparent);position:relative;flex-shrink:0;}
+  .dp-title{font-family:'Orbitron',monospace;font-size:11px;color:var(--green);letter-spacing:3px;margin-bottom:3px;}
+  .dp-id{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:1px;}
+  .dp-close{position:absolute;top:12px;right:14px;background:none;border:none;color:var(--text-mid);font-size:20px;cursor:pointer;line-height:1;}
+  .dp-close:hover{color:var(--red);}
+  .dp-body{flex:1;overflow-y:auto;padding:0;}
+  .dp-footer{flex-shrink:0;padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;}
+  .dp-section{border-bottom:1px solid rgba(0,255,136,.06);}
+  .dp-section-title{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:var(--text-dim);padding:8px 18px;background:rgba(0,255,136,.02);border-bottom:1px solid rgba(0,255,136,.05);}
+  .dp-row{display:flex;justify-content:space-between;align-items:center;padding:7px 18px;border-bottom:1px solid rgba(0,255,136,.03);}
+  .dp-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-mid);letter-spacing:1px;}
+  .dp-val{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text);text-align:right;}
+  .dp-val-money{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:24px;color:var(--green);text-shadow:0 0 10px rgba(0,255,136,.4);}
+  .dp-val-acct{font-family:'Orbitron',monospace;font-size:10px;color:var(--cyan);letter-spacing:1px;}
+  .dp-form{padding:14px 18px;}
+  .ef-row{margin-bottom:12px;}
+  .ef-row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+  .ef-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-mid);letter-spacing:2px;margin-bottom:4px;display:block;}
+  .ef-input{width:100%;background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.2);color:var(--green);font-family:'Share Tech Mono',monospace;font-size:11px;padding:7px 10px;outline:none;transition:all .15s;}
+  .ef-input:focus{border-color:var(--border-hi);background:rgba(0,255,136,.09);}
+  .ef-input option{background:#011a0a;color:var(--green);}
+  .ef-input::placeholder{color:var(--text-dim);}
+  .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:8px 18px;border-bottom:1px solid rgba(0,255,136,.04);}
+  .toggle-label{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-mid);letter-spacing:1px;}
+  .toggle{position:relative;width:40px;height:20px;cursor:pointer;}
+  .toggle input{opacity:0;width:0;height:0;}
+  .toggle-track{position:absolute;inset:0;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);transition:.2s;}
+  .toggle-thumb{position:absolute;height:14px;width:14px;top:2px;left:2px;background:var(--text-dim);transition:.2s;}
+  .toggle input:checked + .toggle-track{background:rgba(0,255,136,.2);border-color:var(--green);}
+  .toggle input:checked ~ .toggle-thumb{transform:translateX(20px);background:var(--green);box-shadow:0 0 6px var(--green);}
+  .img-area{padding:14px 18px;border-bottom:1px solid rgba(0,255,136,.06);}
+  .img-area-title{font-family:'Orbitron',monospace;font-size:8px;color:var(--text-dim);letter-spacing:2px;margin-bottom:10px;}
+  .img-preview{width:100%;max-height:200px;object-fit:contain;border:1px solid var(--green);background:rgba(0,255,136,.02);cursor:pointer;}
+  .img-placeholder{height:80px;border:1px dashed rgba(0,255,136,.2);display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;transition:all .2s;}
+  .img-placeholder:hover{border-color:var(--green);background:rgba(0,255,136,.04);}
+  .img-placeholder-text{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:1px;}
+  .img-actions{display:flex;gap:8px;margin-top:8px;}
+  .img-btn{flex:1;font-family:'Orbitron',monospace;font-size:7px;padding:6px;border:1px solid rgba(0,255,136,.25);color:rgba(0,255,136,.55);background:transparent;cursor:pointer;letter-spacing:1px;transition:all .15s;text-align:center;}
+  .img-btn:hover{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.06);}
+  .dp-btn{flex:1;padding:9px;font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1px;cursor:pointer;border:1px solid;transition:all .15s;background:transparent;text-align:center;white-space:nowrap;}
+  .dp-btn-green{border-color:var(--green);color:var(--green);}
+  .dp-btn-green:hover{background:rgba(0,255,136,.1);}
+  .dp-btn-cyan{border-color:var(--cyan);color:var(--cyan);}
+  .dp-btn-cyan:hover{background:rgba(0,245,255,.08);}
+  .dp-btn-orange{border-color:var(--orange);color:var(--orange);}
+  .dp-btn-orange:hover{background:rgba(255,136,0,.08);}
+  .dp-btn-red{border-color:var(--red);color:var(--red);}
+  .dp-btn-red:hover{background:rgba(255,34,68,.08);}
+  .dp-btn-ghost{border-color:var(--border);color:var(--text-mid);}
+  .dp-btn-ghost:hover{border-color:var(--green);color:var(--green);}
+  .lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:800;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
+  .lightbox.show{display:flex;}
+  .lightbox img{max-width:88vw;max-height:74vh;border:1px solid var(--green);box-shadow:0 0 40px rgba(0,255,136,.15);}
+  .lb-close{font-family:'Orbitron',monospace;font-size:10px;color:var(--red);border:1px solid var(--red);padding:8px 22px;cursor:pointer;letter-spacing:2px;background:rgba(255,34,68,.08);}
+  .lb-caption{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-mid);letter-spacing:1px;}
+  ::-webkit-scrollbar{width:3px;height:3px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:rgba(0,255,136,.2);}
+  .toast{position:fixed;bottom:88px;right:20px;background:#011a0a;border:1px solid var(--green);padding:10px 18px;font-family:'Orbitron',monospace;font-size:9px;color:var(--green);letter-spacing:2px;z-index:900;opacity:0;transition:opacity .3s;pointer-events:none;max-width:320px;line-height:1.5;}
+  .toast.show{opacity:1;}
+  .toast.t-err{border-color:var(--red);color:var(--red);background:#180005;}
+  .toast.t-ok{border-color:var(--green);color:var(--green);background:#011a0a;}
+  .toast.t-warn{border-color:var(--orange);color:var(--orange);background:#180a00;}
+  /* BOTTOM NAV */
+  .botnav{position:fixed;bottom:0;left:0;right:0;height:78px;background:linear-gradient(90deg,#011a0a,#020c14,#011a0a);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:5px;padding:0 14px;z-index:100;}
+  .navbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:58px;height:68px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.25);color:rgba(0,255,136,.58);cursor:pointer;transition:all .2s;font-size:8px;letter-spacing:.8px;text-transform:uppercase;font-family:'Share Tech Mono',monospace;position:relative;overflow:hidden;text-decoration:none;flex-shrink:0;}
+  .navbtn::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--green);transform:scaleX(0);transition:transform .2s;}
+  .navbtn:hover::after,.navbtn.active::after{transform:scaleX(1);}
+  .navbtn:hover{color:rgba(0,255,136,.88);border-color:rgba(0,255,136,.5);background:rgba(0,255,136,.08);}
+  .navbtn.active{color:var(--green);border-color:var(--green);background:rgba(0,255,136,.11);box-shadow:0 0 16px rgba(0,255,136,.28),inset 0 0 14px rgba(0,255,136,.07);}
+  .navicon{font-size:20px;line-height:1;}
+</style>
+</head>
+<body>
+<div class="corner tl"></div><div class="corner tr"></div>
+<div class="corner bl"></div><div class="corner br"></div>
+<div class="topbar">
+  <a class="logo" href="index.html">RADEUS</a>
+  <div style="display:flex;align-items:center;gap:14px">
+    <div class="sdot"></div>
+    <span style="font-size:12px;color:var(--text-mid);letter-spacing:3px;font-family:'Share Tech Mono',monospace">PAYMENTS</span>
+    <select class="sys-select" id="sysSelect" onchange="switchSystem(this.value)">
+      <option value="">⬡ LOADING...</option>
+    </select>
+    <span id="sys-count" style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-mid);letter-spacing:1px;"></span>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px">
+    <span style="font-size:9px;color:var(--text-dim);font-family:'Share Tech Mono',monospace">OPERATOR: <span style="color:var(--green)">ADMIN</span></span>
+    <span id="clock">--:--:--</span>
+  </div>
+</div>
+<div class="controlbar">
+  <div class="ctrl-group"><span class="ctrl-label">FROM</span><input class="date-input" type="date" id="dateFrom" onchange="loadPayments()"></div>
+  <div class="ctrl-group"><span class="ctrl-label">TO</span><input class="date-input" type="date" id="dateTo" onchange="loadPayments()"></div>
+  <div class="ctrl-divider"></div>
+  <button class="range-btn active" id="rb-month" onclick="setRange('month',this)">THIS MONTH</button>
+  <button class="range-btn" id="rb-last"  onclick="setRange('last',this)">LAST MONTH</button>
+  <button class="range-btn" id="rb-ytd"   onclick="setRange('ytd',this)">YTD</button>
+  <button class="range-btn" id="rb-all"   onclick="setRange('all',this)">ALL</button>
+  <div class="ctrl-divider"></div>
+  <div class="search-wrap">
+    <input class="search-input" id="searchInput" type="text" placeholder="Search account, payee, amount, ref, method, notes..." oninput="applyFilters()">
+  </div>
+  <div class="ctrl-divider"></div>
+  <button class="ctrl-btn ctrl-btn-primary" onclick="openNewPayment()">+ POST PAYMENT</button>
+  <button class="ctrl-btn ctrl-btn-dim" onclick="exportCSV()">↓ EXPORT</button>
+</div>
+<div class="statsbar">
+  <div class="stat-cell"><div class="stat-label">PERIOD TOTAL</div><div class="stat-val sv-green" id="stat-period">—</div></div>
+  <div class="stat-cell"><div class="stat-label">UNDEPOSITED</div><div class="stat-val sv-yellow" id="stat-undep">—</div></div>
+  <div class="stat-cell"><div class="stat-label">CYCLE % RCVD</div><div class="stat-val sv-cyan" id="stat-cycle-pct">—</div></div>
+  <div class="stat-cell"><div class="stat-label">OUTSTANDING</div><div class="stat-val sv-orange" id="stat-outstanding">—</div></div>
+  <div class="stat-cell"><div class="stat-label">RETURNED / NSF</div><div class="stat-val sv-red" id="stat-returned">—</div></div>
+  <div class="stat-cell"><div class="stat-label">YTD TOTAL</div><div class="stat-val sv-green" id="stat-ytd">—</div></div>
+</div>
+<div class="filterbar">
+  <button class="fbtn active" onclick="setFilter('ALL',this)">ALL</button>
+  <button class="fbtn" onclick="setFilter('UNDEPOSITED',this)">UNDEPOSITED</button>
+  <button class="fbtn" onclick="setFilter('DEPOSITED',this)">DEPOSITED</button>
+  <button class="fbtn" onclick="setFilter('RETURNED',this)">RETURNED</button>
+  <div class="ctrl-divider" style="margin:0 6px"></div>
+  <span class="ctrl-label">PMT TYPE</span>
+  <select class="method-select" id="methodFilter" onchange="applyFilters()">
+    <option value="">ALL METHODS</option>
+    <option value="CHECK">CHECK</option><option value="CASH">CASH</option>
+    <option value="SQUARE">SQUARE</option><option value="ACH">ACH</option>
+    <option value="MONEY ORDER">MONEY ORDER</option><option value="OTHER">OTHER</option>
+  </select>
+  <div class="filter-right"><span class="row-count" id="rowCount">— ROWS</span></div>
+</div>
+<div class="main" id="mainArea">
+  <div class="empty-state"><div class="empty-icon">💵</div><div class="empty-msg">LOADING PAYMENTS...</div><div class="empty-sub">CONNECTING TO SUPABASE</div></div>
+</div>
+<div class="detail-panel" id="detailPanel">
+  <div class="dp-header">
+    <div class="dp-title" id="dp-title">💵 PAYMENT DETAIL</div>
+    <div class="dp-id" id="dp-id">—</div>
+    <button class="dp-close" onclick="closePanel()">✕</button>
+  </div>
+  <div class="dp-body" id="dp-body"></div>
+  <div class="dp-footer" id="dp-footer"></div>
+</div>
+<div class="lightbox" id="lightbox">
+  <img id="lb-img" src="" alt="Payment Image">
+  <div class="lb-caption" id="lb-caption"></div>
+  <button class="lb-close" onclick="closeLightbox()">✕ CLOSE</button>
+</div>
+<div class="toast" id="toast"></div>
+<input type="file" id="imgFileInput" accept="image/*" style="display:none" onchange="handleImageFile(event,false)">
+<input type="file" id="imgCamInput"  accept="image/*" capture="environment" style="display:none" onchange="handleImageFile(event,true)">
+
+<!-- BOTTOM NAV -->
+<div class="botnav">
+  <a class="navbtn" href="index.html"><span class="navicon">⬡</span>COMMAND</a>
+  <a class="navbtn" href="accounts.html"><span class="navicon">👤</span>ACCOUNTS</a>
+  <a class="navbtn" href="readings.html"><span class="navicon">⏱️</span>READINGS</a>
+  <a class="navbtn" href="billing.html"><span class="navicon">🧾</span>BILLING</a>
+  <a class="navbtn" href="compliance.html"><span class="navicon">📋</span>COMPLY</a>
+  <a class="navbtn active" href="payments.html"><span class="navicon">💵</span>PAYMENTS</a>
+  <a class="navbtn" href="workorders.html"><span class="navicon">🔧</span>WO's</a>
+  <a class="navbtn" href="reports.html"><span class="navicon">📊</span>REPORTS</a>
+  <a class="navbtn" href="comms.html"><span class="navicon">📡</span>COMMS</a>
+  <a class="navbtn" href="system.html"><span class="navicon">⚙</span>SYSTEM</a>
+</div>
+
+<script>
+const SUPA_URL='https://bvpesxpptgdwkhsewhke.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2cGVzeHBwdGdkd2toc2V3aGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNzcwNTksImV4cCI6MjA5MTk1MzA1OX0._th9UdQKqIWvqgTrxxpd5IfTlexCUeyWC5aGwRJYZj8';
+const ORG_ID='00000000-0000-0000-0000-000000000001';
+const BUCKET='payment-images';
+let activeSystemId=null,allSystems=[],allPayments=[],filtered=[],allAccounts=[],currentFilter='ALL',currentMethod='',selectedPayment=null,panelMode=null,pendingImageFile=null,pendingImageUrl=null,sortCol='payment_date',sortDir='desc';
+const MONTHS=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+function tick(){document.getElementById('clock').textContent=new Date().toTimeString().slice(0,8);}
+setInterval(tick,1000);tick();
+async function supa(table,params='',method='GET',body=null){try{const opts={method,headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Content-Type':'application/json','Prefer':'return=representation','Accept':'application/json'}};if(body)opts.body=JSON.stringify(body);const r=await fetch(`${SUPA_URL}/rest/v1/${table}${params}`,opts);if(!r.ok){console.error('Supa',r.status,await r.text());return null;}const txt=await r.text();return txt?JSON.parse(txt):null;}catch(e){console.warn('Supa offline:',e.message);return null;}}
+function toast(msg,type='',dur=2800){const el=document.getElementById('toast');el.textContent=msg;el.className='toast show'+(type?' t-'+type:'');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),dur);}
+function fmtMoney(n){if(n===null||n===undefined)return'—';return'$'+Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');}
+function fmtDate(s){if(!s)return'—';const d=new Date(s+'T00:00:00');return`${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}/${d.getFullYear()}`;}
+function today(){return new Date().toISOString().split('T')[0];}
+function methodPill(m){if(!m)return'<span class="mpill mp-other">—</span>';const u=(m||'').toUpperCase();const cls=u==='CHECK'?'mp-check':u==='CASH'?'mp-cash':u==='SQUARE'?'mp-square':u==='ACH'?'mp-ach':u.includes('MONEY')||u==='MO'?'mp-mo':'mp-other';return`<span class="mpill ${cls}">${u}</span>`;}
+function setRange(range,btn){document.querySelectorAll('.range-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');const now=new Date();const yr=now.getFullYear();const mo=now.getMonth();let from,to;if(range==='month'){from=new Date(yr,mo,1).toISOString().split('T')[0];to=new Date(yr,mo+1,0).toISOString().split('T')[0];}else if(range==='last'){from=new Date(yr,mo-1,1).toISOString().split('T')[0];to=new Date(yr,mo,0).toISOString().split('T')[0];}else if(range==='ytd'){from=`${yr}-01-01`;to=today();}else{from='2020-01-01';to=today();}document.getElementById('dateFrom').value=from;document.getElementById('dateTo').value=to;loadPayments();}
+async function loadSystems(){const systems=await supa('water_systems',`?org_id=eq.${ORG_ID}&select=system_id,system_name,system_code&order=system_name`);if(!systems?.length){toast('NO SYSTEMS FOUND','err');return;}allSystems=systems;const sel=document.getElementById('sysSelect');sel.innerHTML=`<option value="">⬡ ALL SYSTEMS</option>`+systems.map(s=>`<option value="${s.system_id}">⬡ ${s.system_name.toUpperCase()}</option>`).join('');activeSystemId='';const sc=document.getElementById('sys-count');if(sc)sc.textContent=`${systems.length} SYSTEMS`;setRange('all',document.getElementById('rb-all'));loadAccounts();ensureImageBucket();}
+function switchSystem(id){activeSystemId=id;allPayments=[];filtered=[];selectedPayment=null;closePanel();loadPayments();loadAccounts();}
+function sysFilter(){if(!activeSystemId)return allSystems.length?`system_id=in.(${allSystems.map(s=>s.system_id).join(',')})`:null;return`system_id=eq.${activeSystemId}`;}
+function sysParam(){const f=sysFilter();return f?`&${f}`:'';}
+
+async function loadAccounts(){const sp=sysParam();if(!sp&&!allSystems.length)return;const accts=await supa('accounts',`?status=eq.ACTIVE${sp}&select=account_id,account_number,system_id,customers(full_name)&order=account_number`);allAccounts=accts||[];buildAcctDatalist();}
+function buildAcctDatalist(){let dl=document.getElementById('acct-dl');if(!dl){dl=document.createElement('datalist');dl.id='acct-dl';document.body.appendChild(dl);}dl.innerHTML=allAccounts.map(a=>`<option value="${a.account_number}">${a.account_number} — ${a.customers?.full_name||''}`).join('');}
+async function loadPayments(){const from=document.getElementById('dateFrom').value;const to=document.getElementById('dateTo').value;if(!from||!to)return;const sf=sysFilter();if(!sf&&!allSystems.length)return;document.getElementById('mainArea').innerHTML=`<div class="empty-state"><div class="empty-icon" style="font-size:28px;animation:blink 1s infinite">⬡</div><div class="empty-msg">LOADING PAYMENTS...</div></div>`;const params=`?payment_date=gte.${from}&payment_date=lte.${to}${sysParam()}&select=payment_id,account_id,system_id,payment_date,amount,payee,payment_method,reference_number,deposited,deposit_batch_date,returned,return_date,return_reason,return_debit_posted,in_closed_cycle,source_id,posted_by,notes,image_url,created_at,accounts(account_number,customers(full_name)),water_systems(system_name,system_code)&order=payment_date.desc,created_at.desc`;const data=await supa('payments',params);allPayments=data||[];loadStats(from,to);applyFilters();}
+
+// Paginated fetch of all payment amounts for accurate totals (bypasses row limits)
+async function fetchAllAmounts(from,to){const sp=sysParam();const baseUrl=`${SUPA_URL}/rest/v1/payments?payment_date=gte.${from}&payment_date=lte.${to}${sp}&select=amount,returned,deposited`;let all=[];let offset=0;const page=1000;while(true){try{const r=await fetch(baseUrl,{headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Range':`${offset}-${offset+page-1}`,'Range-Unit':'items','Prefer':'count=exact'}});if(!r.ok)break;const txt=await r.text();const data=txt?JSON.parse(txt):[];if(!data.length)break;all=all.concat(data);if(data.length<page)break;offset+=page;}catch(e){break;}}return all;}
+async function loadStats(from,to){const ytdStart=`${new Date().getFullYear()}-01-01`;const sp=sysParam();const[ytdData,balances,cycleData]=await Promise.all([supa('payments',`?payment_date=gte.${ytdStart}${sp}&select=amount&returned=eq.false`),supa('account_balances',`?${sysFilter()||'system_id=not.is.null'}&select=current_balance`),activeSystemId?supa('billing_cycles',`?system_id=eq.${activeSystemId}&status=eq.OPEN&select=cycle_id,cycle_year,cycle_month&limit=1`):Promise.resolve(null)]);const ytdTotal=(ytdData||[]).reduce((s,p)=>s+parseFloat(p.amount||0),0);document.getElementById('stat-ytd').textContent=fmtMoney(ytdTotal);const outstanding=(balances||[]).reduce((s,b)=>s+Math.max(0,parseFloat(b.current_balance||0)),0);document.getElementById('stat-outstanding').textContent=fmtMoney(outstanding);if(cycleData?.length){const cycle=cycleData[0];const cycleFrom=`${cycle.cycle_year}-${String(cycle.cycle_month).padStart(2,'0')}-01`;const cycleTo=new Date(cycle.cycle_year,cycle.cycle_month,0).toISOString().split('T')[0];const mthPay=await supa('payments',`?system_id=eq.${activeSystemId}&payment_date=gte.${cycleFrom}&payment_date=lte.${cycleTo}&returned=eq.false&select=amount`);const totalRcvd=(mthPay||[]).reduce((s,p)=>s+parseFloat(p.amount||0),0);const cycleBills=await supa('bills',`?cycle_id=eq.${cycle.cycle_id}&select=total_amount`);const totalBilled=(cycleBills||[]).reduce((s,b)=>s+parseFloat(b.total_amount||0),0);const pct=totalBilled>0?Math.round((totalRcvd/totalBilled)*100):null;document.getElementById('stat-cycle-pct').textContent=pct!==null?pct+'%':'—';}else{document.getElementById('stat-cycle-pct').textContent='—';}}
+function applyFilters(){const search=(document.getElementById('searchInput')?.value||'').toLowerCase().trim();const method=document.getElementById('methodFilter')?.value||'';filtered=allPayments.filter(p=>{if(currentFilter==='UNDEPOSITED'&&(p.deposited||p.returned))return false;if(currentFilter==='DEPOSITED'&&!p.deposited)return false;if(currentFilter==='RETURNED'&&!p.returned)return false;if(method&&(p.payment_method||'').toUpperCase()!==method.toUpperCase())return false;if(search){const acct=(p.accounts?.account_number||'').toLowerCase();const name=(p.accounts?.customers?.full_name||'').toLowerCase();const payee=(p.payee||'').toLowerCase();const ref=(p.reference_number||'').toLowerCase();const mth=(p.payment_method||'').toLowerCase();const notes=(p.notes||'').toLowerCase();const amt=String(p.amount||'');const date=(p.payment_date||'').toLowerCase();if(![acct,name,payee,ref,mth,notes,amt,date].some(f=>f.includes(search)))return false;}return true;});updateInlineStats();renderTable();}
+function updateInlineStats(){
+  // Use allPayments for row count / filter-based stats
+  const periodTotal=filtered.filter(p=>!p.returned).reduce((s,p)=>s+parseFloat(p.amount||0),0);
+  const undep=filtered.filter(p=>!p.deposited&&!p.returned).reduce((s,p)=>s+parseFloat(p.amount||0),0);
+  const retAmt=filtered.filter(p=>p.returned).reduce((s,p)=>s+parseFloat(p.amount||0),0);
+  const retCount=filtered.filter(p=>p.returned).length;
+  document.getElementById('stat-period').textContent=fmtMoney(periodTotal);
+  document.getElementById('stat-undep').textContent=fmtMoney(undep);
+  document.getElementById('stat-returned').textContent=retCount>0?`${retCount} / ${fmtMoney(retAmt)}`:'$0.00';
+  document.getElementById('rowCount').textContent=filtered.length+' ROWS';
+  // Fetch accurate totals across ALL pages asynchronously
+  const from=document.getElementById('dateFrom').value;const to=document.getElementById('dateTo').value;
+  if(from&&to){fetchAllAmounts(from,to).then(all=>{const tot=all.filter(p=>!p.returned).reduce((s,p)=>s+parseFloat(p.amount||0),0);const ud=all.filter(p=>!p.deposited&&!p.returned).reduce((s,p)=>s+parseFloat(p.amount||0),0);document.getElementById('stat-period').textContent=fmtMoney(tot);document.getElementById('stat-undep').textContent=fmtMoney(ud);});}
+}
+function shortSysName(p){return p.water_systems?.system_code||p.water_systems?.system_name||'—';}
+
+const SYS_COLORS=['#00ff88','#00f5ff','#f4a0b5','#8ab85e','#e8b400','#aa00ff','#ff8800','#1a6fff','#ff2244','#00ccff','#ffcc00','#cc44ff'];
+function sysColor(systemId){if(!systemId)return'rgba(255,255,255,.2)';let h=0;for(let i=0;i<systemId.length;i++){h=(h*31+systemId.charCodeAt(i))>>>0;}return SYS_COLORS[h%SYS_COLORS.length];}
+
+function renderTable(){const area=document.getElementById('mainArea');if(!filtered.length){area.innerHTML=`<div class="empty-state"><div class="empty-icon">💵</div><div class="empty-msg">NO PAYMENTS FOUND</div><div class="empty-sub">ADJUST DATE RANGE OR SEARCH</div></div>`;return;}let html=`<table class="ptable"><thead><tr><th style="width:12px"></th><th class="${sortCol==='payment_date'?'sort-'+sortDir:''}" onclick="sortBy('payment_date')">DATE</th><th onclick="sortBy('account_number')">ACCT #</th><th onclick="sortBy('payee')">PAYEE</th><th class="r ${sortCol==='amount'?'sort-'+sortDir:''}" onclick="sortBy('amount')">AMOUNT</th><th>TYPE</th><th>REFERENCE #</th><th style="text-align:center">DEP</th><th style="text-align:center">RTN</th><th style="text-align:center">IMG</th><th></th></tr></thead><tbody>`;filtered.forEach(p=>{const acctNum=p.accounts?.account_number||'—';const custName=p.accounts?.customers?.full_name||p.payee||'—';const color=sysColor(p.system_id);const isSel=selectedPayment?.payment_id===p.payment_id;const retRow=p.returned?'row-returned':'';html+=`<tr class="${retRow}${isSel?' selected':''}" onclick="openDetail('${p.payment_id}')"><td><span class="td-dot" style="background:${color};box-shadow:0 0 5px ${color}66"></span></td><td class="td-date">${fmtDate(p.payment_date)}</td><td class="td-acct" title="${acctNum}">${acctNum}</td><td class="td-name" title="${custName}">${custName}</td><td class="td-amount" style="${p.returned?'color:var(--red);text-shadow:none':''}">${p.returned?'<span style="font-size:9px;color:var(--red);margin-right:4px">RTN</span>':''}${fmtMoney(p.amount)}</td><td>${methodPill(p.payment_method)}</td><td class="td-ref" title="${p.reference_number||''}">${p.reference_number||'—'}</td><td class="td-flag">${p.deposited?'<span class="flag-yes">✓</span>':'<span class="flag-no">—</span>'}</td><td class="td-flag">${p.returned?'<span class="flag-ret">✕</span>':'<span class="flag-no">—</span>'}</td><td class="td-flag"><div class="img-indicator ${p.image_url?'has-img':''}" onclick="event.stopPropagation();${p.image_url?`viewImage('${p.image_url}','${acctNum} — ${fmtDate(p.payment_date)}')`:`openDetail('${p.payment_id}')`}">📷</div></td><td><button class="open-btn" onclick="event.stopPropagation();openDetail('${p.payment_id}')">···</button></td></tr>`;});html+='</tbody></table>';area.innerHTML=html;}
+function sortBy(col){if(sortCol===col)sortDir=sortDir==='asc'?'desc':'asc';else{sortCol=col;sortDir='desc';}const key=col==='account_number'?p=>(p.accounts?.account_number||''):col==='payee'?p=>(p.accounts?.customers?.full_name||p.payee||''):col==='amount'?p=>parseFloat(p.amount||0):p=>(p[col]||'');filtered.sort((a,b)=>{const av=key(a),bv=key(b);return sortDir==='asc'?(av>bv?1:-1):(av<bv?1:-1);});renderTable();}
+function setFilter(f,btn){currentFilter=f;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');applyFilters();}
+function openDetail(paymentId){const p=allPayments.find(x=>x.payment_id===paymentId);if(!p)return;selectedPayment=p;panelMode='view';renderPanel();document.getElementById('detailPanel').classList.add('open');document.getElementById('mainArea').classList.add('panel-open');renderTable();}
+function closePanel(){document.getElementById('detailPanel').classList.remove('open');document.getElementById('mainArea').classList.remove('panel-open');selectedPayment=null;panelMode=null;pendingImageFile=null;pendingImageUrl=null;renderTable();}
+function renderPanel(){if(!selectedPayment)return;if(panelMode==='view')renderViewPanel(selectedPayment);else if(panelMode==='edit')renderEditPanel(selectedPayment);else if(panelMode==='new')renderNewPanel();}
+function renderViewPanel(p){const acctNum=p.accounts?.account_number||'—';const custName=p.accounts?.customers?.full_name||p.payee||'—';document.getElementById('dp-title').textContent='💵 PAYMENT DETAIL';document.getElementById('dp-id').textContent=p.source_id||p.payment_id?.slice(0,18)+'...';const statusText=p.returned?'⚠ RETURNED/NSF':p.deposited?'✓ DEPOSITED':'● UNDEPOSITED';const statusColor=p.returned?'var(--red)':p.deposited?'var(--green)':'var(--yellow)';document.getElementById('dp-body').innerHTML=`<div class="dp-section"><div class="dp-section-title">PAYMENT</div><div class="dp-row" style="padding:14px 18px;"><div style="font-family:'Orbitron',monospace;font-size:8px;color:var(--text-dim);letter-spacing:2px;">AMOUNT</div><div class="dp-val-money">${fmtMoney(p.amount)}</div></div><div class="dp-row"><div class="dp-label">DATE</div><div class="dp-val">${fmtDate(p.payment_date)}</div></div><div class="dp-row"><div class="dp-label">METHOD</div><div class="dp-val">${methodPill(p.payment_method)}</div></div><div class="dp-row"><div class="dp-label">REFERENCE #</div><div class="dp-val">${p.reference_number||'—'}</div></div><div class="dp-row"><div class="dp-label">PAYEE</div><div class="dp-val">${p.payee||'—'}</div></div><div class="dp-row"><div class="dp-label">POSTED BY</div><div class="dp-val">${p.posted_by||'—'}</div></div><div class="dp-row"><div class="dp-label">NOTES</div><div class="dp-val" style="max-width:260px;text-align:right;word-break:break-word;font-size:10px">${p.notes||'—'}</div></div><div class="dp-row"><div class="dp-label">STATUS</div><div class="dp-val" style="color:${statusColor};font-family:'Orbitron',monospace;font-size:9px">${statusText}</div></div></div><div class="dp-section"><div class="dp-section-title">ACCOUNT</div><div class="dp-row"><div class="dp-label">ACCT #</div><div class="dp-val-acct">${acctNum}</div></div><div class="dp-row"><div class="dp-label">CUSTOMER</div><div class="dp-val">${custName}</div></div><div class="dp-row"><div class="dp-label">CYCLE</div><div class="dp-val" style="${p.in_closed_cycle?'color:var(--text-mid)':'color:var(--green)'}">${p.in_closed_cycle?'CLOSED CYCLE':'OPEN CYCLE'}</div></div></div><div class="dp-section"><div class="dp-section-title">DEPOSIT / RETURN STATUS</div><div class="toggle-row"><div class="toggle-label">DEPOSITED</div><label class="toggle"><input type="checkbox" ${p.deposited?'checked':''} onchange="quickToggle('${p.payment_id}','deposited',this.checked)"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>${p.deposited?`<div class="dp-row"><div class="dp-label">DEPOSIT DATE</div><div class="dp-val">${fmtDate(p.deposit_batch_date)||'—'}</div></div>`:''}<div class="toggle-row"><div class="toggle-label">RETURNED / NSF</div><label class="toggle"><input type="checkbox" ${p.returned?'checked':''} onchange="quickToggle('${p.payment_id}','returned',this.checked)"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>${p.returned?`<div class="dp-row"><div class="dp-label">RETURN DATE</div><div class="dp-val">${fmtDate(p.return_date)||'—'}</div></div><div class="dp-row"><div class="dp-label">RETURN REASON</div><div class="dp-val">${p.return_reason||'—'}</div></div>`:''}</div><div class="img-area"><div class="img-area-title">PAYMENT INSTRUMENT IMAGE</div>${p.image_url?`<img class="img-preview" src="${p.image_url}" alt="Payment image" onclick="viewImage('${p.image_url}','${acctNum} — ${fmtDate(p.payment_date)}')"><div class="img-actions"><button class="img-btn" onclick="triggerImgPicker(false)">📁 REPLACE FILE</button><button class="img-btn" onclick="triggerImgPicker(true)">📷 RECAPTURE</button><button class="img-btn" style="color:var(--red);border-color:rgba(255,34,68,.3)" onclick="removeImage('${p.payment_id}')">✕ REMOVE</button></div>`:`<div class="img-placeholder" onclick="triggerImgPicker(false)"><span style="font-size:24px;opacity:.4">📷</span><div><div class="img-placeholder-text">CLICK TO ATTACH IMAGE</div><div class="img-placeholder-text" style="opacity:.5;margin-top:3px">CHECK · RECEIPT · MONEY ORDER</div></div></div><div class="img-actions" style="margin-top:8px"><button class="img-btn" onclick="triggerImgPicker(false)">📁 UPLOAD FILE</button><button class="img-btn" onclick="triggerImgPicker(true)">📷 CAMERA CAPTURE</button></div>`}${pendingImageUrl?`<div style="margin-top:6px;font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--orange);letter-spacing:1px">⬡ IMAGE PENDING SAVE</div>`:''}</div>`;document.getElementById('dp-footer').innerHTML=`<button class="dp-btn dp-btn-cyan" onclick="enterEditMode()">✎ EDIT</button><button class="dp-btn dp-btn-green" onclick="quickMarkDeposited('${p.payment_id}')">✓ DEPOSITED</button><button class="dp-btn dp-btn-orange" onclick="promptMarkReturned('${p.payment_id}')">⚠ RETURNED</button><button class="dp-btn dp-btn-ghost" onclick="closePanel()">✕ CLOSE</button>`;}
+function enterEditMode(){panelMode='edit';renderPanel();}
+function renderEditPanel(p){document.getElementById('dp-title').textContent='✎ EDIT PAYMENT';document.getElementById('dp-id').textContent=p.source_id||p.payment_id?.slice(0,18)+'...';document.getElementById('dp-body').innerHTML=`<div class="dp-form"><div class="ef-row2"><div><label class="ef-label">PAYMENT DATE</label><input class="ef-input" type="date" id="ef-date" value="${p.payment_date||''}"></div><div><label class="ef-label">AMOUNT</label><input class="ef-input" type="number" step="0.01" id="ef-amount" value="${p.amount||''}"></div></div><div class="ef-row2"><div><label class="ef-label">METHOD</label><select class="ef-input" id="ef-method">${['CHECK','CASH','SQUARE','ACH','MONEY ORDER','OTHER'].map(m=>`<option ${(p.payment_method||'').toUpperCase()===m?'selected':''}>${m}</option>`).join('')}</select></div><div><label class="ef-label">REFERENCE #</label><input class="ef-input" type="text" id="ef-ref" value="${p.reference_number||''}" placeholder="Check #, ID..."></div></div><div class="ef-row"><label class="ef-label">PAYEE</label><input class="ef-input" type="text" id="ef-payee" value="${p.payee||''}"></div><div class="ef-row"><label class="ef-label">NOTES</label><input class="ef-input" type="text" id="ef-notes" value="${p.notes||''}" placeholder="Optional notes"></div><div class="ef-row2"><div><label class="ef-label">DEPOSIT DATE</label><input class="ef-input" type="date" id="ef-dep-date" value="${p.deposit_batch_date||''}"></div><div><label class="ef-label">RETURN REASON</label><input class="ef-input" type="text" id="ef-ret-reason" value="${p.return_reason||''}" placeholder="NSF, CLOSED, etc."></div></div></div>`;document.getElementById('dp-footer').innerHTML=`<button class="dp-btn dp-btn-green" onclick="saveEdit('${p.payment_id}')">✓ SAVE</button><button class="dp-btn dp-btn-ghost" onclick="panelMode='view';renderPanel()">✕ CANCEL</button>`;}
+async function saveEdit(paymentId){const updates={payment_date:document.getElementById('ef-date')?.value||null,amount:parseFloat(document.getElementById('ef-amount')?.value)||null,payment_method:document.getElementById('ef-method')?.value||null,reference_number:document.getElementById('ef-ref')?.value.trim()||null,payee:document.getElementById('ef-payee')?.value.trim()||null,notes:document.getElementById('ef-notes')?.value.trim()||null,deposit_batch_date:document.getElementById('ef-dep-date')?.value||null,return_reason:document.getElementById('ef-ret-reason')?.value.trim()||null};if(!updates.payment_date||!updates.amount){toast('DATE AND AMOUNT REQUIRED','err');return;}if(pendingImageFile){const url=await uploadImage(pendingImageFile,paymentId);if(url){updates.image_url=url;pendingImageFile=null;pendingImageUrl=null;}}const result=await supa('payments',`?payment_id=eq.${paymentId}`,'PATCH',updates);if(result){const idx=allPayments.findIndex(p=>p.payment_id===paymentId);if(idx>-1){allPayments[idx]={...allPayments[idx],...updates};selectedPayment=allPayments[idx];}panelMode='view';renderPanel();applyFilters();toast('PAYMENT UPDATED','ok');}else{toast('ERROR SAVING — CHECK CONSOLE','err');}}
+function openNewPayment(){selectedPayment=null;panelMode='new';pendingImageFile=null;pendingImageUrl=null;document.getElementById('dp-title').textContent='+ POST PAYMENT';document.getElementById('dp-id').textContent='NEW RECORD';renderNewPanel();document.getElementById('detailPanel').classList.add('open');document.getElementById('mainArea').classList.add('panel-open');}
+function renderNewPanel(){document.getElementById('dp-body').innerHTML=`<div class="dp-form"><div class="ef-row"><label class="ef-label">ACCOUNT # <span style="color:var(--red)">*</span></label><input class="ef-input" type="text" id="nf-acct" list="acct-dl" placeholder="e.g. DNWSTX02" autocomplete="off"><div id="nf-acct-confirm" style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--green);letter-spacing:1px;margin-top:4px;min-height:14px;"></div></div><div class="ef-row2"><div><label class="ef-label">PAYMENT DATE <span style="color:var(--red)">*</span></label><input class="ef-input" type="date" id="nf-date" value="${today()}"></div><div><label class="ef-label">AMOUNT <span style="color:var(--red)">*</span></label><input class="ef-input" type="number" step="0.01" id="nf-amount" placeholder="0.00"></div></div><div class="ef-row2"><div><label class="ef-label">METHOD</label><select class="ef-input" id="nf-method"><option>CHECK</option><option>CASH</option><option>SQUARE</option><option>ACH</option><option>MONEY ORDER</option><option>OTHER</option></select></div><div><label class="ef-label">REFERENCE #</label><input class="ef-input" type="text" id="nf-ref" placeholder="Check #, ID..."></div></div><div class="ef-row"><label class="ef-label">NOTES</label><input class="ef-input" type="text" id="nf-notes" placeholder="Optional notes"></div><div class="img-area" style="padding:0;border:none;margin-top:14px;"><div class="img-area-title">PAYMENT INSTRUMENT IMAGE</div><div id="nf-img-preview"><div class="img-placeholder" onclick="triggerImgPicker(false)" style="margin-top:6px"><span style="font-size:24px;opacity:.4">📷</span><div><div class="img-placeholder-text">CLICK TO ATTACH IMAGE</div></div></div></div><div class="img-actions" style="margin-top:8px"><button class="img-btn" onclick="triggerImgPicker(false)">📁 UPLOAD FILE</button><button class="img-btn" onclick="triggerImgPicker(true)">📷 CAMERA CAPTURE</button></div></div></div>`;setTimeout(()=>{const inp=document.getElementById('nf-acct');if(inp)inp.addEventListener('input',e=>{const match=allAccounts.find(a=>a.account_number===e.target.value.trim());const el=document.getElementById('nf-acct-confirm');if(el)el.textContent=match?'✓ '+(match.customers?.full_name||'ACCOUNT FOUND'):(e.target.value?'✗ NOT FOUND':'');});},50);document.getElementById('dp-footer').innerHTML=`<button class="dp-btn dp-btn-green" onclick="submitNewPayment()">✓ POST PAYMENT</button><button class="dp-btn dp-btn-ghost" onclick="closePanel()">✕ CANCEL</button>`;}
+async function submitNewPayment(){const acctNum=document.getElementById('nf-acct')?.value.trim();const date=document.getElementById('nf-date')?.value;const amount=parseFloat(document.getElementById('nf-amount')?.value);const method=document.getElementById('nf-method')?.value;const ref=document.getElementById('nf-ref')?.value.trim();const notes=document.getElementById('nf-notes')?.value.trim();if(!acctNum||!date||!amount||isNaN(amount)||amount<=0){toast('ACCOUNT, DATE, AND AMOUNT REQUIRED','err');return;}const acct=allAccounts.find(a=>a.account_number===acctNum);if(!acct){toast('ACCOUNT NOT FOUND: '+acctNum,'err');return;}const sourceId=`${acctNum}-PAY-${date}-${Date.now()}`;const body={account_id:acct.account_id,system_id:activeSystemId,payment_date:date,amount,payment_method:method,reference_number:ref||null,notes:notes||null,deposited:false,returned:false,return_debit_posted:false,in_closed_cycle:false,source_id:sourceId,posted_by:'ADMIN'};const result=await supa('payments','','POST',body);if(!result){toast('ERROR POSTING PAYMENT','err');return;}const newPay=Array.isArray(result)?result[0]:result;if(pendingImageFile&&newPay?.payment_id){const url=await uploadImage(pendingImageFile,newPay.payment_id);if(url){await supa('payments',`?payment_id=eq.${newPay.payment_id}`,'PATCH',{image_url:url});newPay.image_url=url;}}if(newPay){newPay.accounts={account_number:acctNum,customers:acct.customers};allPayments.unshift(newPay);}toast(`PAYMENT POSTED — ${acctNum} — ${fmtMoney(amount)}`,'ok',3500);loadStats(document.getElementById('dateFrom').value,document.getElementById('dateTo').value);closePanel();applyFilters();}
+async function quickToggle(paymentId,field,value){const updates={[field]:value};if(field==='deposited'&&value)updates.deposit_batch_date=today();if(field==='returned'&&value)updates.return_date=today();const result=await supa('payments',`?payment_id=eq.${paymentId}`,'PATCH',updates);if(result){const idx=allPayments.findIndex(p=>p.payment_id===paymentId);if(idx>-1){allPayments[idx]={...allPayments[idx],...updates};if(selectedPayment?.payment_id===paymentId)selectedPayment=allPayments[idx];}renderPanel();applyFilters();}else{toast('ERROR UPDATING','err');}}
+async function quickMarkDeposited(paymentId){await quickToggle(paymentId,'deposited',true);toast('MARKED AS DEPOSITED','ok');}
+async function promptMarkReturned(paymentId){const reason=prompt('RETURN REASON (NSF, CLOSED ACCOUNT, etc.):');if(reason===null)return;const updates={returned:true,return_date:today(),return_reason:reason||'NSF',deposited:false};const result=await supa('payments',`?payment_id=eq.${paymentId}`,'PATCH',updates);if(result){const idx=allPayments.findIndex(p=>p.payment_id===paymentId);if(idx>-1){allPayments[idx]={...allPayments[idx],...updates};selectedPayment=allPayments[idx];}renderPanel();applyFilters();toast('PAYMENT MARKED AS RETURNED','warn');}else{toast('ERROR UPDATING','err');}}
+function triggerImgPicker(camera){document.getElementById(camera?'imgCamInput':'imgFileInput').click();}
+function handleImageFile(event,isCamera){const file=event.target.files[0];if(!file)return;pendingImageFile=file;const url=URL.createObjectURL(file);pendingImageUrl=url;const previewTarget=panelMode==='new'?document.getElementById('nf-img-preview'):null;if(previewTarget){previewTarget.innerHTML=`<img class="img-preview" src="${url}" onclick="viewImage('${url}','PREVIEW')">`;}else{renderPanel();}toast('📷 IMAGE ATTACHED — SAVE TO UPLOAD','');event.target.value='';}
+async function uploadImage(file,paymentId){const ext=(file.name||'image.jpg').split('.').pop().toLowerCase();const fname=`${paymentId}-${Date.now()}.${ext}`;try{const r=await fetch(`${SUPA_URL}/storage/v1/object/${BUCKET}/${fname}`,{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Content-Type':file.type||'image/jpeg'},body:file});if(!r.ok){toast('IMAGE UPLOAD FAILED','err');return null;}return`${SUPA_URL}/storage/v1/object/public/${BUCKET}/${fname}`;}catch(e){toast('IMAGE UPLOAD ERROR','err');return null;}}
+async function removeImage(paymentId){const r=await supa('payments',`?payment_id=eq.${paymentId}`,'PATCH',{image_url:null});if(r){const idx=allPayments.findIndex(p=>p.payment_id===paymentId);if(idx>-1){allPayments[idx].image_url=null;selectedPayment=allPayments[idx];}renderPanel();applyFilters();toast('IMAGE REMOVED','');}}
+async function ensureImageBucket(){try{const r=await fetch(`${SUPA_URL}/storage/v1/bucket/${BUCKET}`,{headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`}});if(r.status===404||r.status===400){await fetch(`${SUPA_URL}/storage/v1/bucket`,{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({id:BUCKET,name:BUCKET,public:true})});}}catch(e){console.warn('Bucket check failed:',e.message);}}
+function viewImage(url,caption){document.getElementById('lb-img').src=url;document.getElementById('lb-caption').textContent=caption||'';document.getElementById('lightbox').classList.add('show');}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('show');}
+function exportCSV(){if(!filtered.length){toast('NO DATA TO EXPORT','err');return;}const headers=['DATE','ACCOUNT','CUSTOMER','AMOUNT','METHOD','REFERENCE','DEPOSITED','RETURNED','POSTED_BY','NOTES'];const rows=filtered.map(p=>[p.payment_date,p.accounts?.account_number||'',p.accounts?.customers?.full_name||p.payee||'',p.amount,p.payment_method||'',p.reference_number||'',p.deposited?'YES':'NO',p.returned?'YES':'NO',p.posted_by||'',(p.notes||'').replace(/,/g,';')]);const csv=[headers,...rows].map(r=>r.join(',')).join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download=`payments-${document.getElementById('dateFrom').value}-to-${document.getElementById('dateTo').value}.csv`;a.click();toast('CSV EXPORTED','ok');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closePanel();if(e.key==='/'&&document.activeElement!==document.getElementById('searchInput')){e.preventDefault();document.getElementById('searchInput').focus();}});
+window.addEventListener('DOMContentLoaded',loadSystems);
+</script>
+</body>
+</html>

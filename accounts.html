@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RADEUS — Accounts</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="theme.css" rel="stylesheet">
+<style>
+  :root {
+    --cyan:#00f5ff;--cyan-dim:#00a8b5;--green:#00ff88;--red:#ff2244;
+    --orange:#ff8800;--yellow:#ffe600;--blue:#0088ff;--purple:#aa00ff;
+    --bg:#020c14;--bg2:#041220;--panel:rgba(0,245,255,.03);
+    --border:rgba(0,245,255,.12);--border-hi:rgba(0,245,255,.4);
+    --text:#c8eaf0;--text-dim:#3d6a78;--text-mid:#6a9aaa;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-weight:400;overflow:hidden;height:100vh;width:100vw;}
+  body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);pointer-events:none;z-index:1000;}
+  .corner{position:fixed;width:36px;height:36px;border-color:var(--cyan);border-style:solid;opacity:.5;z-index:999;}
+  .tl{top:6px;left:6px;border-width:2px 0 0 2px}.tr{top:6px;right:6px;border-width:2px 2px 0 0}
+  .bl{bottom:6px;left:6px;border-width:0 0 2px 2px}.br{bottom:6px;right:6px;border-width:0 2px 2px 0}
+
+  /* TOP BAR */
+  .topbar{position:fixed;top:0;left:0;right:0;height:46px;background:linear-gradient(90deg,var(--bg2),#021018,var(--bg2));border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:100;}
+  .logo{font-family:'Orbitron',monospace;font-weight:900;font-size:20px;color:var(--cyan);letter-spacing:8px;text-shadow:0 0 20px var(--cyan),0 0 50px rgba(0,245,255,.25);animation:lp 4s ease-in-out infinite;}
+  @keyframes lp{0%,100%{text-shadow:0 0 20px var(--cyan),0 0 40px rgba(0,245,255,.2)}50%{text-shadow:0 0 30px var(--cyan),0 0 70px rgba(0,245,255,.4)}}
+  .logo a{color:inherit;text-decoration:none;}
+  .sys-select{background:rgba(0,245,255,.05);border:1px solid var(--border-hi);color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:11px;padding:4px 12px;letter-spacing:1px;cursor:pointer;outline:none;}
+  .sys-select option{background:#fff;color:#0d1b2a;font-family:Arial,sans-serif;letter-spacing:0;}
+  .sdot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 2s infinite;}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+  #clock{color:var(--cyan);font-size:13px;letter-spacing:2px}
+
+  /* STATS BAR */
+  .statsbar{position:fixed;top:46px;left:0;right:0;height:44px;background:rgba(0,15,25,.98);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:0;z-index:99;}
+  .stat-pill{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 20px;border-right:1px solid var(--border);height:100%;}
+  .stat-pill:last-of-type{border-right:none;}
+  .sp-label{font-size:7px;color:var(--text-dim);letter-spacing:2px;margin-bottom:2px;}
+  .sp-val{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;}
+  .sp-cyan{color:var(--cyan)}.sp-green{color:var(--green)}.sp-red{color:var(--red)}.sp-orange{color:var(--orange)}.sp-blue{color:var(--blue)}.sp-yellow{color:var(--yellow)}
+
+  /* SEARCH + FILTERS */
+  .toolbar{position:fixed;top:90px;left:0;right:0;height:42px;background:rgba(2,12,20,.98);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;padding:0 16px;z-index:98;}
+  .search-wrap{position:relative;flex:1;max-width:380px;}
+  .search-wrap::before{content:'⌕';position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--cyan-dim);font-size:16px;pointer-events:none;}
+  .search-input{width:100%;background:rgba(0,245,255,.04);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:6px 10px 6px 32px;outline:none;letter-spacing:.5px;}
+  .search-input::placeholder{color:var(--text-dim);}
+  .search-input:focus{border-color:var(--border-hi);}
+  .filter-btns{display:flex;gap:4px;flex:1;}
+  .fbtn{font-size:8px;padding:4px 10px;border:1px solid var(--border);color:var(--text-dim);background:transparent;cursor:pointer;font-family:'Share Tech Mono',monospace;letter-spacing:1px;transition:all .15s;white-space:nowrap;}
+  .fbtn:hover,.fbtn.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,245,255,.06);}
+  .fbtn.active-red{border-color:var(--red);color:var(--red);background:rgba(255,34,68,.06);}
+  .fbtn.active-orange{border-color:var(--orange);color:var(--orange);background:rgba(255,136,0,.06);}
+  .fbtn.active-green{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.06);}
+  .fbtn.active-blue{border-color:var(--blue);color:var(--blue);background:rgba(0,136,255,.06);}
+  .new-acct-btn{font-size:9px;padding:6px 14px;border:1px solid var(--green);color:var(--green);background:rgba(0,255,136,.06);cursor:pointer;font-family:'Orbitron',monospace;letter-spacing:1px;white-space:nowrap;transition:all .15s;}
+  .new-acct-btn:hover{background:rgba(0,255,136,.15);}
+
+  /* MAIN LAYOUT */
+  .main{position:fixed;top:132px;bottom:78px;left:0;right:0;display:flex;overflow:hidden;}
+
+  /* ACCOUNTS TABLE */
+  .acct-list{flex:1;overflow-y:auto;min-width:0;}
+  .atable{width:100%;border-collapse:collapse;}
+  .atable thead{position:sticky;top:0;z-index:10;}
+  .atable th{font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1.5px;color:var(--text-dim);padding:8px 12px;border-bottom:2px solid var(--border);text-align:left;font-weight:400;background:#020c14;cursor:pointer;white-space:nowrap;}
+  .atable th:hover{color:var(--cyan);}
+  .atable th.sort-asc::after{content:' ▲';color:var(--cyan);}
+  .atable th.sort-desc::after{content:' ▼';color:var(--cyan);}
+  .atable td{padding:7px 12px;border-bottom:1px solid rgba(0,245,255,.04);cursor:pointer;vertical-align:middle;}
+  .atable tr:hover td{background:rgba(0,245,255,.04);}
+  .atable tr.selected td{background:rgba(0,245,255,.08);border-left:2px solid var(--cyan);}
+  .td-acct{color:var(--cyan);font-family:'Orbitron',monospace;font-size:9px;letter-spacing:.5px;white-space:nowrap;}
+  .td-name{color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;white-space:nowrap;}
+  .td-addr{color:#8ab8c8;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:500;}
+  .td-bal{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;text-align:right;white-space:nowrap;}
+  .td-date{color:var(--text-dim);font-family:'Rajdhani',sans-serif;font-size:12px;white-space:nowrap;}
+  .pill{display:inline-block;padding:2px 6px;border:1px solid;font-size:7px;letter-spacing:.5px;font-family:'Orbitron',monospace;white-space:nowrap;}
+  .plan-pill{display:inline-block;padding:1px 5px;border:1px solid var(--blue);color:var(--blue);font-size:7px;letter-spacing:.5px;font-family:'Orbitron',monospace;white-space:nowrap;}
+
+  /* DETAIL PANEL — wider */
+  .detail-panel{width:0;min-width:0;overflow:hidden;transition:width .25s ease;border-left:1px solid var(--border);background:var(--bg2);display:flex;flex-direction:column;}
+  .detail-panel.open{width:580px;min-width:580px;}
+  .dp-header{padding:14px 20px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(0,245,255,.06),transparent);position:relative;}
+  .dp-acct{font-family:'Orbitron',monospace;font-size:10px;color:var(--cyan);letter-spacing:2px;margin-bottom:4px;}
+  .dp-name{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--text);}
+  .dp-status{display:inline-block;padding:3px 10px;border:1px solid;font-size:8px;letter-spacing:1.5px;font-family:'Orbitron',monospace;margin-top:6px;}
+  .dp-close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--text-dim);font-size:20px;cursor:pointer;z-index:10;}
+  .dp-close:hover{color:var(--red);}
+  .dp-body{flex:1;overflow-y:auto;padding:0;}
+
+  /* DETAIL SECTIONS */
+  .dp-section{border-bottom:1px solid rgba(0,245,255,.06);}
+  .dp-section-title{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:var(--cyan-dim);padding:8px 20px;background:rgba(0,245,255,.02);border-bottom:1px solid rgba(0,245,255,.05);}
+  .dp-row{display:flex;justify-content:space-between;padding:6px 20px;border-bottom:1px solid rgba(0,245,255,.03);}
+  .dp-label{font-size:9px;color:var(--text-mid);}
+  .dp-val{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);text-align:right;}
+
+  /* ACTION INPUT PANELS */
+  .action-panel{display:none;position:fixed;top:0;right:0;bottom:0;width:480px;background:rgba(2,10,20,.98);border-left:1px solid var(--border-hi);z-index:400;flex-direction:column;box-shadow:-20px 0 60px rgba(0,0,0,.6);}
+  .action-panel.show{display:flex;}
+  .ap-header{padding:16px 20px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(0,245,255,.08),transparent);display:flex;justify-content:space-between;align-items:center;}
+  .ap-title{font-family:'Orbitron',monospace;font-size:12px;color:var(--cyan);letter-spacing:3px;}
+  .ap-sub{font-size:9px;color:var(--text-dim);margin-top:3px;letter-spacing:1px;}
+  .ap-close{background:none;border:none;color:var(--text-dim);font-size:20px;cursor:pointer;}
+  .ap-close:hover{color:var(--red);}
+  .ap-body{flex:1;overflow-y:auto;padding:20px;}
+  .ap-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;}
+  .ap-btn{flex:1;padding:10px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;border:1px solid;transition:all .15s;}
+  .ap-btn.cancel{background:transparent;border-color:var(--border);color:var(--text-dim);}
+  .ap-btn.cancel:hover{border-color:var(--red);color:var(--red);}
+  .ap-btn.submit{background:rgba(0,245,255,.08);border-color:var(--cyan);color:var(--cyan);}
+  .ap-btn.submit:hover{background:rgba(0,245,255,.18);}
+  .ap-btn.danger{background:rgba(255,34,68,.08);border-color:var(--red);color:var(--red);}
+  .ap-btn.danger:hover{background:rgba(255,34,68,.2);}
+  .ap-btn.success{background:rgba(0,255,136,.06);border-color:var(--green);color:var(--green);}
+  .ap-btn.success:hover{background:rgba(0,255,136,.15);}
+
+  /* TRANSACTION REGISTER */
+  .txn-wrap{padding:0;}
+  .txn-row{display:flex;align-items:center;gap:8px;padding:6px 16px;border-bottom:1px solid rgba(0,245,255,.03);font-size:9px;}
+  .txn-row:hover{background:rgba(0,245,255,.03);}
+  .txn-date{color:var(--text-dim);white-space:nowrap;width:80px;flex-shrink:0;}
+  .txn-type{font-family:'Orbitron',monospace;font-size:7px;padding:1px 5px;border:1px solid;white-space:nowrap;flex-shrink:0;}
+  .txn-desc{color:var(--text-mid);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .txn-amt{font-family:'Share Tech Mono',monospace;text-align:right;white-space:nowrap;flex-shrink:0;font-size:10px;}
+
+  /* ACTION BUTTONS */
+  .dp-actions{padding:12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:6px;border-top:1px solid var(--border);background:var(--bg2);}
+  .dp-btn{padding:8px;border:1px solid var(--border);color:var(--text-dim);background:transparent;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;cursor:pointer;transition:all .15s;text-align:center;}
+  .dp-btn:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(0,245,255,.05);}
+  .dp-btn.primary{border-color:var(--cyan);color:var(--cyan);background:rgba(0,245,255,.07);}
+  .dp-btn.danger{border-color:var(--red);color:var(--red);}
+  .dp-btn.danger:hover{background:rgba(255,34,68,.08);}
+  .dp-btn.success{border-color:var(--green);color:var(--green);}
+  .dp-btn.success:hover{background:rgba(0,255,136,.08);}
+
+  /* NEW ACCOUNT MODAL */
+  .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:600;align-items:center;justify-content:center;}
+  .modal.show{display:flex;}
+  .modal-box{background:var(--bg2);border:1px solid var(--border-hi);width:520px;max-height:85vh;overflow-y:auto;box-shadow:0 0 50px rgba(0,245,255,.15);}
+  .modal-header{background:linear-gradient(135deg,rgba(0,245,255,.08),transparent);border-bottom:1px solid var(--border);padding:14px 18px;font-family:'Orbitron',monospace;font-size:11px;color:var(--cyan);letter-spacing:3px;display:flex;justify-content:space-between;align-items:center;}
+  .modal-close{background:none;border:none;color:var(--text-dim);font-size:18px;cursor:pointer;}
+  .modal-close:hover{color:var(--red);}
+  .modal-body{padding:20px 18px;}
+  .form-row{margin-bottom:14px;}
+  .form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+  .form-label{font-size:8px;color:var(--text-mid);letter-spacing:1.5px;margin-bottom:5px;display:block;font-family:'Orbitron',monospace;}
+  .form-input,.form-select{width:100%;background:rgba(0,245,255,.04);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:8px 10px;outline:none;transition:border-color .15s;}
+  .form-input:focus,.form-select:focus{border-color:var(--border-hi);}
+  .form-select option{background:#fff;color:#0d1b2a;}
+  .form-section{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:var(--cyan-dim);padding:8px 0;margin:16px 0 10px;border-bottom:1px solid var(--border);}
+  .modal-footer{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:8px;}
+  .modal-btn{flex:1;padding:10px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;transition:all .15s;border:1px solid;}
+  .modal-btn.cancel{background:transparent;border-color:var(--border);color:var(--text-dim);}
+  .modal-btn.cancel:hover{border-color:var(--red);color:var(--red);}
+  .modal-btn.submit{background:rgba(0,245,255,.08);border-color:var(--cyan);color:var(--cyan);}
+  .modal-btn.submit:hover{background:rgba(0,245,255,.18);}
+
+  /* EMPTY STATE */
+  .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:200px;color:var(--text-dim);gap:8px;}
+  .empty-state .big{font-family:'Orbitron',monospace;font-size:12px;letter-spacing:3px;color:rgba(0,245,255,.2);}
+
+  /* BOTTOM NAV */
+  .botnav{position:fixed;bottom:0;left:0;right:0;height:78px;background:linear-gradient(90deg,var(--bg2),#020e1c,var(--bg2));border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:6px;padding:0 16px;z-index:100;}
+  .navbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:58px;height:68px;background:var(--panel);border:1px solid var(--border);color:var(--text-dim);cursor:pointer;transition:all .2s;font-size:8px;letter-spacing:1px;text-transform:uppercase;font-family:'Share Tech Mono',monospace;position:relative;overflow:hidden;text-decoration:none;}
+  .navbtn::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--cyan);transform:scaleX(0);transition:transform .2s;}
+  .navbtn:hover::after,.navbtn.active::after{transform:scaleX(1);}
+  .navbtn:hover,.navbtn.active{color:var(--cyan);border-color:var(--border-hi);background:rgba(0,245,255,.05);}
+  .navicon{font-size:20px;}
+  .navalert{position:absolute;top:5px;right:6px;width:13px;height:13px;background:var(--red);border-radius:50%;font-size:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Orbitron',monospace;}
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar{width:3px;height:3px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--border);}
+
+  /* LOADING */
+  .loading-row td{color:var(--text-dim);font-size:9px;letter-spacing:1px;text-align:center;padding:40px;}
+
+  /* BALANCE COLORS */
+  .bal-green{color:var(--green);}
+  .bal-blue{color:var(--blue);}
+  .bal-orange{color:var(--orange);}
+  .bal-red{color:var(--red);}
+  .bal-gray{color:var(--text-dim);}
+</style>
+</head>
+<body>
+
+<div class="corner tl"></div><div class="corner tr"></div>
+<div class="corner bl"></div><div class="corner br"></div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo"><a href="index.html">RADEUS</a></div>
+  <div style="display:flex;align-items:center;gap:16px">
+    <div class="sdot"></div>
+    <span style="font-size:9px;color:var(--text-dim);letter-spacing:2px">ACCOUNTS MODULE</span>
+    <select class="sys-select" id="sysSelect" onchange="switchSystem(this.value)">
+      <option value="">⬡ LOADING SYSTEMS...</option>
+    </select>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px">
+    <span style="font-size:9px;color:var(--text-dim)">OPERATOR: <span style="color:var(--cyan)">ADMIN</span></span>
+    <span id="clock">--:--:--</span>
+  </div>
+</div>
+
+<!-- STATS BAR -->
+<div class="statsbar">
+  <div class="stat-pill"><div class="sp-label">TOTAL ACCOUNTS</div><div class="sp-val sp-cyan" id="st-total">—</div></div>
+  <div class="stat-pill"><div class="sp-label">ACTIVE</div><div class="sp-val sp-green" id="st-active">—</div></div>
+  <div class="stat-pill"><div class="sp-label">INACTIVE</div><div class="sp-val bal-gray" id="st-inactive">—</div></div>
+  <div class="stat-pill"><div class="sp-label">CURRENT</div><div class="sp-val sp-green" id="st-current">—</div></div>
+  <div class="stat-pill"><div class="sp-label">PAST DUE</div><div class="sp-val sp-orange" id="st-pastdue">—</div></div>
+  <div class="stat-pill"><div class="sp-label">CRITICAL</div><div class="sp-val sp-red" id="st-critical">—</div></div>
+  <div class="stat-pill"><div class="sp-label">CREDIT BAL</div><div class="sp-val sp-blue" id="st-credit">—</div></div>
+  <div class="stat-pill"><div class="sp-label">TOTAL OUTSTANDING</div><div class="sp-val sp-red" id="st-outstanding">—</div></div>
+  <div class="stat-pill"><div class="sp-label">COLLECTION RATE</div><div class="sp-val sp-green" id="st-collection">—</div></div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="search-wrap">
+    <input class="search-input" id="searchInput" type="text" placeholder="SEARCH BY NAME, ACCOUNT #, OR ADDRESS..." oninput="filterAccounts()">
+  </div>
+  <div class="filter-btns">
+    <button class="fbtn active" onclick="setFilter('ALL',this)">ALL</button>
+    <button class="fbtn" onclick="setFilter('ACTIVE',this)">ACTIVE</button>
+    <button class="fbtn" onclick="setFilter('INACTIVE',this)">INACTIVE</button>
+    <button class="fbtn" onclick="setFilter('CURRENT',this)" style="--fc:var(--green)">CURRENT</button>
+    <button class="fbtn" onclick="setFilter('PAST DUE',this)">PAST DUE</button>
+    <button class="fbtn" onclick="setFilter('CRITICAL',this)">CRITICAL</button>
+    <button class="fbtn" onclick="setFilter('CREDIT',this)">CREDIT BAL</button>
+    <button class="fbtn" onclick="setFilter('ARRANGEMENTS',this)">ARRANGEMENTS</button>
+  </div>
+  <button class="new-acct-btn" onclick="openNewAcct()">+ NEW ACCOUNT</button>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ACCOUNTS TABLE -->
+  <div class="acct-list">
+    <table class="atable">
+      <thead>
+        <tr>
+          <th onclick="sortBy('account_number')">ACCT #</th>
+          <th onclick="sortBy('name')">CUSTOMER NAME</th>
+          <th onclick="sortBy('address')">SERVICE ADDRESS</th>
+          <th style="text-align:center;width:40px">●</th>
+          <th>BALANCE STATUS</th>
+          <th>PLAN</th>
+          <th onclick="sortBy('last_payment_date')">LAST PAYMENT</th>
+          <th onclick="sortBy('balance')" style="text-align:right">BALANCE</th>
+        </tr>
+      </thead>
+      <tbody id="acctTable">
+        <tr class="loading-row"><td colspan="8">LOADING ACCOUNTS...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- DETAIL PANEL -->
+  <div class="detail-panel" id="detailPanel">
+    <button class="dp-close" onclick="closeDetail()">✕</button>
+
+    <div class="dp-header">
+      <div class="dp-acct" id="dp-acct">—</div>
+      <div class="dp-name" id="dp-name">—</div>
+      <div class="dp-status" id="dp-status">—</div>
+    </div>
+
+    <div class="dp-body" id="dp-body">
+      <!-- populated dynamically -->
+    </div>
+
+    <div class="dp-actions">
+      <button class="dp-btn primary" onclick="postPayment()">💳 POST PAYMENT</button>
+      <button class="dp-btn success" onclick="arrangement()">📋 ARRANGEMENT</button>
+      <button class="dp-btn" onclick="sendNotice()">📬 SEND NOTICE</button>
+      <button class="dp-btn" onclick="editAccount()">✏️ EDIT ACCOUNT</button>
+      <button class="dp-btn" onclick="viewCallLog()">📞 COMM LOG</button>
+      <button class="dp-btn danger" onclick="disconnectAccount()">⚡ DISCONNECT</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="botnav">
+  <a class="navbtn" href="index.html"><span class="navicon">⬡</span>COMMAND</a>
+  <a class="navbtn active" href="accounts.html"><span class="navicon">👤</span>ACCOUNTS</a>
+  <a class="navbtn" href="readings.html"><span class="navicon">⏱️</span>READINGS</a>
+  <a class="navbtn" href="billing.html"><span class="navicon">🧾</span>BILLING</a>
+  <a class="navbtn" href="compliance.html"><span class="navicon">📋</span>COMPLY</a>
+  <a class="navbtn" href="payments.html"><span class="navicon">💵</span>PAYMENTS</a>
+  <a class="navbtn" href="workorders.html"><span class="navicon">🔧</span>WO's</a>
+  <a class="navbtn" href="reports.html"><span class="navicon">📊</span>REPORTS</a>
+  <a class="navbtn" href="comms.html"><span class="navicon">📡</span>COMMS</a>
+  <a class="navbtn" href="system.html"><span class="navicon">⚙</span>SYSTEM</a>
+</div>
+
+<!-- NEW ACCOUNT MODAL -->
+<div class="modal" id="newAcctModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      NEW SERVICE CONNECTION
+      <button class="modal-close" onclick="closeNewAcct()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="form-section">CUSTOMER INFORMATION</div>
+      <div class="form-row-2">
+        <div>
+          <label class="form-label">FIRST NAME</label>
+          <input class="form-input" id="nf-first" type="text" placeholder="First name">
+        </div>
+        <div>
+          <label class="form-label">LAST NAME</label>
+          <input class="form-input" id="nf-last" type="text" placeholder="Last name">
+        </div>
+      </div>
+      <div class="form-row-2">
+        <div>
+          <label class="form-label">PHONE</label>
+          <input class="form-input" id="nf-phone" type="text" placeholder="Phone number">
+        </div>
+        <div>
+          <label class="form-label">EMAIL</label>
+          <input class="form-input" id="nf-email" type="text" placeholder="Email address">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">BILLING ADDRESS</label>
+        <input class="form-input" id="nf-billaddr" type="text" placeholder="Billing address (if different from service)">
+      </div>
+
+      <div class="form-section">SERVICE INFORMATION</div>
+      <div class="form-row">
+        <label class="form-label">SERVICE ADDRESS</label>
+        <input class="form-input" id="nf-svcaddr" type="text" placeholder="Service address">
+      </div>
+      <div class="form-row-2">
+        <div>
+          <label class="form-label">CITY</label>
+          <input class="form-input" id="nf-city" type="text" placeholder="City">
+        </div>
+        <div>
+          <label class="form-label">ZIP</label>
+          <input class="form-input" id="nf-zip" type="text" placeholder="ZIP code">
+        </div>
+      </div>
+      <div class="form-row-2">
+        <div>
+          <label class="form-label">ACCOUNT TYPE</label>
+          <select class="form-select" id="nf-type">
+            <option value="RESIDENTIAL">RESIDENTIAL</option>
+            <option value="COMMERCIAL">COMMERCIAL</option>
+            <option value="RELIGIOUS">RELIGIOUS</option>
+            <option value="AGRICULTURAL">AGRICULTURAL</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">METER NUMBER</label>
+          <input class="form-input" id="nf-meter" type="text" placeholder="Meter number">
+        </div>
+      </div>
+
+      <div class="form-section">FINANCIAL</div>
+      <div class="form-row-2">
+        <div>
+          <label class="form-label">DEPOSIT AMOUNT</label>
+          <input class="form-input" id="nf-deposit" type="number" placeholder="0.00">
+        </div>
+        <div>
+          <label class="form-label">SERVICE START DATE</label>
+          <input class="form-input" id="nf-startdate" type="date">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">NOTES</label>
+        <input class="form-input" id="nf-notes" type="text" placeholder="Any notes about this account">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn cancel" onclick="closeNewAcct()">CANCEL</button>
+      <button class="modal-btn submit" onclick="submitNewAcct()">CREATE ACCOUNT</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── CONFIG ───────────────────────────────────────────────────
+  const SUPA_URL = 'https://bvpesxpptgdwkhsewhke.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2cGVzeHBwdGdkd2toc2V3aGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNzcwNTksImV4cCI6MjA5MTk1MzA1OX0._th9UdQKqIWvqgTrxxpd5IfTlexCUeyWC5aGwRJYZj8';
+  const ORG_ID  = '00000000-0000-0000-0000-000000000001';
+
+  // ── STATE ────────────────────────────────────────────────────
+  let allAccounts   = [];
+  let balMap        = {};
+  let currentFilter = 'ALL';
+  let currentSort   = {col:'balance', dir:'desc'};
+  let selectedAcct  = null;
+  let activeSystemId = null;
+  let activeSystemCode = null;
+  let activeSystemName = null;
+
+  // ── CLOCK ────────────────────────────────────────────────────
+  function tick(){document.getElementById('clock').textContent=new Date().toTimeString().slice(0,8);}
+  setInterval(tick,1000);tick();
+
+  // ── SUPABASE ─────────────────────────────────────────────────
+  async function supa(table, params='', method='GET', body=null) {
+    try {
+      const opts = {
+        method,
+        headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Content-Type':'application/json','Prefer':'return=representation','Accept':'application/json'}
+      };
+      if (body) opts.body = JSON.stringify(body);
+      const r = await fetch(`${SUPA_URL}/rest/v1/${table}${params}`, opts);
+      if (!r.ok) { console.error('Supa error',r.status,await r.text()); return null; }
+      if (method==='DELETE') return true;
+      const txt = await r.text();
+      return txt ? JSON.parse(txt) : [];
+    } catch(e) { console.error('Supa fail',e); return null; }
+  }
+
+  // ── HELPERS ──────────────────────────────────────────────────
+  function fmtBal(n) {
+    n = Number(n||0);
+    if (n < 0)  return `($${Math.abs(n).toFixed(2)})`;
+    return `$${n.toFixed(2)}`;
+  }
+  function fmtDate(d) {
+    if (!d) return '—';
+    return new Date(d).toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'2-digit'});
+  }
+  function classify(bal, type, status) {
+    if (status==='INACTIVE') return {label:'INACTIVE', color:'var(--text-dim)'};
+    if (type==='RELIGIOUS')  return {label:'RELIGIOUS', color:'var(--text-dim)'};
+    if (bal < 0)   return {label:'CREDIT',   color:'var(--blue)'};
+    if (bal === 0) return {label:'CURRENT',   color:'var(--green)'};
+    if (bal > 500) return {label:'CRITICAL',  color:'var(--red)'};
+    return               {label:'PAST DUE',   color:'var(--orange)'};
+  }
+
+  // ── LOAD SYSTEMS ─────────────────────────────────────────────
+  async function loadSystems() {
+    const systems = await supa('water_systems', `?org_id=eq.${ORG_ID}&select=system_id,system_code,system_name&order=system_name`);
+    if (!systems || !systems.length) return;
+    const sel = document.getElementById('sysSelect');
+    sel.innerHTML = systems.map(s =>
+      `<option value="${s.system_id}|${s.system_code}|${s.system_name}">⬡ ${s.system_name.toUpperCase()}</option>`
+    ).join('');
+    // Load first system
+    const first = systems[0];
+    activeSystemId   = first.system_id;
+    activeSystemCode = first.system_code;
+    activeSystemName = first.system_name;
+    loadAccounts();
+  }
+
+  // ── SWITCH SYSTEM ─────────────────────────────────────────────
+  function switchSystem(val) {
+    const [id, code, name] = val.split('|');
+    activeSystemId   = id;
+    activeSystemCode = code;
+    activeSystemName = name;
+    closeDetail();
+    loadAccounts();
+  }
+
+  // ── LOAD ACCOUNTS ─────────────────────────────────────────────
+  async function loadAccounts() {
+    document.getElementById('acctTable').innerHTML =
+      '<tr class="loading-row"><td colspan="8">LOADING ACCOUNTS...</td></tr>';
+
+    const [accounts, balances] = await Promise.all([
+      supa('accounts', `?system_id=eq.${activeSystemId}&select=account_id,account_number,account_type,status,meter_id,notes,service_start,customers(full_name,phone_primary,email,billing_address,billing_city,billing_state),service_addresses(street,city,state,zip),meters(meter_number)`),
+      supa('account_balances', `?system_id=eq.${activeSystemId}&select=*`)
+    ]);
+
+    if (!accounts) {
+      document.getElementById('acctTable').innerHTML =
+        '<tr class="loading-row"><td colspan="8">ERROR LOADING — CHECK CONNECTION</td></tr>';
+      return;
+    }
+
+    balMap = {};
+    (balances||[]).forEach(b => { balMap[b.account_id] = b; });
+
+    allAccounts = accounts.map(a => {
+      const bal = Number(balMap[a.account_id]?.current_balance ?? 0);
+      return {
+        ...a,
+        bal,
+        name: a.customers?.full_name || '—',
+        address: a.service_addresses?.street || '—',
+        city: a.service_addresses?.city || '',
+        zip: a.service_addresses?.zip || '',
+        meter: a.meters?.meter_number || '—',
+        phone: a.customers?.phone_primary || '—',
+        email: a.customers?.email || '—',
+        billAddr: a.customers?.billing_address || '—',
+        lastPmt: balMap[a.account_id]?.last_payment_date,
+        lastPmtAmt: balMap[a.account_id]?.last_payment_amount,
+        cls: classify(bal, a.account_type, a.status)
+      };
+    });
+
+    updateStats();
+    renderTable();
+  }
+
+  // ── STATS ─────────────────────────────────────────────────────
+  function updateStats() {
+    const active   = allAccounts.filter(a => a.status === 'ACTIVE');
+    const inactive = allAccounts.filter(a => a.status === 'INACTIVE');
+    const current  = allAccounts.filter(a => a.status==='ACTIVE' && a.bal === 0);
+    const pastDue  = allAccounts.filter(a => a.status==='ACTIVE' && a.bal > 0 && a.bal <= 500);
+    const critical = allAccounts.filter(a => a.status==='ACTIVE' && a.bal > 500);
+    const credit   = allAccounts.filter(a => a.status==='ACTIVE' && a.bal < 0);
+    const totalOwed = allAccounts.filter(a=>a.bal>0).reduce((s,a)=>s+a.bal,0);
+    const collRate  = active.length > 0 ? Math.round((current.length/active.length)*100) : 0;
+
+    document.getElementById('st-total').textContent      = allAccounts.length;
+    document.getElementById('st-active').textContent     = active.length;
+    document.getElementById('st-inactive').textContent   = inactive.length;
+    document.getElementById('st-current').textContent    = current.length;
+    document.getElementById('st-pastdue').textContent    = pastDue.length;
+    document.getElementById('st-critical').textContent   = critical.length;
+    document.getElementById('st-credit').textContent     = credit.length;
+    document.getElementById('st-outstanding').textContent= fmtBal(totalOwed);
+    document.getElementById('st-collection').textContent = collRate + '%';
+  }
+
+  // ── RENDER TABLE ──────────────────────────────────────────────
+  function renderTable() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+
+    let rows = allAccounts.filter(a => {
+      // Filter
+      if (currentFilter === 'ACTIVE')     return a.status === 'ACTIVE';
+      if (currentFilter === 'INACTIVE')   return a.status === 'INACTIVE';
+      if (currentFilter === 'CURRENT')    return a.status==='ACTIVE' && a.bal === 0;
+      if (currentFilter === 'PAST DUE')   return a.status==='ACTIVE' && a.bal > 0 && a.bal <= 500;
+      if (currentFilter === 'CRITICAL')   return a.status==='ACTIVE' && a.bal > 500;
+      if (currentFilter === 'CREDIT')     return a.status==='ACTIVE' && a.bal < 0;
+      return true;
+    }).filter(a => {
+      if (!search) return true;
+      return a.account_number.toLowerCase().includes(search) ||
+             a.name.toLowerCase().includes(search) ||
+             a.address.toLowerCase().includes(search);
+    });
+
+    // Sort
+    rows.sort((a,b) => {
+      let va, vb;
+      if (currentSort.col==='balance')          { va=a.bal; vb=b.bal; }
+      else if (currentSort.col==='account_number'){va=a.account_number; vb=b.account_number;}
+      else if (currentSort.col==='name')          {va=a.name; vb=b.name;}
+      else if (currentSort.col==='address')       {va=a.address; vb=b.address;}
+      else if (currentSort.col==='last_payment_date'){va=a.lastPmt||''; vb=b.lastPmt||'';}
+      else { va=a.bal; vb=b.bal; }
+      if (va < vb) return currentSort.dir==='asc' ? -1 : 1;
+      if (va > vb) return currentSort.dir==='asc' ? 1 : -1;
+      return 0;
+    });
+
+    const tbody = document.getElementById('acctTable');
+    if (!rows.length) {
+      tbody.innerHTML = `<tr class="loading-row"><td colspan="8" style="color:var(--text-dim)">NO ACCOUNTS MATCH FILTER</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = '';
+    rows.forEach(a => {
+      const tr = document.createElement('tr');
+      if (selectedAcct && selectedAcct.account_id === a.account_id) tr.classList.add('selected');
+      tr.onclick = () => openDetail(a);
+      const statusColor = a.status==='ACTIVE' ? 'var(--green)' : a.status==='DISCONNECTED' ? 'var(--red)' : 'var(--text-dim)';
+      const hasPlan = false; // TODO: wire to arrangements table
+      tr.innerHTML = `
+        <td class="td-acct">${a.account_number}</td>
+        <td class="td-name">${a.name}</td>
+        <td class="td-addr">${a.address}${a.city ? ', '+a.city : ''}</td>
+        <td style="text-align:center">
+          <span title="${a.status}" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${statusColor};box-shadow:0 0 6px ${statusColor};"></span>
+        </td>
+        <td><span class="pill" style="color:${a.cls.color};border-color:${a.cls.color}">${a.cls.label}</span></td>
+        <td>${hasPlan ? '<span class="plan-pill">PLAN</span>' : '<span style="color:var(--text-dim);font-size:11px">—</span>'}</td>
+        <td class="td-date">${fmtDate(a.lastPmt)}${a.lastPmtAmt ? '<br><span style="color:var(--green);font-size:8px">'+fmtBal(a.lastPmtAmt)+'</span>' : ''}</td>
+        <td class="td-bal" style="color:${a.cls.color}">${fmtBal(a.bal)}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // ── FILTER / SORT / SEARCH ────────────────────────────────────
+  function setFilter(f, btn) {
+    currentFilter = f;
+    document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTable();
+  }
+
+  function filterAccounts() { renderTable(); }
+
+  function sortBy(col) {
+    if (currentSort.col === col) currentSort.dir = currentSort.dir==='asc'?'desc':'asc';
+    else { currentSort.col=col; currentSort.dir='desc'; }
+    document.querySelectorAll('.atable th').forEach(th => {
+      th.classList.remove('sort-asc','sort-desc');
+    });
+    renderTable();
+  }
+
+  // ── OPEN DETAIL ───────────────────────────────────────────────
+  async function openDetail(a) {
+    selectedAcct = a;
+    renderTable(); // re-render to show selected state
+
+    document.getElementById('dp-acct').textContent  = a.account_number;
+    document.getElementById('dp-name').textContent  = a.name;
+    const s = document.getElementById('dp-status');
+    s.textContent = a.cls.label;
+    s.style.color = a.cls.color;
+    s.style.borderColor = a.cls.color;
+
+    // Build detail body
+    const body = document.getElementById('dp-body');
+    body.innerHTML = `
+      <div class="dp-section">
+        <div class="dp-section-title">ACCOUNT INFORMATION</div>
+        <div class="dp-row"><span class="dp-label">ACCOUNT NUMBER</span><span class="dp-val">${a.account_number}</span></div>
+        <div class="dp-row"><span class="dp-label">SYSTEM</span><span class="dp-val">${activeSystemName||activeSystemCode}</span></div>
+        <div class="dp-row"><span class="dp-label">ACCOUNT TYPE</span><span class="dp-val">${a.account_type}</span></div>
+        <div class="dp-row"><span class="dp-label">STATUS</span><span class="dp-val" style="color:${a.cls.color}">${a.status}</span></div>
+        <div class="dp-row"><span class="dp-label">SERVICE START</span><span class="dp-val">${fmtDate(a.service_start)}</span></div>
+        <div class="dp-row"><span class="dp-label">METER NUMBER</span><span class="dp-val">${a.meter}</span></div>
+      </div>
+      <div class="dp-section">
+        <div class="dp-section-title">SERVICE ADDRESS</div>
+        <div class="dp-row"><span class="dp-label">STREET</span><span class="dp-val">${a.address}</span></div>
+        <div class="dp-row"><span class="dp-label">CITY / STATE / ZIP</span><span class="dp-val">${a.city} ${a.zip}</span></div>
+      </div>
+      <div class="dp-section">
+        <div class="dp-section-title">CUSTOMER CONTACT</div>
+        <div class="dp-row"><span class="dp-label">NAME</span><span class="dp-val">${a.name}</span></div>
+        <div class="dp-row"><span class="dp-label">PHONE</span><span class="dp-val">${a.phone}</span></div>
+        <div class="dp-row"><span class="dp-label">EMAIL</span><span class="dp-val">${a.email}</span></div>
+        <div class="dp-row"><span class="dp-label">BILLING ADDRESS</span><span class="dp-val">${a.billAddr}</span></div>
+      </div>
+      <div class="dp-section">
+        <div class="dp-section-title">BALANCE SUMMARY</div>
+        <div class="dp-row"><span class="dp-label">CURRENT BALANCE</span><span class="dp-val" style="color:${a.cls.color};font-size:14px">${fmtBal(a.bal)}</span></div>
+        <div class="dp-row"><span class="dp-label">LAST PAYMENT DATE</span><span class="dp-val">${fmtDate(a.lastPmt)}</span></div>
+        <div class="dp-row"><span class="dp-label">LAST PAYMENT AMOUNT</span><span class="dp-val" style="color:var(--green)">${a.lastPmtAmt ? fmtBal(a.lastPmtAmt) : '—'}</span></div>
+        <div class="dp-row"><span class="dp-label">BASE RATE</span><span class="dp-val">$40.00 / MONTH</span></div>
+        <div class="dp-row"><span class="dp-label">LATE FEE</span><span class="dp-val">$10.00 after due date</span></div>
+      </div>
+      <div class="dp-section">
+        <div class="dp-section-title">TRANSACTION REGISTER <span style="color:var(--text-dim);font-size:7px;margin-left:8px">LOADING...</span></div>
+        <div class="txn-wrap" id="txn-wrap">
+          <div style="padding:20px;text-align:center;color:var(--text-dim);font-size:9px;letter-spacing:1px">LOADING TRANSACTIONS...</div>
+        </div>
+      </div>`;
+
+    document.getElementById('detailPanel').classList.add('open');
+
+    // Load transactions
+    loadTransactions(a.account_id);
+  }
+
+  // ── LOAD TRANSACTIONS ─────────────────────────────────────────
+  async function loadTransactions(accountId) {
+    const txns = await supa('transactions',
+      `?account_id=eq.${accountId}&select=*&order=txn_date.desc&limit=50`
+    );
+    const wrap = document.getElementById('txn-wrap');
+    if (!wrap) return;
+
+    // Update section title
+    const stitle = document.querySelector('#dp-body .dp-section:last-child .dp-section-title');
+    if (stitle) stitle.innerHTML = `TRANSACTION REGISTER <span style="color:var(--text-dim);font-size:7px;margin-left:8px">${txns?.length||0} RECORDS</span>`;
+
+    if (!txns || !txns.length) {
+      wrap.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-dim);font-size:9px">NO TRANSACTIONS FOUND</div>';
+      return;
+    }
+
+    const typeColors = {
+      'BILL':'var(--orange)','PAYMENT':'var(--green)','LATE_FEE':'var(--red)',
+      'ADJUSTMENT':'var(--cyan)','CREDIT':'var(--blue)','DEPOSIT':'var(--purple)'
+    };
+
+    wrap.innerHTML = txns.map(t => {
+      const col = typeColors[t.txn_type] || 'var(--text-dim)';
+      const amt = Number(t.amount||0);
+      const amtColor = t.txn_type==='PAYMENT'||t.txn_type==='CREDIT' ? 'var(--green)' : amt<0 ? 'var(--green)' : 'var(--orange)';
+      return `<div class="txn-row">
+        <span class="txn-date">${fmtDate(t.txn_date)}</span>
+        <span class="txn-type" style="color:${col};border-color:${col}">${t.txn_type.replace('_',' ')}</span>
+        <span class="txn-desc">${t.description||t.payment_method||'—'}</span>
+        <span class="txn-amt" style="color:${amtColor}">${fmtBal(amt)}</span>
+      </div>`;
+    }).join('');
+  }
+
+  function closeDetail() {
+    selectedAcct = null;
+    document.getElementById('detailPanel').classList.remove('open');
+    renderTable();
+  }
+
+  // ── ACTION PANELS ────────────────────────────────────────────
+  let updateClosedCycle = false;
+
+  function closeActionPanel(id) {
+    document.getElementById(id).classList.remove('show');
+  }
+
+  function closeAllPanels() {
+    ['panel-payment','panel-arrangement','panel-notice','panel-disconnect']
+      .forEach(id => document.getElementById(id).classList.remove('show'));
+  }
+
+  function postPayment() {
+    if (!selectedAcct) return;
+    closeAllPanels();
+    document.getElementById('pay-acct-sub').textContent =
+      `${selectedAcct.account_number} — ${selectedAcct.name} — BAL: ${fmtBal(selectedAcct.bal)}`;
+    document.getElementById('pay-date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('pay-amount').value = '';
+    document.getElementById('pay-cycle-warn').style.display = 'none';
+    updateClosedCycle = false;
+    document.getElementById('panel-payment').classList.add('show');
+  }
+
+  function setUpdateCycle(val) {
+    updateClosedCycle = val;
+    document.getElementById('pay-cycle-warn').style.display = 'none';
+  }
+
+  async function submitPayment() {
+    if (!selectedAcct) return;
+    const amount  = parseFloat(document.getElementById('pay-amount').value);
+    const date    = document.getElementById('pay-date').value;
+    const method  = document.getElementById('pay-method').value;
+    const ref     = document.getElementById('pay-ref').value.trim();
+    const notes   = document.getElementById('pay-notes').value.trim();
+    if (!amount || amount <= 0) { alert('Enter a valid payment amount'); return; }
+    if (!date) { alert('Enter a payment date'); return; }
+
+    const txn = await supa('transactions', '', 'POST', {
+      account_id:     selectedAcct.account_id,
+      txn_date:       date,
+      txn_type:       'PAYMENT',
+      amount:         -Math.abs(amount),
+      description:    notes || `Payment received — ${method}`,
+      payment_method: method,
+      reference:      ref,
+      posted_by:      'OPERATOR'
+    });
+
+    if (!txn) { alert('ERROR: Payment could not be posted'); return; }
+    closeActionPanel('panel-payment');
+    alert(`✓ PAYMENT POSTED\n${fmtBal(amount)} — ${selectedAcct.name}`);
+    loadAccounts();
+  }
+
+  function arrangement() {
+    if (!selectedAcct) return;
+    closeAllPanels();
+    document.getElementById('arr-acct-sub').textContent =
+      `${selectedAcct.account_number} — ${selectedAcct.name}`;
+    document.getElementById('arr-bal-val').textContent = fmtBal(selectedAcct.bal);
+    document.getElementById('arr-bal-val').style.color =
+      selectedAcct.bal > 500 ? 'var(--red)' : 'var(--orange)';
+    document.getElementById('arr-start').value = new Date().toISOString().split('T')[0];
+    document.getElementById('panel-arrangement').classList.add('show');
+  }
+
+  async function submitArrangement() {
+    const down      = parseFloat(document.getElementById('arr-down').value||0);
+    const downDate  = document.getElementById('arr-down-date').value;
+    const monthly   = parseFloat(document.getElementById('arr-monthly').value||0);
+    const start     = document.getElementById('arr-start').value;
+    const count     = parseInt(document.getElementById('arr-count').value||0);
+    const notes     = document.getElementById('arr-notes').value.trim();
+    if (!monthly || !start) { alert('Monthly payment amount and start date are required'); return; }
+    // Log arrangement as a call log entry for now
+    await supa('call_log', '', 'POST', {
+      system_id:       activeSystemId,
+      account_id:      selectedAcct.account_id,
+      call_date:       new Date().toISOString().split('T')[0],
+      category:        'Payment Arrangement',
+      customer_name:   selectedAcct.name,
+      service_address: selectedAcct.address,
+      description:     `ARRANGEMENT: Down $${down} on ${downDate||'N/A'}. Monthly $${monthly} x${count} starting ${start}. ${notes}`,
+      status:          'Open',
+      assigned_to:     'Manager'
+    });
+    closeActionPanel('panel-arrangement');
+    alert(`✓ ARRANGEMENT LOGGED\n${selectedAcct.name}\n$${monthly}/mo x${count} payments`);
+    loadAccounts();
+  }
+
+  function sendNotice() {
+    if (!selectedAcct) return;
+    closeAllPanels();
+    document.getElementById('notice-acct-sub').textContent =
+      `${selectedAcct.account_number} — ${selectedAcct.name}`;
+    document.getElementById('notice-email').value = selectedAcct.email || '';
+    updateNoticeTemplate();
+    document.getElementById('panel-notice').classList.add('show');
+  }
+
+  function updateNoticeTemplate() {
+    if (!selectedAcct) return;
+    const type = document.getElementById('notice-type').value;
+    const templates = {
+      PAST_DUE: `Dear ${selectedAcct.name},\n\nThis is a notice that your water utility account (${selectedAcct.account_number||''}) has a past due balance of ${fmtBal(selectedAcct.bal)}.\n\nPlease contact our office immediately to arrange payment and avoid service interruption.\n\nThank you,\nDerby New Water System`,
+      DISCONNECT_WARNING: `Dear ${selectedAcct.name},\n\nThis is a final notice before disconnection of service for account ${selectedAcct.account_number||''}.\n\nYour balance of ${fmtBal(selectedAcct.bal)} must be paid immediately to avoid disconnection.\n\nPlease contact our office today.\n\nDerby New Water System`,
+      BOIL_WATER: `BOIL WATER NOTICE\n\nDear Customer,\n\nDue to a system issue, you are advised to boil all drinking water before use until further notice. We will notify you when it is safe to resume normal use.\n\nDerby New Water System`,
+      GENERAL: `Dear ${selectedAcct.name},\n\n`,
+      PAYMENT_RECEIVED: `Dear ${selectedAcct.name},\n\nWe have received your payment on account ${selectedAcct.account_number||''}. Thank you.\n\nDerby New Water System`
+    };
+    document.getElementById('notice-msg').value = templates[type] || '';
+  }
+
+  async function submitNotice() {
+    const type     = document.getElementById('notice-type').value;
+    const delivery = document.getElementById('notice-delivery').value;
+    const msg      = document.getElementById('notice-msg').value.trim();
+    if (!msg) { alert('Message cannot be empty'); return; }
+    // Log to call log
+    await supa('call_log', '', 'POST', {
+      system_id:       activeSystemId,
+      account_id:      selectedAcct.account_id,
+      call_date:       new Date().toISOString().split('T')[0],
+      category:        'Notice Sent',
+      customer_name:   selectedAcct.name,
+      service_address: selectedAcct.address,
+      description:     `${type} sent via ${delivery}: ${msg.substring(0,100)}...`,
+      status:          'Resolved',
+      assigned_to:     'System'
+    });
+    closeActionPanel('panel-notice');
+    alert(`✓ NOTICE LOGGED\n${type} — ${delivery}\n${selectedAcct.name}`);
+  }
+
+  function disconnectAccount() {
+    if (!selectedAcct) return;
+    closeAllPanels();
+    document.getElementById('disc-acct-sub').textContent =
+      `${selectedAcct.account_number} — ${selectedAcct.name}`;
+    document.getElementById('disc-date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('panel-disconnect').classList.add('show');
+  }
+
+  async function submitDisconnect() {
+    const date   = document.getElementById('disc-date').value;
+    const reason = document.getElementById('disc-reason').value;
+    const read   = document.getElementById('disc-read').value;
+    const notes  = document.getElementById('disc-notes').value.trim();
+    if (!date) { alert('Disconnect date is required'); return; }
+    // Update account status
+    const res = await supa('accounts', `?account_id=eq.${selectedAcct.account_id}`, 'PATCH', {
+      status: 'DISCONNECTED',
+      service_end: date,
+      notes: `DISCONNECTED ${date}: ${reason}. ${notes}`
+    });
+    if (!res && res !== true) { alert('ERROR: Could not update account status'); return; }
+    // Log to call log
+    await supa('call_log', '', 'POST', {
+      system_id:       activeSystemId,
+      account_id:      selectedAcct.account_id,
+      call_date:       date,
+      category:        'Disconnection',
+      customer_name:   selectedAcct.name,
+      service_address: selectedAcct.address,
+      description:     `SERVICE DISCONNECTED. Reason: ${reason}. Final read: ${read||'N/A'}. ${notes}`,
+      status:          'Resolved',
+      assigned_to:     'Operator'
+    });
+    closeActionPanel('panel-disconnect');
+    closeDetail();
+    alert(`✓ ACCOUNT DISCONNECTED\n${selectedAcct.account_number} — ${selectedAcct.name}`);
+    loadAccounts();
+  }
+
+  function editAccount()  { alert('EDIT ACCOUNT — coming in next build'); }
+  function viewCallLog()  { window.location.href = 'calllog.html'; }
+
+  // ── NEW ACCOUNT ───────────────────────────────────────────────
+  function openNewAcct()  { document.getElementById('newAcctModal').classList.add('show'); }
+  function closeNewAcct() { document.getElementById('newAcctModal').classList.remove('show'); }
+
+  async function submitNewAcct() {
+    const first    = document.getElementById('nf-first').value.trim();
+    const last     = document.getElementById('nf-last').value.trim();
+    const phone    = document.getElementById('nf-phone').value.trim();
+    const email    = document.getElementById('nf-email').value.trim();
+    const billAddr = document.getElementById('nf-billaddr').value.trim();
+    const svcAddr  = document.getElementById('nf-svcaddr').value.trim();
+    const city     = document.getElementById('nf-city').value.trim();
+    const zip      = document.getElementById('nf-zip').value.trim();
+    const type     = document.getElementById('nf-type').value;
+    const meter    = document.getElementById('nf-meter').value.trim();
+    const deposit  = parseFloat(document.getElementById('nf-deposit').value||0);
+    const start    = document.getElementById('nf-startdate').value;
+    const notes    = document.getElementById('nf-notes').value.trim();
+
+    if (!first || !last || !svcAddr) {
+      alert('REQUIRED: First name, last name, and service address');
+      return;
+    }
+
+    // Generate account number
+    const acctNum = `${activeSystemCode}${String(allAccounts.length+1).padStart(2,'0')}`;
+
+    // Insert customer
+    const cust = await supa('customers', '', 'POST', {
+      org_id: ORG_ID,
+      full_name: `${first} ${last}`,
+      billing_address: billAddr || svcAddr,
+      billing_city: city,
+      billing_state: 'TX',
+      phone_primary: phone,
+      email: email
+    });
+    if (!cust || !cust[0]) { alert('ERROR: Could not create customer record'); return; }
+
+    // Insert service address
+    const addr = await supa('service_addresses', '', 'POST', {
+      system_id: activeSystemId,
+      street: svcAddr,
+      city: city,
+      state: 'TX',
+      zip: zip,
+      active: true
+    });
+    if (!addr || !addr[0]) { alert('ERROR: Could not create service address'); return; }
+
+    // Insert account
+    const acct = await supa('accounts', '', 'POST', {
+      system_id: activeSystemId,
+      customer_id: cust[0].customer_id,
+      address_id: addr[0].address_id,
+      account_number: acctNum,
+      account_type: type,
+      status: 'ACTIVE',
+      deposit: deposit,
+      service_start: start || new Date().toISOString().split('T')[0],
+      notes: notes
+    });
+    if (!acct || !acct[0]) { alert('ERROR: Could not create account'); return; }
+
+    closeNewAcct();
+    alert(`✓ ACCOUNT CREATED: ${acctNum}\n${first} ${last}\n${svcAddr}`);
+    loadAccounts();
+  }
+
+  // ── KEYBOARD ──────────────────────────────────────────────────
+  document.addEventListener('keydown', e => {
+    if (e.key==='Escape') closeDetail();
+    if (e.key==='/' && document.activeElement !== document.getElementById('searchInput')) {
+      e.preventDefault();
+      document.getElementById('searchInput').focus();
+    }
+  });
+
+  // ── BOOT ─────────────────────────────────────────────────────
+  loadSystems();
+</script>
+
+<!-- POST PAYMENT PANEL -->
+<div class="action-panel" id="panel-payment">
+  <div class="ap-header">
+    <div>
+      <div class="ap-title">POST PAYMENT</div>
+      <div class="ap-sub" id="pay-acct-sub">—</div>
+    </div>
+    <button class="ap-close" onclick="closeActionPanel('panel-payment')">✕</button>
+  </div>
+  <div class="ap-body">
+    <div class="form-row">
+      <label class="form-label">PAYMENT AMOUNT</label>
+      <input class="form-input" id="pay-amount" type="number" step="0.01" placeholder="0.00">
+    </div>
+    <div class="form-row">
+      <label class="form-label">PAYMENT DATE</label>
+      <input class="form-input" id="pay-date" type="date">
+    </div>
+    <div class="form-row">
+      <label class="form-label">PAYMENT METHOD</label>
+      <select class="form-select" id="pay-method">
+        <option value="CHECK">CHECK</option>
+        <option value="CASH">CASH</option>
+        <option value="SQUARE">SQUARE</option>
+        <option value="ACH">ACH / BANK TRANSFER</option>
+        <option value="MONEY_ORDER">MONEY ORDER</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label class="form-label">CHECK / REFERENCE NUMBER</label>
+      <input class="form-input" id="pay-ref" type="text" placeholder="Check #, Square ID, etc.">
+    </div>
+    <div class="form-row">
+      <label class="form-label">NOTES</label>
+      <input class="form-input" id="pay-notes" type="text" placeholder="Optional notes">
+    </div>
+    <div id="pay-cycle-warn" style="display:none;margin-top:16px;padding:12px;border:1px solid var(--orange);background:rgba(255,136,0,.06);">
+      <div style="font-family:Orbitron,monospace;font-size:9px;color:var(--orange);letter-spacing:2px;margin-bottom:8px;">⚠ CLOSED BILLING CYCLE</div>
+      <div style="font-size:10px;color:var(--text-mid);margin-bottom:12px;">This payment date falls within a closed billing cycle. Would you like to update the closed bill for this customer?</div>
+      <div style="display:flex;gap:8px;">
+        <button class="ap-btn success" style="font-size:9px;padding:7px" onclick="setUpdateCycle(true)">YES — UPDATE BILL</button>
+        <button class="ap-btn cancel" style="font-size:9px;padding:7px" onclick="setUpdateCycle(false)">POST TO CURRENT ONLY</button>
+      </div>
+    </div>
+  </div>
+  <div class="ap-footer">
+    <button class="ap-btn cancel" onclick="closeActionPanel('panel-payment')">CANCEL</button>
+    <button class="ap-btn submit" onclick="submitPayment()">POST PAYMENT</button>
+  </div>
+</div>
+
+<!-- PAYMENT ARRANGEMENT PANEL -->
+<div class="action-panel" id="panel-arrangement">
+  <div class="ap-header">
+    <div>
+      <div class="ap-title">PAYMENT ARRANGEMENT</div>
+      <div class="ap-sub" id="arr-acct-sub">—</div>
+    </div>
+    <button class="ap-close" onclick="closeActionPanel('panel-arrangement')">✕</button>
+  </div>
+  <div class="ap-body">
+    <div id="arr-balance-display" style="padding:16px;background:rgba(0,245,255,.04);border:1px solid var(--border);margin-bottom:20px;text-align:center;">
+      <div style="font-size:9px;color:var(--text-dim);letter-spacing:2px;margin-bottom:4px;">TOTAL BALANCE DUE</div>
+      <div id="arr-bal-val" style="font-family:Share Tech Mono,monospace;font-size:28px;color:var(--red);">—</div>
+    </div>
+    <div class="form-row">
+      <label class="form-label">DOWN PAYMENT AMOUNT</label>
+      <input class="form-input" id="arr-down" type="number" step="0.01" placeholder="0.00">
+    </div>
+    <div class="form-row">
+      <label class="form-label">DOWN PAYMENT DATE</label>
+      <input class="form-input" id="arr-down-date" type="date">
+    </div>
+    <div class="form-row-2">
+      <div>
+        <label class="form-label">MONTHLY PAYMENT</label>
+        <input class="form-input" id="arr-monthly" type="number" step="0.01" placeholder="0.00">
+      </div>
+      <div>
+        <label class="form-label">FIRST PAYMENT DATE</label>
+        <input class="form-input" id="arr-start" type="date">
+      </div>
+    </div>
+    <div class="form-row">
+      <label class="form-label">NUMBER OF PAYMENTS</label>
+      <input class="form-input" id="arr-count" type="number" placeholder="e.g. 3">
+    </div>
+    <div class="form-row">
+      <label class="form-label">ARRANGEMENT NOTES</label>
+      <input class="form-input" id="arr-notes" type="text" placeholder="Terms, conditions, verbal agreement details">
+    </div>
+  </div>
+  <div class="ap-footer">
+    <button class="ap-btn cancel" onclick="closeActionPanel('panel-arrangement')">CANCEL</button>
+    <button class="ap-btn success" onclick="submitArrangement()">CREATE ARRANGEMENT</button>
+  </div>
+</div>
+
+<!-- SEND NOTICE PANEL -->
+<div class="action-panel" id="panel-notice">
+  <div class="ap-header">
+    <div>
+      <div class="ap-title">SEND NOTICE</div>
+      <div class="ap-sub" id="notice-acct-sub">—</div>
+    </div>
+    <button class="ap-close" onclick="closeActionPanel('panel-notice')">✕</button>
+  </div>
+  <div class="ap-body">
+    <div class="form-row">
+      <label class="form-label">NOTICE TYPE</label>
+      <select class="form-select" id="notice-type" onchange="updateNoticeTemplate()">
+        <option value="PAST_DUE">PAST DUE NOTICE</option>
+        <option value="DISCONNECT_WARNING">DISCONNECT WARNING</option>
+        <option value="BOIL_WATER">BOIL WATER NOTICE</option>
+        <option value="GENERAL">GENERAL NOTICE</option>
+        <option value="PAYMENT_RECEIVED">PAYMENT RECEIVED CONFIRMATION</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label class="form-label">DELIVERY METHOD</label>
+      <select class="form-select" id="notice-delivery">
+        <option value="EMAIL">EMAIL</option>
+        <option value="SMS">SMS TEXT</option>
+        <option value="BOTH">EMAIL + SMS</option>
+        <option value="LOG_ONLY">LOG ONLY (NO SEND)</option>
+      </select>
+    </div>
+    <div id="notice-email-row" class="form-row">
+      <label class="form-label">EMAIL ADDRESS</label>
+      <input class="form-input" id="notice-email" type="text" placeholder="Customer email">
+    </div>
+    <div class="form-row">
+      <label class="form-label">MESSAGE</label>
+      <textarea class="form-input" id="notice-msg" rows="6" style="resize:vertical;line-height:1.6"></textarea>
+    </div>
+  </div>
+  <div class="ap-footer">
+    <button class="ap-btn cancel" onclick="closeActionPanel('panel-notice')">CANCEL</button>
+    <button class="ap-btn submit" onclick="submitNotice()">SEND NOTICE</button>
+  </div>
+</div>
+
+<!-- DISCONNECT PANEL -->
+<div class="action-panel" id="panel-disconnect">
+  <div class="ap-header">
+    <div>
+      <div class="ap-title" style="color:var(--red)">DISCONNECT SERVICE</div>
+      <div class="ap-sub" id="disc-acct-sub">—</div>
+    </div>
+    <button class="ap-close" onclick="closeActionPanel('panel-disconnect')">✕</button>
+  </div>
+  <div class="ap-body">
+    <div style="padding:16px;background:rgba(255,34,68,.06);border:1px solid rgba(255,34,68,.3);margin-bottom:20px;">
+      <div style="font-family:Orbitron,monospace;font-size:9px;color:var(--red);letter-spacing:2px;margin-bottom:6px;">⚡ THIS ACTION DISCONNECTS SERVICE</div>
+      <div style="font-size:10px;color:var(--text-mid);line-height:1.6">This will mark the account as DISCONNECTED and log the disconnection event. Service must be physically disconnected in the field separately.</div>
+    </div>
+    <div class="form-row">
+      <label class="form-label">DISCONNECT DATE</label>
+      <input class="form-input" id="disc-date" type="date">
+    </div>
+    <div class="form-row">
+      <label class="form-label">DISCONNECT REASON</label>
+      <select class="form-select" id="disc-reason">
+        <option value="NON_PAYMENT">NON-PAYMENT</option>
+        <option value="CUSTOMER_REQUEST">CUSTOMER REQUEST</option>
+        <option value="PROPERTY_SALE">PROPERTY SALE / TRANSFER</option>
+        <option value="MOVING">CUSTOMER MOVING</option>
+        <option value="OTHER">OTHER</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label class="form-label">FINAL METER READ</label>
+      <input class="form-input" id="disc-read" type="number" placeholder="Final meter reading">
+    </div>
+    <div class="form-row">
+      <label class="form-label">NOTES</label>
+      <input class="form-input" id="disc-notes" type="text" placeholder="Notes about disconnection">
+    </div>
+    <div class="form-row" style="display:flex;align-items:center;gap:10px">
+      <input type="checkbox" id="disc-send-notice" style="width:16px;height:16px;accent-color:var(--cyan)">
+      <label for="disc-send-notice" style="font-size:10px;color:var(--text-mid);cursor:pointer">Send disconnection notice to customer</label>
+    </div>
+  </div>
+  <div class="ap-footer">
+    <button class="ap-btn cancel" onclick="closeActionPanel('panel-disconnect')">CANCEL</button>
+    <button class="ap-btn danger" onclick="submitDisconnect()">CONFIRM DISCONNECT</button>
+  </div>
+</div>
+
+</body>
+</html>

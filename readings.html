@@ -260,24 +260,29 @@ async function loadSystems(){
     const s=systems[0];sel.innerHTML=`<option value="${s.system_id}">⬡ ${s.system_name.toUpperCase()}</option>`;
     activeSystemId=s.system_id;activeSystemCode=s.system_code;activeSystemName=s.system_name;applySystemRates(s);
   } else {
-    sel.innerHTML=`<option value="">⬡ ALL SYSTEMS</option>`+systems.map(s=>`<option value="${s.system_id}">⬡ ${s.system_name.toUpperCase()}</option>`).join('');
-    const first=systems[0];sel.value=first.system_id;
-    activeSystemId=first.system_id;activeSystemCode=first.system_code;activeSystemName=first.system_name;applySystemRates(first);
+    sel.innerHTML=`<option value="ALL">⬡ ALL SYSTEMS</option>`+systems.map(s=>`<option value="${s.system_id}">⬡ ${s.system_name.toUpperCase()}</option>`).join('');
+    sel.value='ALL';
+    activeSystemId=null;activeSystemCode='ALL';activeSystemName='ALL SYSTEMS';
   }
   loadReadings();
 }
 
 function switchSystem(val){
-  if(!val)return;const sys=allSystemsCache.find(s=>s.system_id===val);if(!sys)return;
+  if(!val||val==='ALL'){
+    activeSystemId=null;activeSystemCode='ALL';activeSystemName='ALL SYSTEMS';
+    pendingReads={};pendingImages={};loadReadings();return;
+  }
+  const sys=allSystemsCache.find(s=>s.system_id===val);if(!sys)return;
   activeSystemId=sys.system_id;activeSystemCode=sys.system_code;activeSystemName=sys.system_name;
   applySystemRates(sys);pendingReads={};pendingImages={};loadReadings();
 }
 
 async function loadReadings(){
-  if(!activeSystemId)return;
+  if(!allSystemsCache.length)return;
   document.getElementById('readTable').innerHTML='<tr class="loading-row"><td colspan="12">LOADING...</td></tr>';
-  const accounts=await supa('accounts',`?system_id=eq.${activeSystemId}&status=eq.ACTIVE&select=account_id,account_number,customers(full_name),service_addresses(street,city)`);
-  if(!accounts||!accounts.length){document.getElementById('readTable').innerHTML='<tr class="loading-row"><td colspan="12">NO ACTIVE ACCOUNTS FOR THIS SYSTEM</td></tr>';updateProgress();return;}
+  const sysFilter=activeSystemId?`system_id=eq.${activeSystemId}`:`system_id=in.(${allSystemsCache.map(s=>s.system_id).join(',')})`;
+  const accounts=await supa('accounts',`?${sysFilter}&status=eq.ACTIVE&select=account_id,account_number,customers(full_name),service_addresses(street,city)`);
+  if(!accounts||!accounts.length){document.getElementById('readTable').innerHTML='<tr class="loading-row"><td colspan="12">NO ACTIVE ACCOUNTS</td></tr>';updateProgress();return;}
   allAccounts=accounts;
   const reads=await supa('meter_reads',`?account_id=in.(${accounts.map(a=>a.account_id).join(',')})&select=*&order=read_date.desc`);
   existingReads={};if(reads){reads.forEach(r=>{if(!existingReads[r.account_id])existingReads[r.account_id]=r;});}
@@ -336,8 +341,7 @@ function sortByRoute(){allAccounts.sort((a,b)=>a.account_number.localeCompare(b.
 function clearUnread(){if(!confirm('Clear all unsaved reads? This cannot be undone.'))return;pendingReads={};renderTable();toast('UNSAVED READS CLEARED');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeImgModal();});
 
-initCycle();
-loadSystems();
+// boot is called from auth bootstrap below
 </script>
 <script>
 const _SUPA_URL='https://bvpesxpptgdwkhsewhke.supabase.co';
@@ -354,6 +358,8 @@ function signOut(){const s=getSession();if(s?.access_token){fetch(`${_SUPA_URL}/
   ORG_ID=staff.org_id;
   const el=document.getElementById('operatorName');
   if(el)el.textContent=staff.name||'OPERATOR';
+  initCycle();
+  loadSystems();
 })();
 </script>
 </body>

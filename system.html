@@ -7,186 +7,158 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
-<link href="theme.css" rel="stylesheet">
 <style>
-:root{
-  --sys:#ffffff;--sys-dim:#888899;--sys-rgb:255,255,255;
-  --bg:#050508;--bg2:#08080f;
-  --panel:rgba(255,255,255,.03);--border:rgba(255,255,255,.12);--border-hi:rgba(255,255,255,.42);
-  --text:#e8eef8;--text-dim:#2a2a44;--text-mid:#4a4a70;
-  --red:#ff2244;--orange:#ff8800;--yellow:#ffe600;--green:#00ff88;
-  --cyan:#00f5ff;--blue:#1a6fff;--wo:#8ab85e;
+:root {
+  --primary:#2c7ba2;--primary-soft:#d9ebf4;
+  --success:#348b67;--warning:#b8822f;--danger:#bf6157;--info:#4f8fbe;
+  --bg:#eef4f7;--bg2:#e4edf2;
+  --surface:rgba(255,255,255,0.94);--surface-strong:#ffffff;
+  --border:rgba(150,177,193,0.34);--border-strong:rgba(120,154,176,0.52);
+  --shadow:0 16px 42px rgba(49,83,105,0.10);
+  --text:#18384a;--text-soft:#5f7b8c;--text-muted:#8fa6b4;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;overflow:hidden;height:100vh;width:100vw;}
-body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:1000;}
-.corner{position:fixed;width:36px;height:36px;border-color:var(--sys);border-style:solid;opacity:.3;z-index:999;}
-.tl{top:6px;left:6px;border-width:2px 0 0 2px}.tr{top:6px;right:6px;border-width:2px 2px 0 0}
-.bl{bottom:6px;left:6px;border-width:0 0 2px 2px}.br{bottom:6px;right:6px;border-width:0 2px 2px 0}
+html,body{background:radial-gradient(circle at top left,rgba(124,175,205,0.20),transparent 30%),linear-gradient(180deg,#f7fbfd 0%,var(--bg) 100%);color:var(--text);font-family:"Aptos","Segoe UI","Helvetica Neue",Arial,sans-serif;overflow:hidden;height:100vh;width:100vw;}
 
-/* TOPBAR */
-.topbar{position:fixed;top:0;left:0;right:0;height:46px;background:linear-gradient(90deg,var(--bg2),#03030a,var(--bg2));border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:100;}
-.logo{font-family:'Orbitron',monospace;font-weight:900;font-size:20px;color:var(--sys);letter-spacing:8px;text-shadow:0 0 20px rgba(255,255,255,.4);text-decoration:none;}
-.sys-select{background:rgba(255,255,255,.05);border:1px solid var(--border-hi);color:var(--sys);font-family:'Share Tech Mono',monospace;font-size:11px;padding:4px 12px;letter-spacing:1px;cursor:pointer;outline:none;}
-.sys-select option{background:#08080f;color:#fff;font-family:'Share Tech Mono',monospace;}
-.sdot{width:7px;height:7px;border-radius:50%;background:var(--sys);box-shadow:0 0 8px var(--sys);animation:blink 2s infinite;}
+.topbar{position:fixed;top:0;left:0;right:0;height:58px;background:rgba(248,251,253,0.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;box-shadow:0 8px 22px rgba(80,114,138,0.08);}
+.logo{font-family:'Orbitron',monospace;font-weight:900;font-size:20px;color:var(--primary);letter-spacing:0.42rem;text-shadow:none;text-decoration:none;}
+.sys-select{background:rgba(255,255,255,0.90);border:1px solid var(--border-strong);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:4px 12px;letter-spacing:1px;cursor:pointer;outline:none;border-radius:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.70);}
+.sys-select option{background:#fff;color:var(--text);}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 0 5px rgba(52,139,103,0.16);animation:blink 2s infinite;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-#clock{color:var(--sys);font-size:13px;letter-spacing:2px;font-family:'Share Tech Mono',monospace;}
+#clock{color:var(--text-soft);font-size:13px;letter-spacing:2px;font-family:'Share Tech Mono',monospace;}
 
-/* TICKER */
-.ticker-wrap{position:fixed;top:46px;left:0;right:0;height:26px;background:rgba(5,5,8,.95);border-bottom:1px solid rgba(255,255,255,.06);overflow:hidden;z-index:99;display:flex;align-items:center;}
-.ticker-tag{background:var(--sys);color:#050508;font-family:'Orbitron',monospace;font-size:8px;font-weight:700;padding:0 10px;height:100%;display:flex;align-items:center;letter-spacing:2px;white-space:nowrap;flex-shrink:0;}
+.ticker-wrap{position:fixed;top:58px;left:0;right:0;height:26px;background:rgba(248,251,253,0.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);overflow:hidden;z-index:99;display:flex;align-items:center;}
+.ticker-tag{background:var(--primary);color:#fff;font-family:'Orbitron',monospace;font-size:8px;font-weight:700;padding:0 10px;height:100%;display:flex;align-items:center;letter-spacing:2px;white-space:nowrap;flex-shrink:0;}
 .ticker-track{display:flex;animation:tick 55s linear infinite;white-space:nowrap;}
-.ti{padding:0 28px;font-size:10px;color:rgba(220,228,248,.75);letter-spacing:.5px;}
-.ti .r{color:var(--red)}.ti .o{color:var(--orange)}.ti .g{color:var(--green)}.ti .w{color:var(--sys)}
+.ti{padding:0 28px;font-size:10px;color:var(--text);letter-spacing:.5px;}
 @keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-/* STATS BAR */
-.statsbar{position:fixed;top:72px;left:0;right:0;height:64px;background:rgba(5,5,8,.97);border-bottom:1px solid var(--border);display:flex;align-items:stretch;z-index:98;}
-.stat-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 16px;border-right:1px solid var(--border);flex:1;gap:2px;}
+.statsbar{position:fixed;top:84px;left:0;right:0;height:64px;background:rgba(248,251,253,0.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);display:flex;align-items:stretch;z-index:98;box-shadow:0 8px 22px rgba(80,114,138,0.08);}
+.stat-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 16px;border-right:1px solid var(--border);flex:1;gap:2px;background:rgba(248,251,253,0.82);}
 .stat-cell:last-child{border-right:none;}
-.stat-label{font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(220,228,248,.65);letter-spacing:1.5px;white-space:nowrap;}
-.stat-val{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:28px;}
-.sv-w{color:#fff;}.sv-g{color:var(--green);}.sv-r{color:var(--red);}.sv-o{color:var(--orange);}.sv-y{color:var(--yellow);}
+.stat-label{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-muted);letter-spacing:1.5px;white-space:nowrap;}
+.stat-val{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:28px;color:var(--text);text-shadow:none;}
+.sv-w{color:var(--primary);}.sv-g{color:var(--success);}.sv-r{color:var(--danger);}.sv-o{color:var(--warning);}.sv-y{color:var(--warning);}
 
-/* MAIN */
-.main{position:fixed;top:136px;bottom:80px;left:0;right:0;display:flex;overflow:hidden;}
+.main{position:fixed;top:148px;bottom:78px;left:0;right:0;display:flex;overflow:hidden;}
 
-/* LEFT PANEL */
-.left-panel{width:300px;flex-shrink:0;border-right:1px solid var(--border);background:rgba(255,255,255,.02);display:flex;flex-direction:column;overflow:hidden;}
-.lp-sec{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;}
+.left-panel{width:300px;flex-shrink:0;border-right:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column;overflow:hidden;}
+.lp-sec{padding:8px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
 .lp-sec.scroll{flex:1;overflow-y:auto;}
-.lp-title{font-family:'Orbitron',monospace;font-size:7px;letter-spacing:2.5px;color:var(--text-dim);margin-bottom:6px;}
+.lp-title{font-family:'Orbitron',monospace;font-size:7px;letter-spacing:2.5px;color:var(--primary);margin-bottom:6px;}
 
-/* SYSTEM LIST */
-.sys-row{display:flex;align-items:center;gap:8px;padding:6px 8px;cursor:pointer;border:1px solid transparent;transition:all .15s;margin-bottom:2px;}
-.sys-row:hover{border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.04);}
-.sys-row.active{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.07);}
+.sys-row{display:flex;align-items:center;gap:8px;padding:6px 8px;cursor:pointer;border:1px solid transparent;transition:all .15s;margin-bottom:2px;border-radius:8px;}
+.sys-row:hover{border-color:var(--border-strong);background:rgba(223,237,245,0.55);}
+.sys-row.active{border-color:rgba(44,123,162,.45);background:rgba(44,123,162,.08);}
 .sys-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.sys-code{font-family:'Orbitron',monospace;font-size:8px;color:rgba(255,255,255,.6);letter-spacing:1px;width:68px;flex-shrink:0;}
+.sys-code{font-family:'Orbitron',monospace;font-size:8px;color:var(--primary);letter-spacing:1px;width:68px;flex-shrink:0;}
 .sys-name{font-family:'Rajdhani',sans-serif;font-size:11px;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.sys-acct{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-mid);}
+.sys-acct{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-muted);}
 
-/* CONFIG DETAILS */
-.cfg-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);}
-.cfg-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-mid);letter-spacing:1px;}
+.cfg-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border);}
+.cfg-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-muted);letter-spacing:1px;}
 .cfg-val{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;color:var(--text);}
 
-/* ASSET LIST */
-.asset-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.asset-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);}
 .asset-icon{font-size:11px;width:18px;text-align:center;flex-shrink:0;}
 .asset-name{font-size:11px;color:var(--text);flex:1;}
-.asset-status{font-family:'Orbitron',monospace;font-size:6px;padding:2px 5px;border:1px solid;}
-.as-active{border-color:var(--green);color:var(--green);}
-.as-maint{border-color:var(--orange);color:var(--orange);}
-.as-offline{border-color:var(--red);color:var(--red);}
+.asset-status{font-family:'Orbitron',monospace;font-size:6px;padding:2px 5px;border:1px solid;border-radius:999px;background:rgba(255,255,255,0.80);}
+.as-active{border-color:rgba(52,139,103,.45);color:var(--success);}
+.as-maint{border-color:rgba(184,130,47,.45);color:var(--warning);}
+.as-offline{border-color:rgba(191,97,87,.35);color:var(--danger);}
 
-/* MAP AREA */
 .map-area{flex:1;position:relative;overflow:hidden;}
 #map{width:100%;height:100%;}
 
-/* MAP LAYER TOGGLES */
 .layer-toggles{position:absolute;top:12px;right:12px;display:flex;flex-direction:column;gap:5px;z-index:10;}
-.ltbtn{font-family:'Orbitron',monospace;font-size:7px;padding:5px 10px;border:1px solid rgba(255,255,255,.2);background:rgba(5,5,8,.85);color:rgba(255,255,255,.5);cursor:pointer;letter-spacing:1px;transition:all .2s;white-space:nowrap;}
-.ltbtn:hover{border-color:rgba(255,255,255,.5);color:#fff;}
-.ltbtn.on{border-color:var(--sys);color:var(--sys);background:rgba(255,255,255,.1);box-shadow:0 0 10px rgba(255,255,255,.15);}
-.ltbtn.layer-wo.on{border-color:var(--wo);color:var(--wo);}
-.ltbtn.layer-comply.on{border-color:var(--orange);color:var(--orange);}
-.ltbtn.layer-cust.on{border-color:var(--green);color:var(--green);}
+.ltbtn{font-family:'Orbitron',monospace;font-size:7px;padding:5px 10px;border:1px solid var(--border-strong);background:rgba(248,251,253,0.88);color:var(--text-soft);cursor:pointer;letter-spacing:1px;transition:all .2s;white-space:nowrap;border-radius:12px;backdrop-filter:blur(12px);}
+.ltbtn:hover{border-color:rgba(44,123,162,.45);color:var(--primary);}
+.ltbtn.on{border-color:rgba(44,123,162,.45);color:var(--primary);background:var(--primary-soft);}
+.ltbtn.layer-wo.on{border-color:rgba(52,139,103,.45);color:var(--success);background:rgba(52,139,103,.08);}
+.ltbtn.layer-comply.on{border-color:rgba(184,130,47,.45);color:var(--warning);background:rgba(184,130,47,.06);}
+.ltbtn.layer-cust.on{border-color:rgba(52,139,103,.35);color:var(--success);background:rgba(52,139,103,.06);}
 
-/* MAP COMPASS / SCALE */
-.map-info{position:absolute;bottom:12px;left:12px;font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(255,255,255,.4);letter-spacing:1px;background:rgba(5,5,8,.7);padding:5px 10px;border:1px solid rgba(255,255,255,.08);}
+.map-info{position:absolute;bottom:12px;left:12px;font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-soft);letter-spacing:1px;background:rgba(248,251,253,0.88);padding:5px 10px;border:1px solid var(--border);border-radius:8px;backdrop-filter:blur(12px);}
 
-/* DETAIL PANEL */
-.detail-panel{position:fixed;top:136px;right:-440px;bottom:80px;width:440px;background:var(--bg2);border-left:1px solid var(--border-hi);z-index:300;display:flex;flex-direction:column;transition:right .25s ease;box-shadow:-20px 0 60px rgba(0,0,0,.9);}
+.detail-panel{position:fixed;top:148px;right:-440px;bottom:78px;width:440px;background:var(--surface-strong);border-left:1px solid var(--border-strong);z-index:300;display:flex;flex-direction:column;transition:right .25s ease;box-shadow:-20px 0 60px rgba(0,0,0,.15);}
 .detail-panel.open{right:0;}
-.dp-header{padding:14px 18px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(255,255,255,.07),transparent);flex-shrink:0;position:relative;}
-.dp-sys-code{font-family:'Orbitron',monospace;font-size:9px;color:var(--sys);letter-spacing:3px;margin-bottom:2px;}
+.dp-header{padding:14px 18px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(216,235,244,0.65),rgba(255,255,255,0.72));flex-shrink:0;position:relative;}
+.dp-sys-code{font-family:'Orbitron',monospace;font-size:9px;color:var(--primary);letter-spacing:3px;margin-bottom:2px;}
 .dp-sys-name{font-size:18px;font-weight:700;color:var(--text);}
-.dp-close{position:absolute;top:12px;right:14px;background:none;border:none;color:var(--text-mid);font-size:20px;cursor:pointer;}
-.dp-close:hover{color:var(--red);}
+.dp-close{position:absolute;top:12px;right:14px;background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer;}
+.dp-close:hover{color:var(--danger);}
 .dp-body{flex:1;overflow-y:auto;}
-.dp-sec-title{font-family:'Orbitron',monospace;font-size:7px;letter-spacing:2px;color:var(--text-dim);padding:7px 18px;background:rgba(255,255,255,.02);border-bottom:1px solid rgba(255,255,255,.05);border-top:1px solid rgba(255,255,255,.05);}
-.dp-row{display:flex;justify-content:space-between;padding:7px 18px;border-bottom:1px solid rgba(255,255,255,.03);}
-.dp-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-mid);letter-spacing:1px;}
+.dp-sec-title{font-family:'Orbitron',monospace;font-size:7px;letter-spacing:2px;color:var(--primary);padding:7px 18px;background:rgba(243,248,251,0.82);border-bottom:1px solid var(--border);border-top:1px solid var(--border);}
+.dp-row{display:flex;justify-content:space-between;padding:7px 18px;border-bottom:1px solid var(--border);}
+.dp-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-muted);letter-spacing:1px;}
 .dp-val{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);}
 .dp-footer{flex-shrink:0;padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;}
-.dp-btn{flex:1;padding:9px;font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1px;cursor:pointer;border:1px solid;background:transparent;text-align:center;transition:all .15s;}
-.dp-btn-w{border-color:var(--sys);color:var(--sys);}
-.dp-btn-w:hover{background:rgba(255,255,255,.08);}
-.dp-btn-ghost{border-color:var(--border);color:var(--text-mid);}
-.dp-btn-ghost:hover{border-color:var(--sys);color:var(--sys);}
+.dp-btn{flex:1;padding:9px;font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1px;cursor:pointer;border:1px solid var(--border-strong);background:rgba(255,255,255,0.88);color:var(--text-soft);text-align:center;transition:all .15s;border-radius:12px;}
+.dp-btn-w{border-color:rgba(44,123,162,0.45);color:var(--primary);}
+.dp-btn-w:hover{background:var(--primary-soft);}
+.dp-btn-ghost{border-color:var(--border-strong);color:var(--text-muted);}
+.dp-btn-ghost:hover{border-color:rgba(44,123,162,0.38);color:var(--primary);}
 
-/* SCROLLBAR */
-::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar{width:8px;height:8px;}
 ::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);}
+::-webkit-scrollbar-thumb{background:rgba(133,161,178,0.45);border-radius:999px;}
 
-/* MAPBOX CUSTOM MARKERS */
-.mk-pump{width:16px;height:16px;background:var(--orange);border-radius:50%;border:2px solid rgba(255,255,255,.8);display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:#fff;font-family:'Orbitron',monospace;cursor:pointer;box-shadow:0 0 8px rgba(255,136,0,.6);}
-.mk-tank{width:14px;height:14px;background:var(--cyan);border-radius:2px;border:2px solid rgba(255,255,255,.8);cursor:pointer;box-shadow:0 0 8px rgba(0,245,255,.5);}
-.mk-valve{width:12px;height:12px;background:var(--yellow);border-radius:50%;border:2px solid rgba(255,255,255,.6);cursor:pointer;}
-.mk-sample{width:10px;height:10px;background:var(--green);border-radius:50%;border:2px solid rgba(255,255,255,.6);cursor:pointer;box-shadow:0 0 6px rgba(0,255,136,.4);}
-.mk-meter{width:10px;height:10px;background:var(--blue);border-radius:2px;border:2px solid rgba(255,255,255,.5);cursor:pointer;}
-.mk-wo-crit{width:12px;height:12px;background:var(--red);border-radius:50%;border:2px solid #fff;cursor:pointer;animation:critPulse 1.5s infinite;}
-.mk-wo-high{width:11px;height:11px;background:var(--orange);border-radius:50%;border:2px solid #fff;cursor:pointer;}
-.mk-wo-med{width:10px;height:10px;background:var(--wo);border-radius:50%;border:2px solid #fff;cursor:pointer;}
-.mk-cust-active{width:6px;height:6px;background:var(--green);border-radius:50%;opacity:.7;}
-.mk-cust-inactive{width:5px;height:5px;background:#555;border-radius:50%;opacity:.5;}
-.mk-cust-disc{width:6px;height:6px;background:var(--red);border-radius:50%;opacity:.7;}
-@keyframes critPulse{0%,100%{box-shadow:0 0 4px rgba(255,34,68,.4)}50%{box-shadow:0 0 12px rgba(255,34,68,.9)}}
+/* MAPBOX MARKERS — Enterprise palette */
+.mk-pump{width:16px;height:16px;background:var(--warning);border-radius:50%;border:2px solid rgba(255,255,255,.8);display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:#fff;font-family:'Orbitron',monospace;cursor:pointer;}
+.mk-tank{width:14px;height:14px;background:var(--primary);border-radius:2px;border:2px solid rgba(255,255,255,.8);cursor:pointer;}
+.mk-valve{width:12px;height:12px;background:var(--warning);border-radius:50%;border:2px solid rgba(255,255,255,.6);cursor:pointer;}
+.mk-sample{width:10px;height:10px;background:var(--success);border-radius:50%;border:2px solid rgba(255,255,255,.6);cursor:pointer;}
+.mk-meter{width:10px;height:10px;background:var(--info);border-radius:2px;border:2px solid rgba(255,255,255,.5);cursor:pointer;}
+.mk-wo-crit{width:12px;height:12px;background:var(--danger);border-radius:50%;border:2px solid #fff;cursor:pointer;animation:critPulse 1.5s infinite;}
+.mk-wo-high{width:11px;height:11px;background:var(--warning);border-radius:50%;border:2px solid #fff;cursor:pointer;}
+.mk-wo-med{width:10px;height:10px;background:var(--success);border-radius:50%;border:2px solid #fff;cursor:pointer;}
+.mk-cust-active{width:6px;height:6px;background:var(--success);border-radius:50%;opacity:.7;}
+.mk-cust-inactive{width:5px;height:5px;background:#aaa;border-radius:50%;opacity:.5;}
+.mk-cust-disc{width:6px;height:6px;background:var(--danger);border-radius:50%;opacity:.7;}
+@keyframes critPulse{0%,100%{box-shadow:0 0 4px rgba(191,97,87,.4)}50%{box-shadow:0 0 12px rgba(191,97,87,.8)}}
 
-/* TOAST */
-.toast{position:fixed;bottom:90px;right:20px;background:var(--bg2);border:1px solid var(--sys);padding:10px 18px;font-family:'Orbitron',monospace;font-size:9px;color:var(--sys);letter-spacing:2px;z-index:900;opacity:0;transition:opacity .3s;pointer-events:none;}
+.toast{position:fixed;bottom:88px;right:20px;background:var(--surface-strong);border:1px solid var(--primary);padding:10px 18px;font-family:'Orbitron',monospace;font-size:9px;color:var(--primary);letter-spacing:2px;z-index:900;opacity:0;transition:opacity .3s;pointer-events:none;border-radius:12px;box-shadow:var(--shadow);}
 .toast.show{opacity:1;}
 
-/* NAV — white theme */
-.botnav{position:fixed;bottom:0;left:0;right:0;height:80px;background:linear-gradient(90deg,var(--bg2),#03030a,var(--bg2));border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:5px;padding:0 14px;z-index:100;}
-.navbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:58px;height:68px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.50);cursor:pointer;transition:all .2s;font-size:8px;letter-spacing:.8px;text-transform:uppercase;font-family:'Share Tech Mono',monospace;position:relative;overflow:hidden;text-decoration:none;flex-shrink:0;}
-.navbtn::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--sys);transform:scaleX(0);transition:transform .2s;}
-.navbtn:hover::after,.navbtn.active::after{transform:scaleX(1)}
-.navbtn:hover{color:rgba(255,255,255,.85);border-color:rgba(255,255,255,.45);background:rgba(255,255,255,.06);}
-.navbtn.active{color:#fff;border-color:#fff;background:rgba(255,255,255,.09);box-shadow:0 0 16px rgba(255,255,255,.22),inset 0 0 14px rgba(255,255,255,.05);}
-.navicon{font-size:20px;line-height:1;}
+.botnav{position:fixed;bottom:0;left:0;right:0;height:78px;background:rgba(248,251,253,0.92);backdrop-filter:blur(18px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:6px;padding:0 16px;z-index:100;box-shadow:0 -8px 22px rgba(80,114,138,0.08);}
+.navbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:72px;height:62px;background:rgba(255,255,255,0.88);border:1px solid var(--border-strong);color:var(--text-soft);cursor:pointer;transition:all .2s;font-size:8px;letter-spacing:1px;text-transform:uppercase;font-family:'Share Tech Mono',monospace;position:relative;overflow:hidden;text-decoration:none;border-radius:12px;box-shadow:none;}
+.navbtn::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--primary);transform:scaleX(0);transition:transform .2s;}
+.navbtn:hover::after,.navbtn.active::after{transform:scaleX(1);}
+.navbtn:hover{color:var(--primary);border-color:rgba(44,123,162,0.38);}
+.navbtn.active{color:var(--primary);border-color:rgba(44,123,162,0.45);background:var(--primary-soft);}
+.navicon{font-size:20px;}
 </style>
 </head>
 <body>
 
-<div class="corner tl"></div><div class="corner tr"></div>
-<div class="corner bl"></div><div class="corner br"></div>
-
-<!-- TOPBAR -->
 <div class="topbar">
   <a class="logo" href="index.html">RADEUS</a>
   <div style="display:flex;align-items:center;gap:14px">
     <div class="sdot"></div>
-    <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:rgba(255,255,255,.45);letter-spacing:3px">SYSTEM</span>
+    <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-soft);letter-spacing:3px">SYSTEM</span>
     <select class="sys-select" id="sysSelect" onchange="selectSystem(this.value)">
       <option value="">⬡ ALL SYSTEMS</option>
     </select>
   </div>
   <div style="display:flex;align-items:center;gap:14px">
-    <span style="font-size:9px;color:var(--text-mid);font-family:'Share Tech Mono',monospace">OPERATOR: <span style="color:var(--sys)">ADMIN</span></span>
+    <span style="font-size:9px;color:var(--text-soft);font-family:'Share Tech Mono',monospace">OPERATOR: <span id="operatorName" style="color:var(--text)">—</span></span>
     <span id="clock">--:--:--</span>
   </div>
 </div>
 
-<!-- TICKER -->
 <div class="ticker-wrap">
   <div class="ticker-tag">⬡ SYSTEM FEED</div>
   <div style="overflow:hidden;flex:1">
     <div class="ticker-track" id="tickerTrack">
-      <span class="ti" style="color:rgba(255,255,255,.75)">⬡ SYSTEM MONITOR ACTIVE — 9 WATER SYSTEMS — RADEUS INFRASTRUCTURE LAYER</span>
-      <span class="ti" style="color:var(--red)">⬡ OAK HILL NWS — BOIL WATER NOTICE ACTIVE — BWN verification sampling IN PROGRESS</span>
-      <span class="ti" style="color:var(--orange)">⬡ DERBY NWS — ACTIVE LEAK — CR 4401 — Mike Solis IN PROGRESS</span>
-      <span class="ti" style="color:rgba(255,255,255,.75)">⬡ SYSTEM MONITOR ACTIVE — 9 WATER SYSTEMS — RADEUS INFRASTRUCTURE LAYER</span>
-      <span class="ti" style="color:var(--red)">⬡ OAK HILL NWS — BOIL WATER NOTICE ACTIVE — BWN verification sampling IN PROGRESS</span>
-      <span class="ti" style="color:var(--orange)">⬡ DERBY NWS — ACTIVE LEAK — CR 4401 — Mike Solis IN PROGRESS</span>
+      <span class="ti" style="color:var(--text)">⬡ SYSTEM MONITOR ACTIVE — RADEUS INFRASTRUCTURE LAYER</span>
+      <span class="ti" style="color:var(--danger)">⬡ ACTIVE ALERTS WILL APPEAR HERE</span>
+      <span class="ti" style="color:var(--text)">⬡ SYSTEM MONITOR ACTIVE — RADEUS INFRASTRUCTURE LAYER</span>
+      <span class="ti" style="color:var(--danger)">⬡ ACTIVE ALERTS WILL APPEAR HERE</span>
     </div>
   </div>
 </div>
 
-<!-- STATS BAR -->
 <div class="statsbar">
   <div class="stat-cell"><div class="stat-label">SYSTEMS</div><div class="stat-val sv-w" id="st-sys">—</div></div>
   <div class="stat-cell"><div class="stat-label">ACCOUNTS</div><div class="stat-val sv-w" id="st-acct">—</div></div>
@@ -196,52 +168,36 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
   <div class="stat-cell"><div class="stat-label">BWN ACTIVE</div><div class="stat-val sv-r" id="st-bwn">—</div></div>
 </div>
 
-<!-- MAIN -->
 <div class="main">
-
-  <!-- LEFT PANEL -->
   <div class="left-panel">
-
-    <!-- SYSTEM LIST -->
     <div class="lp-sec" style="flex-shrink:0">
       <div class="lp-title">⬡ WATER SYSTEMS</div>
       <div id="sysList"></div>
     </div>
-
-    <!-- SELECTED SYSTEM CONFIG -->
     <div class="lp-sec" id="cfgPanel" style="flex-shrink:0;display:none">
       <div class="lp-title" id="cfgTitle">◎ SYSTEM CONFIG</div>
       <div id="cfgRows"></div>
     </div>
-
-    <!-- INFRASTRUCTURE ASSETS -->
     <div class="lp-sec scroll">
       <div class="lp-title">◎ INFRASTRUCTURE ASSETS</div>
       <div id="assetList">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim)">SELECT A SYSTEM</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-muted)">SELECT A SYSTEM</div>
       </div>
     </div>
-
   </div>
 
-  <!-- MAP -->
   <div class="map-area">
     <div id="map"></div>
-
-    <!-- LAYER TOGGLES -->
     <div class="layer-toggles">
-      <button class="ltbtn layer-infra on"  onclick="toggleLayer('infra',this)">⬡ INFRASTRUCTURE</button>
-      <button class="ltbtn layer-wo on"     onclick="toggleLayer('wo',this)">🔧 WORK ORDERS</button>
+      <button class="ltbtn layer-infra on" onclick="toggleLayer('infra',this)">⬡ INFRASTRUCTURE</button>
+      <button class="ltbtn layer-wo on" onclick="toggleLayer('wo',this)">🔧 WORK ORDERS</button>
       <button class="ltbtn layer-comply on" onclick="toggleLayer('comply',this)">📋 COMPLIANCE</button>
-      <button class="ltbtn layer-cust"      onclick="toggleLayer('cust',this)">👤 CUSTOMERS</button>
+      <button class="ltbtn layer-cust" onclick="toggleLayer('cust',this)">👤 CUSTOMERS</button>
     </div>
-
     <div class="map-info" id="mapInfo">⬡ RADEUS SYSTEM MAP — ALL SYSTEMS VIEW</div>
   </div>
-
 </div>
 
-<!-- DETAIL PANEL -->
 <div class="detail-panel" id="detailPanel">
   <div class="dp-header">
     <div class="dp-sys-code" id="dp-code">—</div>
@@ -257,7 +213,6 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 
 <div class="toast" id="toast"></div>
 
-<!-- NAV -->
 <div class="botnav">
   <a class="navbtn" href="index.html"><span class="navicon">⬡</span>COMMAND</a>
   <a class="navbtn" href="accounts.html"><span class="navicon">👤</span>ACCOUNTS</a>
@@ -275,7 +230,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 // ── CONFIG ─────────────────────────────────────────────────────
 const SUPA_URL='https://bvpesxpptgdwkhsewhke.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2cGVzeHBwdGdkd2toc2V3aGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNzcwNTksImV4cCI6MjA5MTk1MzA1OX0._th9UdQKqIWvqgTrxxpd5IfTlexCUeyWC5aGwRJYZj8';
-const ORG_ID='00000000-0000-0000-0000-000000000001';
+let ORG_ID=null;
 const MAPBOX_TOKEN='pk.eyJ1IjoicmFkZXVzIiwiYSI6ImNtbzNtYXNqMzE2ZW8ycXBuYW04cmo4amoifQ.Q98K-t05aYn4bvViWOkw1Q';
 
 // ── STATE ──────────────────────────────────────────────────────
@@ -319,12 +274,13 @@ function initMap(){
 
 // ── LOAD ALL DATA ──────────────────────────────────────────────
 async function loadAll(){
+  if(!ORG_ID)return;
   const [systems,assets,wos,addresses,compliance]=await Promise.all([
     supa('water_systems',`?org_id=eq.${ORG_ID}&select=*&order=system_name`),
     supa('infrastructure',`?org_id=eq.${ORG_ID}&select=*`),
     supa('work_orders',`?select=*&order=scheduled_date.asc`),
-    supa('service_addresses',`?org_id=eq.${ORG_ID}&select=address_id,latitude,longitude,city,state,system_id&limit=500`),
-    supa('compliance_events',`?org_id=eq.${ORG_ID}&select=*`)
+    supa('service_addresses',`?select=address_id,latitude,longitude,city,state,system_id&limit=500`),
+    supa('compliance_events',`?select=*`)
   ]);
   allSystems=systems||[];
   allAssets=assets||[];
@@ -358,7 +314,7 @@ function buildSystemList(){
   el.innerHTML=allSystems.map(s=>{
     const hasWO=allWOs.some(w=>w.system_id===s.system_id&&!['COMPLETED','CANCELLED'].includes(w.status));
     const hasBWN=allCompliance.some(c=>c.system_id===s.system_id&&c.category==='BWN'&&c.status!=='RESOLVED');
-    const dotColor=hasBWN?'var(--red)':hasWO?'var(--orange)':'var(--green)';
+    const dotColor=hasBWN?'var(--danger)':hasWO?'var(--warning)':'var(--success)';
     const shortName=s.system_name.replace(/\s*new\s*water\s*system/i,' NWS').trim();
     return `<div class="sys-row" id="sr-${s.system_id}" onclick="selectSystem('${s.system_id}')">
       <div class="sys-dot" style="background:${dotColor};box-shadow:0 0 5px ${dotColor}"></div>
@@ -390,7 +346,7 @@ function selectSystem(id){
     updateMapInfo(activeSystem);
   } else {
     document.getElementById('cfgPanel').style.display='none';
-    document.getElementById('assetList').innerHTML='<div style="font-family:\'Share Tech Mono\',monospace;font-size:9px;color:var(--text-dim)">SELECT A SYSTEM</div>';
+    document.getElementById('assetList').innerHTML='<div style="font-family:\'Share Tech Mono\',monospace;font-size:9px;color:var(--text-muted)">SELECT A SYSTEM</div>';
     map.flyTo({center:[-99.5,29.8],zoom:6.5,duration:1500});
     document.getElementById('mapInfo').textContent='⬡ RADEUS SYSTEM MAP — ALL SYSTEMS VIEW';
   }
@@ -425,7 +381,7 @@ function showSystemConfig(sys){
     <div class="cfg-row"><span class="cfg-label">BASE RATE</span><span class="cfg-val">$${(sys.base_rate||40).toFixed(2)}/mo</span></div>
     <div class="cfg-row"><span class="cfg-label">ENERGY SURCHARGE</span><span class="cfg-val">$${(sys.energy_surcharge||6).toFixed(2)}</span></div>
     <div class="cfg-row"><span class="cfg-label">LATE FEE</span><span class="cfg-val">$${(sys.late_fee_amount||10).toFixed(2)}</span></div>
-    <div class="cfg-row"><span class="cfg-label">ACTIVE WO's</span><span class="cfg-val" style="color:${woCount>0?'var(--orange)':'var(--green)'}">${woCount}</span></div>
+    <div class="cfg-row"><span class="cfg-label">ACTIVE WO's</span><span class="cfg-val" style="color:${woCount>0?'var(--warning)':'var(--success)'}">${woCount}</span></div>
     <div class="cfg-row"><span class="cfg-label">INFRASTRUCTURE</span><span class="cfg-val">${infraCount} ASSETS</span></div>
   `;
 }
@@ -434,7 +390,7 @@ function showSystemConfig(sys){
 function loadAssets(sysId){
   const assets=allAssets.filter(a=>a.system_id===sysId);
   const el=document.getElementById('assetList');
-  if(!assets.length){el.innerHTML='<div style="font-size:9px;color:var(--text-dim)">NO ASSETS</div>';return;}
+  if(!assets.length){el.innerHTML='<div style="font-size:9px;color:var(--text-muted)">NO ASSETS</div>';return;}
   const iconMap={PUMP_STATION:'🔴',STORAGE_TANK:'🔵',VALVE:'🟡',SAMPLE_POINT:'🟢',METER_BANK:'⚪',BOOSTER:'🔴'};
   const statusCls={ACTIVE:'as-active',MAINTENANCE:'as-maint',OFFLINE:'as-offline',INACTIVE:'as-offline'};
   el.innerHTML=assets.map(a=>`
@@ -501,7 +457,7 @@ function renderComplyMarkers(){
     const anchor=infraAssets[0];
     const jitter=()=>(Math.random()-0.5)*0.006;
     const el=document.createElement('div');
-    el.style.cssText='width:10px;height:10px;background:var(--orange);border-radius:2px;border:2px solid rgba(255,136,0,.8);cursor:pointer;';
+    el.style.cssText='width:10px;height:10px;background:var(--warning);border-radius:2px;border:2px solid rgba(184,130,47,.6);cursor:pointer;';
     el.title=`OVERDUE: ${c.event_type||c.category}`;
     const mk=new mapboxgl.Marker({element:el}).setLngLat([anchor.longitude+jitter(),anchor.latitude+jitter()]).addTo(map);
     markers.comply.push(mk);
@@ -540,12 +496,12 @@ function showAssetDetail(a){
     <div class="dp-sec-title">ASSET DETAIL</div>
     <div class="dp-row"><div class="dp-label">SYSTEM</div><div class="dp-val">${sys?.system_code||'—'}</div></div>
     <div class="dp-row"><div class="dp-label">TYPE</div><div class="dp-val">${a.asset_type.replace(/_/g,' ')}</div></div>
-    <div class="dp-row"><div class="dp-label">STATUS</div><div class="dp-val" style="color:${a.status==='ACTIVE'?'var(--green)':a.status==='MAINTENANCE'?'var(--orange)':'var(--red)'}">${a.status}</div></div>
+    <div class="dp-row"><div class="dp-label">STATUS</div><div class="dp-val" style="color:${a.status==='ACTIVE'?'var(--success)':a.status==='MAINTENANCE'?'var(--warning)':'var(--danger)'}">${a.status}</div></div>
     ${a.capacity_gallons?`<div class="dp-row"><div class="dp-label">CAPACITY</div><div class="dp-val">${Number(a.capacity_gallons).toLocaleString()} GAL</div></div>`:''}
     ${a.hp?`<div class="dp-row"><div class="dp-label">HORSEPOWER</div><div class="dp-val">${a.hp} HP</div></div>`:''}
     <div class="dp-row"><div class="dp-label">LAST INSPECTION</div><div class="dp-val">${a.last_inspection||'—'}</div></div>
     <div class="dp-row"><div class="dp-label">LOCATION</div><div class="dp-val" style="font-size:8px;text-align:right;max-width:200px">${a.location_desc||'—'}</div></div>
-    ${a.description?`<div class="dp-sec-title">NOTES</div><div style="padding:10px 18px;font-size:11px;color:var(--text-mid)">${a.description}</div>`:''}
+    ${a.description?`<div class="dp-sec-title">NOTES</div><div style="padding:10px 18px;font-size:11px;color:var(--text-soft)">${a.description}</div>`:''}
   `;
   document.getElementById('detailPanel').classList.add('open');
 }
@@ -555,6 +511,25 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDetail();});
 
 // ── INIT ───────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded',initMap);
+</script>
+</script>
+
+<script>
+const _SUPA_URL='https://bvpesxpptgdwkhsewhke.supabase.co';
+const _SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2cGVzeHBwdGdkd2toc2V3aGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNzcwNTksImV4cCI6MjA5MTk1MzA1OX0._th9UdQKqIWvqgTrxxpd5IfTlexCUeyWC5aGwRJYZj8';
+const SESSION_KEY='radeus_session';
+function getSession(){try{const s=JSON.parse(localStorage.getItem(SESSION_KEY)||'null');if(!s)return null;if(s.expires_at&&Date.now()/1000>s.expires_at){localStorage.removeItem(SESSION_KEY);return null;}return s;}catch{return null;}}
+function getStoredStaff(){try{const r=localStorage.getItem('radeus_staff');return r?JSON.parse(r):null;}catch{return null;}}
+function signOut(){const s=getSession();if(s?.access_token){fetch(`${_SUPA_URL}/auth/v1/logout`,{method:'POST',headers:{'apikey':_SUPA_KEY,'Authorization':`Bearer ${s.access_token}`}}).catch(()=>{});}localStorage.removeItem(SESSION_KEY);localStorage.removeItem('radeus_staff');window.location.href='login.html';}
+(function initAuth(){
+  const s=getSession();
+  if(!s||s.expires_at<Date.now()/1000){window.location.href='login.html';return;}
+  const staff=getStoredStaff();
+  if(!staff||!staff.org_id){window.location.href='login.html';return;}
+  ORG_ID=staff.org_id;
+  const el=document.getElementById('operatorName');
+  if(el)el.textContent=staff.name||'OPERATOR';
+})();
 </script>
 </body>
 </html>

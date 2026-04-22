@@ -5,205 +5,173 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RADEUS — Accounts</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
-<link href="theme.css" rel="stylesheet">
 <style>
-  :root {
-    --cyan:#00f5ff;--cyan-dim:#00a8b5;--green:#00ff88;--red:#ff2244;
-    --orange:#ff8800;--yellow:#ffe600;--blue:#0088ff;--purple:#aa00ff;
-    --bg:#020c14;--bg2:#041220;--panel:rgba(0,245,255,.03);
-    --border:rgba(0,245,255,.12);--border-hi:rgba(0,245,255,.4);
-    --text:#c8eaf0;--text-dim:#3d6a78;--text-mid:#6a9aaa;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-weight:400;overflow:hidden;height:100vh;width:100vw;}
-  body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);pointer-events:none;z-index:1000;}
-  .corner{position:fixed;width:36px;height:36px;border-color:var(--cyan);border-style:solid;opacity:.5;z-index:999;}
-  .tl{top:6px;left:6px;border-width:2px 0 0 2px}.tr{top:6px;right:6px;border-width:2px 2px 0 0}
-  .bl{bottom:6px;left:6px;border-width:0 0 2px 2px}.br{bottom:6px;right:6px;border-width:0 2px 2px 0}
+:root {
+  --primary:#2c7ba2;--primary-soft:#d9ebf4;
+  --success:#348b67;--warning:#b8822f;--danger:#bf6157;--info:#4f8fbe;
+  --bg:#eef4f7;--bg2:#e4edf2;
+  --surface:rgba(255,255,255,0.94);--surface-strong:#ffffff;
+  --border:rgba(150,177,193,0.34);--border-strong:rgba(120,154,176,0.52);
+  --shadow:0 16px 42px rgba(49,83,105,0.10);
+  --text:#18384a;--text-soft:#5f7b8c;--text-muted:#8fa6b4;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:radial-gradient(circle at top left,rgba(124,175,205,0.20),transparent 30%),linear-gradient(180deg,#f7fbfd 0%,var(--bg) 100%);color:var(--text);font-family:"Aptos","Segoe UI","Helvetica Neue",Arial,sans-serif;overflow:hidden;height:100vh;width:100vw;}
 
-  /* TOP BAR */
-  .topbar{position:fixed;top:0;left:0;right:0;height:46px;background:linear-gradient(90deg,var(--bg2),#021018,var(--bg2));border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:100;}
-  .logo{font-family:'Orbitron',monospace;font-weight:900;font-size:20px;color:var(--cyan);letter-spacing:8px;text-shadow:0 0 20px var(--cyan),0 0 50px rgba(0,245,255,.25);animation:lp 4s ease-in-out infinite;}
-  @keyframes lp{0%,100%{text-shadow:0 0 20px var(--cyan),0 0 40px rgba(0,245,255,.2)}50%{text-shadow:0 0 30px var(--cyan),0 0 70px rgba(0,245,255,.4)}}
-  .logo a{color:inherit;text-decoration:none;}
-  .sys-select{background:rgba(0,245,255,.05);border:1px solid var(--border-hi);color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:11px;padding:4px 12px;letter-spacing:1px;cursor:pointer;outline:none;}
-  .sys-select option{background:#fff;color:#0d1b2a;font-family:Arial,sans-serif;letter-spacing:0;}
-  .sdot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 2s infinite;}
-  @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-  #clock{color:var(--cyan);font-size:13px;letter-spacing:2px}
+.topbar{position:fixed;top:0;left:0;right:0;height:58px;background:rgba(248,251,253,0.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;box-shadow:0 8px 22px rgba(80,114,138,0.08);}
+.logo{font-family:'Orbitron',monospace;font-weight:900;font-size:20px;color:var(--primary);letter-spacing:0.42rem;text-shadow:none;text-decoration:none;}
+.logo a{color:inherit;text-decoration:none;}
+.sys-select{background:rgba(255,255,255,0.90);border:1px solid var(--border-strong);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:4px 12px;letter-spacing:1px;cursor:pointer;outline:none;border-radius:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.70);}
+.sys-select option{background:#fff;color:var(--text);}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 0 5px rgba(52,139,103,0.16);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+#clock{color:var(--text-soft);font-size:13px;letter-spacing:2px;font-family:'Share Tech Mono',monospace;}
 
-  /* STATS BAR */
-  .statsbar{position:fixed;top:46px;left:0;right:0;height:44px;background:rgba(0,15,25,.98);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:0;z-index:99;}
-  .stat-pill{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 20px;border-right:1px solid var(--border);height:100%;}
-  .stat-pill:last-of-type{border-right:none;}
-  .sp-label{font-size:7px;color:var(--text-dim);letter-spacing:2px;margin-bottom:2px;}
-  .sp-val{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;}
-  .sp-cyan{color:var(--cyan)}.sp-green{color:var(--green)}.sp-red{color:var(--red)}.sp-orange{color:var(--orange)}.sp-blue{color:var(--blue)}.sp-yellow{color:var(--yellow)}
+.statsbar{position:fixed;top:58px;left:0;right:0;height:44px;background:rgba(248,251,253,0.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:0;z-index:99;box-shadow:0 8px 22px rgba(80,114,138,0.08);}
+.stat-pill{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 20px;border-right:1px solid var(--border);height:100%;background:rgba(248,251,253,0.82);}
+.stat-pill:last-of-type{border-right:none;}
+.sp-label{font-size:7px;color:var(--text-muted);letter-spacing:2px;margin-bottom:2px;}
+.sp-val{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--text);text-shadow:none;}
+.sp-cyan{color:var(--primary)}.sp-green{color:var(--success)}.sp-red{color:var(--danger)}.sp-orange{color:var(--warning)}.sp-blue{color:var(--info)}.sp-yellow{color:var(--warning)}
 
-  /* SEARCH + FILTERS */
-  .toolbar{position:fixed;top:90px;left:0;right:0;height:42px;background:rgba(2,12,20,.98);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;padding:0 16px;z-index:98;}
-  .search-wrap{position:relative;flex:1;max-width:380px;}
-  .search-wrap::before{content:'⌕';position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--cyan-dim);font-size:16px;pointer-events:none;}
-  .search-input{width:100%;background:rgba(0,245,255,.04);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:6px 10px 6px 32px;outline:none;letter-spacing:.5px;}
-  .search-input::placeholder{color:var(--text-dim);}
-  .search-input:focus{border-color:var(--border-hi);}
-  .filter-btns{display:flex;gap:4px;flex:1;}
-  .fbtn{font-size:8px;padding:4px 10px;border:1px solid var(--border);color:var(--text-dim);background:transparent;cursor:pointer;font-family:'Share Tech Mono',monospace;letter-spacing:1px;transition:all .15s;white-space:nowrap;}
-  .fbtn:hover,.fbtn.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,245,255,.06);}
-  .fbtn.active-red{border-color:var(--red);color:var(--red);background:rgba(255,34,68,.06);}
-  .fbtn.active-orange{border-color:var(--orange);color:var(--orange);background:rgba(255,136,0,.06);}
-  .fbtn.active-green{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.06);}
-  .fbtn.active-blue{border-color:var(--blue);color:var(--blue);background:rgba(0,136,255,.06);}
-  .new-acct-btn{font-size:9px;padding:6px 14px;border:1px solid var(--green);color:var(--green);background:rgba(0,255,136,.06);cursor:pointer;font-family:'Orbitron',monospace;letter-spacing:1px;white-space:nowrap;transition:all .15s;}
-  .new-acct-btn:hover{background:rgba(0,255,136,.15);}
+.toolbar{position:fixed;top:102px;left:0;right:0;height:42px;background:rgba(248,251,253,0.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;padding:0 16px;z-index:98;}
+.search-wrap{position:relative;flex:1;max-width:380px;}
+.search-wrap::before{content:'⌕';position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--primary);font-size:16px;pointer-events:none;opacity:.5;}
+.search-input{width:100%;background:rgba(255,255,255,0.90);border:1px solid var(--border-strong);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:6px 10px 6px 32px;outline:none;letter-spacing:.5px;border-radius:12px;}
+.search-input::placeholder{color:var(--text-muted);}
+.search-input:focus{border-color:var(--primary);}
+.filter-btns{display:flex;gap:4px;flex:1;}
+.fbtn{font-size:8px;padding:4px 10px;border:1px solid var(--border-strong);color:var(--text-soft);background:rgba(255,255,255,0.88);cursor:pointer;font-family:'Share Tech Mono',monospace;letter-spacing:1px;transition:all .15s;white-space:nowrap;border-radius:12px;}
+.fbtn:hover,.fbtn.active{border-color:rgba(44,123,162,0.45);color:var(--primary);background:var(--primary-soft);}
+.new-acct-btn{font-size:9px;padding:6px 14px;border:1px solid rgba(52,139,103,0.45);color:var(--success);background:rgba(52,139,103,0.06);cursor:pointer;font-family:'Orbitron',monospace;letter-spacing:1px;white-space:nowrap;transition:all .15s;border-radius:12px;}
+.new-acct-btn:hover{background:rgba(52,139,103,0.12);}
 
-  /* MAIN LAYOUT */
-  .main{position:fixed;top:132px;bottom:78px;left:0;right:0;display:flex;overflow:hidden;}
+.main{position:fixed;top:144px;bottom:78px;left:0;right:0;display:flex;overflow:hidden;}
+.acct-list{flex:1;overflow-y:auto;min-width:0;}
+.atable{width:100%;border-collapse:collapse;}
+.atable thead{position:sticky;top:0;z-index:10;}
+.atable th{font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1.5px;color:var(--text-soft);padding:8px 12px;border-bottom:1px solid var(--border);text-align:left;font-weight:400;background:rgba(243,248,251,0.98);cursor:pointer;white-space:nowrap;}
+.atable th:hover{color:var(--primary);}
+.atable th.sort-asc::after{content:' ▲';color:var(--primary);}
+.atable th.sort-desc::after{content:' ▼';color:var(--primary);}
+.atable td{padding:7px 12px;border-bottom:1px solid rgba(150,177,193,0.18);cursor:pointer;vertical-align:middle;color:var(--text);}
+.atable tr:hover td{background:rgba(223,237,245,0.55);}
+.atable tr.selected td{background:rgba(44,123,162,.08);border-left:2px solid var(--primary);}
+.td-acct{color:var(--primary);font-family:'Orbitron',monospace;font-size:9px;letter-spacing:.5px;white-space:nowrap;}
+.td-name{color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;white-space:nowrap;}
+.td-addr{color:var(--text-soft);font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:500;}
+.td-bal{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;text-align:right;white-space:nowrap;}
+.td-date{color:var(--text-soft);font-family:'Rajdhani',sans-serif;font-size:12px;white-space:nowrap;}
+.pill{display:inline-block;padding:2px 6px;border:1px solid;font-size:7px;letter-spacing:.5px;font-family:'Orbitron',monospace;white-space:nowrap;border-radius:999px;background:rgba(255,255,255,0.80);}
+.plan-pill{display:inline-block;padding:1px 5px;border:1px solid var(--info);color:var(--info);font-size:7px;letter-spacing:.5px;font-family:'Orbitron',monospace;white-space:nowrap;border-radius:999px;}
 
-  /* ACCOUNTS TABLE */
-  .acct-list{flex:1;overflow-y:auto;min-width:0;}
-  .atable{width:100%;border-collapse:collapse;}
-  .atable thead{position:sticky;top:0;z-index:10;}
-  .atable th{font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1.5px;color:var(--text-dim);padding:8px 12px;border-bottom:2px solid var(--border);text-align:left;font-weight:400;background:#020c14;cursor:pointer;white-space:nowrap;}
-  .atable th:hover{color:var(--cyan);}
-  .atable th.sort-asc::after{content:' ▲';color:var(--cyan);}
-  .atable th.sort-desc::after{content:' ▼';color:var(--cyan);}
-  .atable td{padding:7px 12px;border-bottom:1px solid rgba(0,245,255,.04);cursor:pointer;vertical-align:middle;}
-  .atable tr:hover td{background:rgba(0,245,255,.04);}
-  .atable tr.selected td{background:rgba(0,245,255,.08);border-left:2px solid var(--cyan);}
-  .td-acct{color:var(--cyan);font-family:'Orbitron',monospace;font-size:9px;letter-spacing:.5px;white-space:nowrap;}
-  .td-name{color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;white-space:nowrap;}
-  .td-addr{color:#8ab8c8;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:500;}
-  .td-bal{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;text-align:right;white-space:nowrap;}
-  .td-date{color:var(--text-dim);font-family:'Rajdhani',sans-serif;font-size:12px;white-space:nowrap;}
-  .pill{display:inline-block;padding:2px 6px;border:1px solid;font-size:7px;letter-spacing:.5px;font-family:'Orbitron',monospace;white-space:nowrap;}
-  .plan-pill{display:inline-block;padding:1px 5px;border:1px solid var(--blue);color:var(--blue);font-size:7px;letter-spacing:.5px;font-family:'Orbitron',monospace;white-space:nowrap;}
+.detail-panel{width:0;min-width:0;overflow:hidden;transition:width .25s ease;border-left:1px solid var(--border-strong);background:var(--surface-strong);display:flex;flex-direction:column;}
+.detail-panel.open{width:580px;min-width:580px;}
+.dp-header{padding:14px 20px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(216,235,244,0.65),rgba(255,255,255,0.72));position:relative;}
+.dp-acct{font-family:'Orbitron',monospace;font-size:10px;color:var(--primary);letter-spacing:2px;margin-bottom:4px;}
+.dp-name{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--text);}
+.dp-status{display:inline-block;padding:3px 10px;border:1px solid;font-size:8px;letter-spacing:1.5px;font-family:'Orbitron',monospace;margin-top:6px;border-radius:999px;}
+.dp-close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer;z-index:10;}
+.dp-close:hover{color:var(--danger);}
+.dp-body{flex:1;overflow-y:auto;padding:0;}
 
-  /* DETAIL PANEL — wider */
-  .detail-panel{width:0;min-width:0;overflow:hidden;transition:width .25s ease;border-left:1px solid var(--border);background:var(--bg2);display:flex;flex-direction:column;}
-  .detail-panel.open{width:580px;min-width:580px;}
-  .dp-header{padding:14px 20px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(0,245,255,.06),transparent);position:relative;}
-  .dp-acct{font-family:'Orbitron',monospace;font-size:10px;color:var(--cyan);letter-spacing:2px;margin-bottom:4px;}
-  .dp-name{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--text);}
-  .dp-status{display:inline-block;padding:3px 10px;border:1px solid;font-size:8px;letter-spacing:1.5px;font-family:'Orbitron',monospace;margin-top:6px;}
-  .dp-close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--text-dim);font-size:20px;cursor:pointer;z-index:10;}
-  .dp-close:hover{color:var(--red);}
-  .dp-body{flex:1;overflow-y:auto;padding:0;}
+.dp-section{border-bottom:1px solid var(--border);}
+.dp-section-title{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:var(--primary);padding:8px 20px;background:rgba(243,248,251,0.82);border-bottom:1px solid var(--border);}
+.dp-row{display:flex;justify-content:space-between;padding:6px 20px;border-bottom:1px solid var(--border);}
+.dp-label{font-size:9px;color:var(--text-muted);}
+.dp-val{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);text-align:right;}
 
-  /* DETAIL SECTIONS */
-  .dp-section{border-bottom:1px solid rgba(0,245,255,.06);}
-  .dp-section-title{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:var(--cyan-dim);padding:8px 20px;background:rgba(0,245,255,.02);border-bottom:1px solid rgba(0,245,255,.05);}
-  .dp-row{display:flex;justify-content:space-between;padding:6px 20px;border-bottom:1px solid rgba(0,245,255,.03);}
-  .dp-label{font-size:9px;color:var(--text-mid);}
-  .dp-val{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);text-align:right;}
+.action-panel{display:none;position:fixed;top:0;right:0;bottom:0;width:480px;background:var(--surface-strong);border-left:1px solid var(--border-strong);z-index:400;flex-direction:column;box-shadow:-20px 0 60px rgba(0,0,0,.15);}
+.action-panel.show{display:flex;}
+.ap-header{padding:16px 20px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(216,235,244,0.65),rgba(255,255,255,0.72));display:flex;justify-content:space-between;align-items:center;}
+.ap-title{font-family:'Orbitron',monospace;font-size:12px;color:var(--primary);letter-spacing:3px;}
+.ap-sub{font-size:9px;color:var(--text-muted);margin-top:3px;letter-spacing:1px;}
+.ap-close{background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer;}
+.ap-close:hover{color:var(--danger);}
+.ap-body{flex:1;overflow-y:auto;padding:20px;}
+.ap-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;}
+.ap-btn{flex:1;padding:10px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;border:1px solid var(--border-strong);background:rgba(255,255,255,0.88);color:var(--text-soft);transition:all .15s;border-radius:12px;}
+.ap-btn.cancel{border-color:var(--border-strong);color:var(--text-muted);}
+.ap-btn.cancel:hover{border-color:rgba(191,97,87,.35);color:var(--danger);}
+.ap-btn.submit{border-color:rgba(44,123,162,.45);color:var(--primary);}
+.ap-btn.submit:hover{background:var(--primary-soft);}
+.ap-btn.danger{border-color:rgba(191,97,87,.35);color:var(--danger);}
+.ap-btn.danger:hover{background:rgba(191,97,87,.08);}
+.ap-btn.success{border-color:rgba(52,139,103,.45);color:var(--success);}
+.ap-btn.success:hover{background:rgba(52,139,103,.08);}
 
-  /* ACTION INPUT PANELS */
-  .action-panel{display:none;position:fixed;top:0;right:0;bottom:0;width:480px;background:rgba(2,10,20,.98);border-left:1px solid var(--border-hi);z-index:400;flex-direction:column;box-shadow:-20px 0 60px rgba(0,0,0,.6);}
-  .action-panel.show{display:flex;}
-  .ap-header{padding:16px 20px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(0,245,255,.08),transparent);display:flex;justify-content:space-between;align-items:center;}
-  .ap-title{font-family:'Orbitron',monospace;font-size:12px;color:var(--cyan);letter-spacing:3px;}
-  .ap-sub{font-size:9px;color:var(--text-dim);margin-top:3px;letter-spacing:1px;}
-  .ap-close{background:none;border:none;color:var(--text-dim);font-size:20px;cursor:pointer;}
-  .ap-close:hover{color:var(--red);}
-  .ap-body{flex:1;overflow-y:auto;padding:20px;}
-  .ap-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;}
-  .ap-btn{flex:1;padding:10px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;border:1px solid;transition:all .15s;}
-  .ap-btn.cancel{background:transparent;border-color:var(--border);color:var(--text-dim);}
-  .ap-btn.cancel:hover{border-color:var(--red);color:var(--red);}
-  .ap-btn.submit{background:rgba(0,245,255,.08);border-color:var(--cyan);color:var(--cyan);}
-  .ap-btn.submit:hover{background:rgba(0,245,255,.18);}
-  .ap-btn.danger{background:rgba(255,34,68,.08);border-color:var(--red);color:var(--red);}
-  .ap-btn.danger:hover{background:rgba(255,34,68,.2);}
-  .ap-btn.success{background:rgba(0,255,136,.06);border-color:var(--green);color:var(--green);}
-  .ap-btn.success:hover{background:rgba(0,255,136,.15);}
+.txn-wrap{padding:0;}
+.txn-row{display:flex;align-items:center;gap:8px;padding:6px 16px;border-bottom:1px solid var(--border);font-size:9px;}
+.txn-row:hover{background:rgba(223,237,245,0.55);}
+.txn-date{color:var(--text-muted);white-space:nowrap;width:80px;flex-shrink:0;}
+.txn-type{font-family:'Orbitron',monospace;font-size:7px;padding:1px 5px;border:1px solid;white-space:nowrap;flex-shrink:0;border-radius:999px;}
+.txn-desc{color:var(--text-soft);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.txn-amt{font-family:'Share Tech Mono',monospace;text-align:right;white-space:nowrap;flex-shrink:0;font-size:10px;}
 
-  /* TRANSACTION REGISTER */
-  .txn-wrap{padding:0;}
-  .txn-row{display:flex;align-items:center;gap:8px;padding:6px 16px;border-bottom:1px solid rgba(0,245,255,.03);font-size:9px;}
-  .txn-row:hover{background:rgba(0,245,255,.03);}
-  .txn-date{color:var(--text-dim);white-space:nowrap;width:80px;flex-shrink:0;}
-  .txn-type{font-family:'Orbitron',monospace;font-size:7px;padding:1px 5px;border:1px solid;white-space:nowrap;flex-shrink:0;}
-  .txn-desc{color:var(--text-mid);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .txn-amt{font-family:'Share Tech Mono',monospace;text-align:right;white-space:nowrap;flex-shrink:0;font-size:10px;}
+.dp-actions{padding:12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:6px;border-top:1px solid var(--border);background:rgba(248,251,253,0.92);}
+.dp-btn{padding:8px;border:1px solid var(--border-strong);color:var(--text-soft);background:rgba(255,255,255,0.88);font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;cursor:pointer;transition:all .15s;text-align:center;border-radius:12px;}
+.dp-btn:hover{border-color:rgba(44,123,162,.45);color:var(--primary);background:var(--primary-soft);}
+.dp-btn.primary{border-color:rgba(44,123,162,.45);color:var(--primary);background:var(--primary-soft);}
+.dp-btn.danger{border-color:rgba(191,97,87,.35);color:var(--danger);}
+.dp-btn.danger:hover{background:rgba(191,97,87,.08);}
+.dp-btn.success{border-color:rgba(52,139,103,.45);color:var(--success);}
+.dp-btn.success:hover{background:rgba(52,139,103,.08);}
 
-  /* ACTION BUTTONS */
-  .dp-actions{padding:12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:6px;border-top:1px solid var(--border);background:var(--bg2);}
-  .dp-btn{padding:8px;border:1px solid var(--border);color:var(--text-dim);background:transparent;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;cursor:pointer;transition:all .15s;text-align:center;}
-  .dp-btn:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(0,245,255,.05);}
-  .dp-btn.primary{border-color:var(--cyan);color:var(--cyan);background:rgba(0,245,255,.07);}
-  .dp-btn.danger{border-color:var(--red);color:var(--red);}
-  .dp-btn.danger:hover{background:rgba(255,34,68,.08);}
-  .dp-btn.success{border-color:var(--green);color:var(--green);}
-  .dp-btn.success:hover{background:rgba(0,255,136,.08);}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:600;align-items:center;justify-content:center;}
+.modal.show{display:flex;}
+.modal-box{background:var(--surface-strong);border:1px solid var(--border-strong);width:520px;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow);border-radius:16px;overflow:hidden;}
+.modal-header{background:linear-gradient(180deg,rgba(216,235,244,0.65),rgba(255,255,255,0.72));border-bottom:1px solid var(--border);padding:14px 18px;font-family:'Orbitron',monospace;font-size:11px;color:var(--primary);letter-spacing:3px;display:flex;justify-content:space-between;align-items:center;}
+.modal-close{background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer;}
+.modal-close:hover{color:var(--danger);}
+.modal-body{padding:20px 18px;}
+.form-row{margin-bottom:14px;}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.form-label{font-size:8px;color:var(--text-muted);letter-spacing:1.5px;margin-bottom:5px;display:block;font-family:'Orbitron',monospace;}
+.form-input,.form-select{width:100%;background:rgba(255,255,255,0.90);border:1px solid var(--border-strong);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:8px 10px;outline:none;transition:border-color .15s;border-radius:12px;}
+.form-input:focus,.form-select:focus{border-color:var(--primary);}
+.form-select option{background:#fff;color:var(--text);}
+.form-section{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:var(--primary);padding:8px 0;margin:16px 0 10px;border-bottom:1px solid var(--border);}
+.modal-footer{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:8px;}
+.modal-btn{flex:1;padding:10px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;transition:all .15s;border:1px solid var(--border-strong);background:rgba(255,255,255,0.88);color:var(--text-soft);border-radius:12px;}
+.modal-btn.cancel{border-color:var(--border-strong);color:var(--text-muted);}
+.modal-btn.cancel:hover{border-color:rgba(191,97,87,.35);color:var(--danger);}
+.modal-btn.submit{border-color:rgba(44,123,162,.45);color:var(--primary);}
+.modal-btn.submit:hover{background:var(--primary-soft);}
 
-  /* NEW ACCOUNT MODAL */
-  .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:600;align-items:center;justify-content:center;}
-  .modal.show{display:flex;}
-  .modal-box{background:var(--bg2);border:1px solid var(--border-hi);width:520px;max-height:85vh;overflow-y:auto;box-shadow:0 0 50px rgba(0,245,255,.15);}
-  .modal-header{background:linear-gradient(135deg,rgba(0,245,255,.08),transparent);border-bottom:1px solid var(--border);padding:14px 18px;font-family:'Orbitron',monospace;font-size:11px;color:var(--cyan);letter-spacing:3px;display:flex;justify-content:space-between;align-items:center;}
-  .modal-close{background:none;border:none;color:var(--text-dim);font-size:18px;cursor:pointer;}
-  .modal-close:hover{color:var(--red);}
-  .modal-body{padding:20px 18px;}
-  .form-row{margin-bottom:14px;}
-  .form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
-  .form-label{font-size:8px;color:var(--text-mid);letter-spacing:1.5px;margin-bottom:5px;display:block;font-family:'Orbitron',monospace;}
-  .form-input,.form-select{width:100%;background:rgba(0,245,255,.04);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:8px 10px;outline:none;transition:border-color .15s;}
-  .form-input:focus,.form-select:focus{border-color:var(--border-hi);}
-  .form-select option{background:#fff;color:#0d1b2a;}
-  .form-section{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:var(--cyan-dim);padding:8px 0;margin:16px 0 10px;border-bottom:1px solid var(--border);}
-  .modal-footer{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:8px;}
-  .modal-btn{flex:1;padding:10px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;transition:all .15s;border:1px solid;}
-  .modal-btn.cancel{background:transparent;border-color:var(--border);color:var(--text-dim);}
-  .modal-btn.cancel:hover{border-color:var(--red);color:var(--red);}
-  .modal-btn.submit{background:rgba(0,245,255,.08);border-color:var(--cyan);color:var(--cyan);}
-  .modal-btn.submit:hover{background:rgba(0,245,255,.18);}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:200px;color:var(--text-muted);gap:8px;}
+.empty-state .big{font-family:'Orbitron',monospace;font-size:12px;letter-spacing:3px;color:var(--text-muted);}
+.loading-row td{color:var(--text-soft);font-size:9px;letter-spacing:1px;text-align:center;padding:40px;}
+.bal-green{color:var(--success);}.bal-blue{color:var(--info);}.bal-orange{color:var(--warning);}.bal-red{color:var(--danger);}.bal-gray{color:var(--text-muted);}
 
-  /* EMPTY STATE */
-  .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:200px;color:var(--text-dim);gap:8px;}
-  .empty-state .big{font-family:'Orbitron',monospace;font-size:12px;letter-spacing:3px;color:rgba(0,245,255,.2);}
+.botnav{position:fixed;bottom:0;left:0;right:0;height:78px;background:rgba(248,251,253,0.92);backdrop-filter:blur(18px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:6px;padding:0 16px;z-index:100;box-shadow:0 -8px 22px rgba(80,114,138,0.08);}
+.navbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:72px;height:62px;background:rgba(255,255,255,0.88);border:1px solid var(--border-strong);color:var(--text-soft);cursor:pointer;transition:all .2s;font-size:8px;letter-spacing:1px;text-transform:uppercase;font-family:'Share Tech Mono',monospace;position:relative;overflow:hidden;text-decoration:none;border-radius:12px;box-shadow:none;}
+.navbtn::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--primary);transform:scaleX(0);transition:transform .2s;}
+.navbtn:hover::after,.navbtn.active::after{transform:scaleX(1);}
+.navbtn:hover{color:var(--primary);border-color:rgba(44,123,162,0.38);}
+.navbtn.active{color:var(--primary);border-color:rgba(44,123,162,0.45);background:var(--primary-soft);}
+.navicon{font-size:20px;}
 
-  /* BOTTOM NAV */
-  .botnav{position:fixed;bottom:0;left:0;right:0;height:78px;background:linear-gradient(90deg,var(--bg2),#020e1c,var(--bg2));border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:6px;padding:0 16px;z-index:100;}
-  .navbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:58px;height:68px;background:var(--panel);border:1px solid var(--border);color:var(--text-dim);cursor:pointer;transition:all .2s;font-size:8px;letter-spacing:1px;text-transform:uppercase;font-family:'Share Tech Mono',monospace;position:relative;overflow:hidden;text-decoration:none;}
-  .navbtn::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--cyan);transform:scaleX(0);transition:transform .2s;}
-  .navbtn:hover::after,.navbtn.active::after{transform:scaleX(1);}
-  .navbtn:hover,.navbtn.active{color:var(--cyan);border-color:var(--border-hi);background:rgba(0,245,255,.05);}
-  .navicon{font-size:20px;}
-  .navalert{position:absolute;top:5px;right:6px;width:13px;height:13px;background:var(--red);border-radius:50%;font-size:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Orbitron',monospace;}
-
-  /* SCROLLBAR */
-  ::-webkit-scrollbar{width:3px;height:3px;}
-  ::-webkit-scrollbar-track{background:transparent;}
-  ::-webkit-scrollbar-thumb{background:var(--border);}
-
-  /* LOADING */
-  .loading-row td{color:var(--text-dim);font-size:9px;letter-spacing:1px;text-align:center;padding:40px;}
-
-  /* BALANCE COLORS */
-  .bal-green{color:var(--green);}
-  .bal-blue{color:var(--blue);}
-  .bal-orange{color:var(--orange);}
-  .bal-red{color:var(--red);}
-  .bal-gray{color:var(--text-dim);}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(133,161,178,0.45);border-radius:999px;}
 </style>
 </head>
 <body>
+<body>
 
-<div class="corner tl"></div><div class="corner tr"></div>
-<div class="corner bl"></div><div class="corner br"></div>
 
 <!-- TOP BAR -->
 <div class="topbar">
   <div class="logo"><a href="index.html">RADEUS</a></div>
   <div style="display:flex;align-items:center;gap:16px">
     <div class="sdot"></div>
-    <span style="font-size:9px;color:var(--text-dim);letter-spacing:2px">ACCOUNTS MODULE</span>
+    <span style="font-size:9px;color:var(--text-muted);letter-spacing:2px">ACCOUNTS MODULE</span>
     <select class="sys-select" id="sysSelect" onchange="switchSystem(this.value)">
       <option value="">⬡ LOADING SYSTEMS...</option>
     </select>
   </div>
   <div style="display:flex;align-items:center;gap:14px">
-    <span style="font-size:9px;color:var(--text-dim)">OPERATOR: <span style="color:var(--cyan)">ADMIN</span></span>
+    <span style="font-size:9px;color:var(--text-muted)">OPERATOR: <span id="operatorName" style="color:var(--text)">—</span></span>
     <span id="clock">--:--:--</span>
   </div>
 </div>
@@ -230,7 +198,7 @@
     <button class="fbtn active" onclick="setFilter('ALL',this)">ALL</button>
     <button class="fbtn" onclick="setFilter('ACTIVE',this)">ACTIVE</button>
     <button class="fbtn" onclick="setFilter('INACTIVE',this)">INACTIVE</button>
-    <button class="fbtn" onclick="setFilter('CURRENT',this)" style="--fc:var(--green)">CURRENT</button>
+    <button class="fbtn" onclick="setFilter('CURRENT',this)">CURRENT</button>
     <button class="fbtn" onclick="setFilter('PAST DUE',this)">PAST DUE</button>
     <button class="fbtn" onclick="setFilter('CRITICAL',this)">CRITICAL</button>
     <button class="fbtn" onclick="setFilter('CREDIT',this)">CREDIT BAL</button>
@@ -392,13 +360,205 @@
   </div>
 </div>
 
+<!-- POST PAYMENT PANEL -->
+<div class="action-panel" id="panel-payment">
+  <div class="ap-header">
+    <div>
+      <div class="ap-title">POST PAYMENT</div>
+      <div class="ap-sub" id="pay-acct-sub">—</div>
+    </div>
+    <button class="ap-close" onclick="closeActionPanel('panel-payment')">✕</button>
+  </div>
+  <div class="ap-body">
+    <div class="form-row">
+      <label class="form-label">PAYMENT AMOUNT</label>
+      <input class="form-input" id="pay-amount" type="number" step="0.01" placeholder="0.00">
+    </div>
+    <div class="form-row">
+      <label class="form-label">PAYMENT DATE</label>
+      <input class="form-input" id="pay-date" type="date">
+    </div>
+    <div class="form-row">
+      <label class="form-label">PAYMENT METHOD</label>
+      <select class="form-select" id="pay-method">
+        <option value="CHECK">CHECK</option>
+        <option value="CASH">CASH</option>
+        <option value="SQUARE">SQUARE</option>
+        <option value="ACH">ACH / BANK TRANSFER</option>
+        <option value="MONEY_ORDER">MONEY ORDER</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label class="form-label">CHECK / REFERENCE NUMBER</label>
+      <input class="form-input" id="pay-ref" type="text" placeholder="Check #, Square ID, etc.">
+    </div>
+    <div class="form-row">
+      <label class="form-label">NOTES</label>
+      <input class="form-input" id="pay-notes" type="text" placeholder="Optional notes">
+    </div>
+    <div id="pay-cycle-warn" style="display:none;margin-top:16px;padding:12px;border:1px solid var(--warning);background:rgba(184,130,47,.06);">
+      <div style="font-family:Orbitron,monospace;font-size:9px;color:var(--warning);letter-spacing:2px;margin-bottom:8px;">⚠ CLOSED BILLING CYCLE</div>
+      <div style="font-size:10px;color:var(--text-soft);margin-bottom:12px;">This payment date falls within a closed billing cycle. Would you like to update the closed bill for this customer?</div>
+      <div style="display:flex;gap:8px;">
+        <button class="ap-btn success" style="font-size:9px;padding:7px" onclick="setUpdateCycle(true)">YES — UPDATE BILL</button>
+        <button class="ap-btn cancel" style="font-size:9px;padding:7px" onclick="setUpdateCycle(false)">POST TO CURRENT ONLY</button>
+      </div>
+    </div>
+  </div>
+  <div class="ap-footer">
+    <button class="ap-btn cancel" onclick="closeActionPanel('panel-payment')">CANCEL</button>
+    <button class="ap-btn submit" onclick="submitPayment()">POST PAYMENT</button>
+  </div>
+</div>
+
+<!-- PAYMENT ARRANGEMENT PANEL -->
+<div class="action-panel" id="panel-arrangement">
+  <div class="ap-header">
+    <div>
+      <div class="ap-title">PAYMENT ARRANGEMENT</div>
+      <div class="ap-sub" id="arr-acct-sub">—</div>
+    </div>
+    <button class="ap-close" onclick="closeActionPanel('panel-arrangement')">✕</button>
+  </div>
+  <div class="ap-body">
+    <div id="arr-balance-display" style="padding:16px;background:rgba(44,123,162,.04);border:1px solid var(--border);margin-bottom:20px;text-align:center;">
+      <div style="font-size:9px;color:var(--text-muted);letter-spacing:2px;margin-bottom:4px;">TOTAL BALANCE DUE</div>
+      <div id="arr-bal-val" style="font-family:Share Tech Mono,monospace;font-size:28px;color:var(--danger);">—</div>
+    </div>
+    <div class="form-row">
+      <label class="form-label">DOWN PAYMENT AMOUNT</label>
+      <input class="form-input" id="arr-down" type="number" step="0.01" placeholder="0.00">
+    </div>
+    <div class="form-row">
+      <label class="form-label">DOWN PAYMENT DATE</label>
+      <input class="form-input" id="arr-down-date" type="date">
+    </div>
+    <div class="form-row-2">
+      <div>
+        <label class="form-label">MONTHLY PAYMENT</label>
+        <input class="form-input" id="arr-monthly" type="number" step="0.01" placeholder="0.00">
+      </div>
+      <div>
+        <label class="form-label">FIRST PAYMENT DATE</label>
+        <input class="form-input" id="arr-start" type="date">
+      </div>
+    </div>
+    <div class="form-row">
+      <label class="form-label">NUMBER OF PAYMENTS</label>
+      <input class="form-input" id="arr-count" type="number" placeholder="e.g. 3">
+    </div>
+    <div class="form-row">
+      <label class="form-label">ARRANGEMENT NOTES</label>
+      <input class="form-input" id="arr-notes" type="text" placeholder="Terms, conditions, verbal agreement details">
+    </div>
+  </div>
+  <div class="ap-footer">
+    <button class="ap-btn cancel" onclick="closeActionPanel('panel-arrangement')">CANCEL</button>
+    <button class="ap-btn success" onclick="submitArrangement()">CREATE ARRANGEMENT</button>
+  </div>
+</div>
+
+<!-- SEND NOTICE PANEL -->
+<div class="action-panel" id="panel-notice">
+  <div class="ap-header">
+    <div>
+      <div class="ap-title">SEND NOTICE</div>
+      <div class="ap-sub" id="notice-acct-sub">—</div>
+    </div>
+    <button class="ap-close" onclick="closeActionPanel('panel-notice')">✕</button>
+  </div>
+  <div class="ap-body">
+    <div class="form-row">
+      <label class="form-label">NOTICE TYPE</label>
+      <select class="form-select" id="notice-type" onchange="updateNoticeTemplate()">
+        <option value="PAST_DUE">PAST DUE NOTICE</option>
+        <option value="DISCONNECT_WARNING">DISCONNECT WARNING</option>
+        <option value="BOIL_WATER">BOIL WATER NOTICE</option>
+        <option value="GENERAL">GENERAL NOTICE</option>
+        <option value="PAYMENT_RECEIVED">PAYMENT RECEIVED CONFIRMATION</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label class="form-label">DELIVERY METHOD</label>
+      <select class="form-select" id="notice-delivery">
+        <option value="EMAIL">EMAIL</option>
+        <option value="SMS">SMS TEXT</option>
+        <option value="BOTH">EMAIL + SMS</option>
+        <option value="LOG_ONLY">LOG ONLY (NO SEND)</option>
+      </select>
+    </div>
+    <div id="notice-email-row" class="form-row">
+      <label class="form-label">EMAIL ADDRESS</label>
+      <input class="form-input" id="notice-email" type="text" placeholder="Customer email">
+    </div>
+    <div class="form-row">
+      <label class="form-label">MESSAGE</label>
+      <textarea class="form-input" id="notice-msg" rows="6" style="resize:vertical;line-height:1.6"></textarea>
+    </div>
+  </div>
+  <div class="ap-footer">
+    <button class="ap-btn cancel" onclick="closeActionPanel('panel-notice')">CANCEL</button>
+    <button class="ap-btn submit" onclick="submitNotice()">SEND NOTICE</button>
+  </div>
+</div>
+
+<!-- DISCONNECT PANEL -->
+<div class="action-panel" id="panel-disconnect">
+  <div class="ap-header">
+    <div>
+      <div class="ap-title" style="color:var(--danger)">DISCONNECT SERVICE</div>
+      <div class="ap-sub" id="disc-acct-sub">—</div>
+    </div>
+    <button class="ap-close" onclick="closeActionPanel('panel-disconnect')">✕</button>
+  </div>
+  <div class="ap-body">
+    <div style="padding:16px;background:rgba(191,97,87,.06);border:1px solid rgba(191,97,87,.3);margin-bottom:20px;">
+      <div style="font-family:Orbitron,monospace;font-size:9px;color:var(--danger);letter-spacing:2px;margin-bottom:6px;">⚡ THIS ACTION DISCONNECTS SERVICE</div>
+      <div style="font-size:10px;color:var(--text-soft);line-height:1.6">This will mark the account as DISCONNECTED and log the disconnection event. Service must be physically disconnected in the field separately.</div>
+    </div>
+    <div class="form-row">
+      <label class="form-label">DISCONNECT DATE</label>
+      <input class="form-input" id="disc-date" type="date">
+    </div>
+    <div class="form-row">
+      <label class="form-label">DISCONNECT REASON</label>
+      <select class="form-select" id="disc-reason">
+        <option value="NON_PAYMENT">NON-PAYMENT</option>
+        <option value="CUSTOMER_REQUEST">CUSTOMER REQUEST</option>
+        <option value="PROPERTY_SALE">PROPERTY SALE / TRANSFER</option>
+        <option value="MOVING">CUSTOMER MOVING</option>
+        <option value="OTHER">OTHER</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label class="form-label">FINAL METER READ</label>
+      <input class="form-input" id="disc-read" type="number" placeholder="Final meter reading">
+    </div>
+    <div class="form-row">
+      <label class="form-label">NOTES</label>
+      <input class="form-input" id="disc-notes" type="text" placeholder="Notes about disconnection">
+    </div>
+    <div class="form-row" style="display:flex;align-items:center;gap:10px">
+      <input type="checkbox" id="disc-send-notice" style="width:16px;height:16px;accent-color:var(--primary)">
+      <label for="disc-send-notice" style="font-size:10px;color:var(--text-soft);cursor:pointer">Send disconnection notice to customer</label>
+    </div>
+  </div>
+  <div class="ap-footer">
+    <button class="ap-btn cancel" onclick="closeActionPanel('panel-disconnect')">CANCEL</button>
+    <button class="ap-btn danger" onclick="submitDisconnect()">CONFIRM DISCONNECT</button>
+  </div>
+</div>
+
+</body>
+
 <script>
   // ── CONFIG ───────────────────────────────────────────────────
   const SUPA_URL = 'https://bvpesxpptgdwkhsewhke.supabase.co';
   const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2cGVzeHBwdGdkd2toc2V3aGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNzcwNTksImV4cCI6MjA5MTk1MzA1OX0._th9UdQKqIWvqgTrxxpd5IfTlexCUeyWC5aGwRJYZj8';
-  const ORG_ID  = '00000000-0000-0000-0000-000000000001';
+  let ORG_ID = null;
 
   // ── STATE ────────────────────────────────────────────────────
+  let allSystems    = [];
   let allAccounts   = [];
   let balMap        = {};
   let currentFilter = 'ALL';
@@ -439,36 +599,49 @@
     return new Date(d).toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'2-digit'});
   }
   function classify(bal, type, status) {
-    if (status==='INACTIVE') return {label:'INACTIVE', color:'var(--text-dim)'};
-    if (type==='RELIGIOUS')  return {label:'RELIGIOUS', color:'var(--text-dim)'};
-    if (bal < 0)   return {label:'CREDIT',   color:'var(--blue)'};
-    if (bal === 0) return {label:'CURRENT',   color:'var(--green)'};
-    if (bal > 500) return {label:'CRITICAL',  color:'var(--red)'};
-    return               {label:'PAST DUE',   color:'var(--orange)'};
+    if (status==='INACTIVE') return {label:'INACTIVE', color:'var(--text-muted)'};
+    if (type==='RELIGIOUS')  return {label:'RELIGIOUS', color:'var(--text-muted)'};
+    if (bal < 0)   return {label:'CREDIT',   color:'var(--info)'};
+    if (bal === 0) return {label:'CURRENT',   color:'var(--success)'};
+    if (bal > 500) return {label:'CRITICAL',  color:'var(--danger)'};
+    return               {label:'PAST DUE',   color:'var(--warning)'};
   }
 
   // ── LOAD SYSTEMS ─────────────────────────────────────────────
   async function loadSystems() {
+    if(!ORG_ID)return;
     const systems = await supa('water_systems', `?org_id=eq.${ORG_ID}&select=system_id,system_code,system_name&order=system_name`);
     if (!systems || !systems.length) return;
     const sel = document.getElementById('sysSelect');
-    sel.innerHTML = systems.map(s =>
-      `<option value="${s.system_id}|${s.system_code}|${s.system_name}">⬡ ${s.system_name.toUpperCase()}</option>`
-    ).join('');
-    // Load first system
-    const first = systems[0];
-    activeSystemId   = first.system_id;
-    activeSystemCode = first.system_code;
-    activeSystemName = first.system_name;
+    if(systems.length===1){
+      sel.innerHTML=`<option value="${systems[0].system_id}">⬡ ${systems[0].system_name.toUpperCase()}</option>`;
+      allSystems=systems;
+      activeSystemId=systems[0].system_id;
+      activeSystemCode=systems[0].system_code;
+      activeSystemName=systems[0].system_name;
+    } else {
+      sel.innerHTML='<option value="ALL">⬡ ALL SYSTEMS</option>'+systems.map(s=>`<option value="${s.system_id}">⬡ ${s.system_name.toUpperCase()}</option>`).join('');
+      sel.value='ALL';
+      allSystems=systems;
+      activeSystemId=null;
+      activeSystemCode='ALL';
+      activeSystemName='ALL SYSTEMS';
+    }
     loadAccounts();
   }
 
   // ── SWITCH SYSTEM ─────────────────────────────────────────────
-  function switchSystem(val) {
-    const [id, code, name] = val.split('|');
-    activeSystemId   = id;
-    activeSystemCode = code;
-    activeSystemName = name;
+  function switchSystem(id) {
+    if(id==='ALL'){
+      activeSystemId=null;
+      activeSystemCode='ALL';
+      activeSystemName='ALL SYSTEMS';
+    } else {
+      const sys=allSystems.find(s=>s.system_id===id);
+      activeSystemId=id;
+      activeSystemCode=sys?.system_code||'';
+      activeSystemName=sys?.system_name||'';
+    }
     closeDetail();
     loadAccounts();
   }
@@ -478,9 +651,10 @@
     document.getElementById('acctTable').innerHTML =
       '<tr class="loading-row"><td colspan="8">LOADING ACCOUNTS...</td></tr>';
 
+    const sysFilter=activeSystemId?`system_id=eq.${activeSystemId}`:(allSystems.length?`system_id=in.(${allSystems.map(s=>s.system_id).join(',')})`:'system_id=not.is.null');
     const [accounts, balances] = await Promise.all([
-      supa('accounts', `?system_id=eq.${activeSystemId}&select=account_id,account_number,account_type,status,meter_id,notes,service_start,customers(full_name,phone_primary,email,billing_address,billing_city,billing_state),service_addresses(street,city,state,zip),meters(meter_number)`),
-      supa('account_balances', `?system_id=eq.${activeSystemId}&select=*`)
+      supa('accounts', `?${sysFilter}&select=account_id,account_number,account_type,status,meter_id,notes,service_start,customers(full_name,phone_primary,email,billing_address,billing_city,billing_state),service_addresses(street,city,state,zip),meters(meter_number)`),
+      supa('account_balances', `?${sysFilter}&select=*`)
     ]);
 
     if (!accounts) {
@@ -573,7 +747,7 @@
 
     const tbody = document.getElementById('acctTable');
     if (!rows.length) {
-      tbody.innerHTML = `<tr class="loading-row"><td colspan="8" style="color:var(--text-dim)">NO ACCOUNTS MATCH FILTER</td></tr>`;
+      tbody.innerHTML = `<tr class="loading-row"><td colspan="8" style="color:var(--text-muted)">NO ACCOUNTS MATCH FILTER</td></tr>`;
       return;
     }
 
@@ -582,7 +756,7 @@
       const tr = document.createElement('tr');
       if (selectedAcct && selectedAcct.account_id === a.account_id) tr.classList.add('selected');
       tr.onclick = () => openDetail(a);
-      const statusColor = a.status==='ACTIVE' ? 'var(--green)' : a.status==='DISCONNECTED' ? 'var(--red)' : 'var(--text-dim)';
+      const statusColor = a.status==='ACTIVE' ? 'var(--success)' : a.status==='DISCONNECTED' ? 'var(--danger)' : 'var(--text-muted)';
       const hasPlan = false; // TODO: wire to arrangements table
       tr.innerHTML = `
         <td class="td-acct">${a.account_number}</td>
@@ -592,8 +766,8 @@
           <span title="${a.status}" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${statusColor};box-shadow:0 0 6px ${statusColor};"></span>
         </td>
         <td><span class="pill" style="color:${a.cls.color};border-color:${a.cls.color}">${a.cls.label}</span></td>
-        <td>${hasPlan ? '<span class="plan-pill">PLAN</span>' : '<span style="color:var(--text-dim);font-size:11px">—</span>'}</td>
-        <td class="td-date">${fmtDate(a.lastPmt)}${a.lastPmtAmt ? '<br><span style="color:var(--green);font-size:8px">'+fmtBal(a.lastPmtAmt)+'</span>' : ''}</td>
+        <td>${hasPlan ? '<span class="plan-pill">PLAN</span>' : '<span style="color:var(--text-muted);font-size:11px">—</span>'}</td>
+        <td class="td-date">${fmtDate(a.lastPmt)}${a.lastPmtAmt ? '<br><span style="color:var(--success);font-size:11px;font-weight:600">'+fmtBal(a.lastPmtAmt)+'</span>' : ''}</td>
         <td class="td-bal" style="color:${a.cls.color}">${fmtBal(a.bal)}</td>`;
       tbody.appendChild(tr);
     });
@@ -658,14 +832,14 @@
         <div class="dp-section-title">BALANCE SUMMARY</div>
         <div class="dp-row"><span class="dp-label">CURRENT BALANCE</span><span class="dp-val" style="color:${a.cls.color};font-size:14px">${fmtBal(a.bal)}</span></div>
         <div class="dp-row"><span class="dp-label">LAST PAYMENT DATE</span><span class="dp-val">${fmtDate(a.lastPmt)}</span></div>
-        <div class="dp-row"><span class="dp-label">LAST PAYMENT AMOUNT</span><span class="dp-val" style="color:var(--green)">${a.lastPmtAmt ? fmtBal(a.lastPmtAmt) : '—'}</span></div>
+        <div class="dp-row"><span class="dp-label">LAST PAYMENT AMOUNT</span><span class="dp-val" style="color:var(--success)">${a.lastPmtAmt ? fmtBal(a.lastPmtAmt) : '—'}</span></div>
         <div class="dp-row"><span class="dp-label">BASE RATE</span><span class="dp-val">$40.00 / MONTH</span></div>
         <div class="dp-row"><span class="dp-label">LATE FEE</span><span class="dp-val">$10.00 after due date</span></div>
       </div>
       <div class="dp-section">
-        <div class="dp-section-title">TRANSACTION REGISTER <span style="color:var(--text-dim);font-size:7px;margin-left:8px">LOADING...</span></div>
+        <div class="dp-section-title">TRANSACTION REGISTER <span style="color:var(--text-muted);font-size:7px;margin-left:8px">LOADING...</span></div>
         <div class="txn-wrap" id="txn-wrap">
-          <div style="padding:20px;text-align:center;color:var(--text-dim);font-size:9px;letter-spacing:1px">LOADING TRANSACTIONS...</div>
+          <div style="padding:20px;text-align:center;color:var(--text-muted);font-size:9px;letter-spacing:1px">LOADING TRANSACTIONS...</div>
         </div>
       </div>`;
 
@@ -685,22 +859,22 @@
 
     // Update section title
     const stitle = document.querySelector('#dp-body .dp-section:last-child .dp-section-title');
-    if (stitle) stitle.innerHTML = `TRANSACTION REGISTER <span style="color:var(--text-dim);font-size:7px;margin-left:8px">${txns?.length||0} RECORDS</span>`;
+    if (stitle) stitle.innerHTML = `TRANSACTION REGISTER <span style="color:var(--text-muted);font-size:7px;margin-left:8px">${txns?.length||0} RECORDS</span>`;
 
     if (!txns || !txns.length) {
-      wrap.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-dim);font-size:9px">NO TRANSACTIONS FOUND</div>';
+      wrap.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:9px">NO TRANSACTIONS FOUND</div>';
       return;
     }
 
     const typeColors = {
-      'BILL':'var(--orange)','PAYMENT':'var(--green)','LATE_FEE':'var(--red)',
-      'ADJUSTMENT':'var(--cyan)','CREDIT':'var(--blue)','DEPOSIT':'var(--purple)'
+      'BILL':'var(--warning)','PAYMENT':'var(--success)','LATE_FEE':'var(--danger)',
+      'ADJUSTMENT':'var(--primary)','CREDIT':'var(--info)','DEPOSIT':'color:#7d8eb6'
     };
 
     wrap.innerHTML = txns.map(t => {
-      const col = typeColors[t.txn_type] || 'var(--text-dim)';
+      const col = typeColors[t.txn_type] || 'var(--text-muted)';
       const amt = Number(t.amount||0);
-      const amtColor = t.txn_type==='PAYMENT'||t.txn_type==='CREDIT' ? 'var(--green)' : amt<0 ? 'var(--green)' : 'var(--orange)';
+      const amtColor = t.txn_type==='PAYMENT'||t.txn_type==='CREDIT' ? 'var(--success)' : amt<0 ? 'var(--success)' : 'var(--warning)';
       return `<div class="txn-row">
         <span class="txn-date">${fmtDate(t.txn_date)}</span>
         <span class="txn-type" style="color:${col};border-color:${col}">${t.txn_type.replace('_',' ')}</span>
@@ -779,7 +953,7 @@
       `${selectedAcct.account_number} — ${selectedAcct.name}`;
     document.getElementById('arr-bal-val').textContent = fmtBal(selectedAcct.bal);
     document.getElementById('arr-bal-val').style.color =
-      selectedAcct.bal > 500 ? 'var(--red)' : 'var(--orange)';
+      selectedAcct.bal > 500 ? 'var(--danger)' : 'var(--warning)';
     document.getElementById('arr-start').value = new Date().toISOString().split('T')[0];
     document.getElementById('panel-arrangement').classList.add('show');
   }
@@ -823,11 +997,11 @@
     if (!selectedAcct) return;
     const type = document.getElementById('notice-type').value;
     const templates = {
-      PAST_DUE: `Dear ${selectedAcct.name},\n\nThis is a notice that your water utility account (${selectedAcct.account_number||''}) has a past due balance of ${fmtBal(selectedAcct.bal)}.\n\nPlease contact our office immediately to arrange payment and avoid service interruption.\n\nThank you,\nDerby New Water System`,
-      DISCONNECT_WARNING: `Dear ${selectedAcct.name},\n\nThis is a final notice before disconnection of service for account ${selectedAcct.account_number||''}.\n\nYour balance of ${fmtBal(selectedAcct.bal)} must be paid immediately to avoid disconnection.\n\nPlease contact our office today.\n\nDerby New Water System`,
-      BOIL_WATER: `BOIL WATER NOTICE\n\nDear Customer,\n\nDue to a system issue, you are advised to boil all drinking water before use until further notice. We will notify you when it is safe to resume normal use.\n\nDerby New Water System`,
+      PAST_DUE: `Dear ${selectedAcct.name},\n\nThis is a notice that your water utility account (${selectedAcct.account_number||''}) has a past due balance of ${fmtBal(selectedAcct.bal)}.\n\nPlease contact our office immediately to arrange payment and avoid service interruption.\n\nThank you,\n'+activeSystemName+'`,
+      DISCONNECT_WARNING: `Dear ${selectedAcct.name},\n\nThis is a final notice before disconnection of service for account ${selectedAcct.account_number||''}.\n\nYour balance of ${fmtBal(selectedAcct.bal)} must be paid immediately to avoid disconnection.\n\nPlease contact our office today.\n\n'+activeSystemName+'`,
+      BOIL_WATER: `BOIL WATER NOTICE\n\nDear Customer,\n\nDue to a system issue, you are advised to boil all drinking water before use until further notice. We will notify you when it is safe to resume normal use.\n\n'+activeSystemName+'`,
       GENERAL: `Dear ${selectedAcct.name},\n\n`,
-      PAYMENT_RECEIVED: `Dear ${selectedAcct.name},\n\nWe have received your payment on account ${selectedAcct.account_number||''}. Thank you.\n\nDerby New Water System`
+      PAYMENT_RECEIVED: `Dear ${selectedAcct.name},\n\nWe have received your payment on account ${selectedAcct.account_number||''}. Thank you.\n\n'+activeSystemName+'`
     };
     document.getElementById('notice-msg').value = templates[type] || '';
   }
@@ -894,7 +1068,7 @@
   }
 
   function editAccount()  { alert('EDIT ACCOUNT — coming in next build'); }
-  function viewCallLog()  { window.location.href = 'calllog.html'; }
+  function viewCallLog()  { window.location.href = 'comms.html'; }
 
   // ── NEW ACCOUNT ───────────────────────────────────────────────
   function openNewAcct()  { document.getElementById('newAcctModal').classList.add('show'); }
@@ -975,197 +1149,26 @@
   });
 
   // ── BOOT ─────────────────────────────────────────────────────
-  loadSystems();
+  window.addEventListener('DOMContentLoaded',loadSystems);
+</script>
 </script>
 
-<!-- POST PAYMENT PANEL -->
-<div class="action-panel" id="panel-payment">
-  <div class="ap-header">
-    <div>
-      <div class="ap-title">POST PAYMENT</div>
-      <div class="ap-sub" id="pay-acct-sub">—</div>
-    </div>
-    <button class="ap-close" onclick="closeActionPanel('panel-payment')">✕</button>
-  </div>
-  <div class="ap-body">
-    <div class="form-row">
-      <label class="form-label">PAYMENT AMOUNT</label>
-      <input class="form-input" id="pay-amount" type="number" step="0.01" placeholder="0.00">
-    </div>
-    <div class="form-row">
-      <label class="form-label">PAYMENT DATE</label>
-      <input class="form-input" id="pay-date" type="date">
-    </div>
-    <div class="form-row">
-      <label class="form-label">PAYMENT METHOD</label>
-      <select class="form-select" id="pay-method">
-        <option value="CHECK">CHECK</option>
-        <option value="CASH">CASH</option>
-        <option value="SQUARE">SQUARE</option>
-        <option value="ACH">ACH / BANK TRANSFER</option>
-        <option value="MONEY_ORDER">MONEY ORDER</option>
-      </select>
-    </div>
-    <div class="form-row">
-      <label class="form-label">CHECK / REFERENCE NUMBER</label>
-      <input class="form-input" id="pay-ref" type="text" placeholder="Check #, Square ID, etc.">
-    </div>
-    <div class="form-row">
-      <label class="form-label">NOTES</label>
-      <input class="form-input" id="pay-notes" type="text" placeholder="Optional notes">
-    </div>
-    <div id="pay-cycle-warn" style="display:none;margin-top:16px;padding:12px;border:1px solid var(--orange);background:rgba(255,136,0,.06);">
-      <div style="font-family:Orbitron,monospace;font-size:9px;color:var(--orange);letter-spacing:2px;margin-bottom:8px;">⚠ CLOSED BILLING CYCLE</div>
-      <div style="font-size:10px;color:var(--text-mid);margin-bottom:12px;">This payment date falls within a closed billing cycle. Would you like to update the closed bill for this customer?</div>
-      <div style="display:flex;gap:8px;">
-        <button class="ap-btn success" style="font-size:9px;padding:7px" onclick="setUpdateCycle(true)">YES — UPDATE BILL</button>
-        <button class="ap-btn cancel" style="font-size:9px;padding:7px" onclick="setUpdateCycle(false)">POST TO CURRENT ONLY</button>
-      </div>
-    </div>
-  </div>
-  <div class="ap-footer">
-    <button class="ap-btn cancel" onclick="closeActionPanel('panel-payment')">CANCEL</button>
-    <button class="ap-btn submit" onclick="submitPayment()">POST PAYMENT</button>
-  </div>
-</div>
-
-<!-- PAYMENT ARRANGEMENT PANEL -->
-<div class="action-panel" id="panel-arrangement">
-  <div class="ap-header">
-    <div>
-      <div class="ap-title">PAYMENT ARRANGEMENT</div>
-      <div class="ap-sub" id="arr-acct-sub">—</div>
-    </div>
-    <button class="ap-close" onclick="closeActionPanel('panel-arrangement')">✕</button>
-  </div>
-  <div class="ap-body">
-    <div id="arr-balance-display" style="padding:16px;background:rgba(0,245,255,.04);border:1px solid var(--border);margin-bottom:20px;text-align:center;">
-      <div style="font-size:9px;color:var(--text-dim);letter-spacing:2px;margin-bottom:4px;">TOTAL BALANCE DUE</div>
-      <div id="arr-bal-val" style="font-family:Share Tech Mono,monospace;font-size:28px;color:var(--red);">—</div>
-    </div>
-    <div class="form-row">
-      <label class="form-label">DOWN PAYMENT AMOUNT</label>
-      <input class="form-input" id="arr-down" type="number" step="0.01" placeholder="0.00">
-    </div>
-    <div class="form-row">
-      <label class="form-label">DOWN PAYMENT DATE</label>
-      <input class="form-input" id="arr-down-date" type="date">
-    </div>
-    <div class="form-row-2">
-      <div>
-        <label class="form-label">MONTHLY PAYMENT</label>
-        <input class="form-input" id="arr-monthly" type="number" step="0.01" placeholder="0.00">
-      </div>
-      <div>
-        <label class="form-label">FIRST PAYMENT DATE</label>
-        <input class="form-input" id="arr-start" type="date">
-      </div>
-    </div>
-    <div class="form-row">
-      <label class="form-label">NUMBER OF PAYMENTS</label>
-      <input class="form-input" id="arr-count" type="number" placeholder="e.g. 3">
-    </div>
-    <div class="form-row">
-      <label class="form-label">ARRANGEMENT NOTES</label>
-      <input class="form-input" id="arr-notes" type="text" placeholder="Terms, conditions, verbal agreement details">
-    </div>
-  </div>
-  <div class="ap-footer">
-    <button class="ap-btn cancel" onclick="closeActionPanel('panel-arrangement')">CANCEL</button>
-    <button class="ap-btn success" onclick="submitArrangement()">CREATE ARRANGEMENT</button>
-  </div>
-</div>
-
-<!-- SEND NOTICE PANEL -->
-<div class="action-panel" id="panel-notice">
-  <div class="ap-header">
-    <div>
-      <div class="ap-title">SEND NOTICE</div>
-      <div class="ap-sub" id="notice-acct-sub">—</div>
-    </div>
-    <button class="ap-close" onclick="closeActionPanel('panel-notice')">✕</button>
-  </div>
-  <div class="ap-body">
-    <div class="form-row">
-      <label class="form-label">NOTICE TYPE</label>
-      <select class="form-select" id="notice-type" onchange="updateNoticeTemplate()">
-        <option value="PAST_DUE">PAST DUE NOTICE</option>
-        <option value="DISCONNECT_WARNING">DISCONNECT WARNING</option>
-        <option value="BOIL_WATER">BOIL WATER NOTICE</option>
-        <option value="GENERAL">GENERAL NOTICE</option>
-        <option value="PAYMENT_RECEIVED">PAYMENT RECEIVED CONFIRMATION</option>
-      </select>
-    </div>
-    <div class="form-row">
-      <label class="form-label">DELIVERY METHOD</label>
-      <select class="form-select" id="notice-delivery">
-        <option value="EMAIL">EMAIL</option>
-        <option value="SMS">SMS TEXT</option>
-        <option value="BOTH">EMAIL + SMS</option>
-        <option value="LOG_ONLY">LOG ONLY (NO SEND)</option>
-      </select>
-    </div>
-    <div id="notice-email-row" class="form-row">
-      <label class="form-label">EMAIL ADDRESS</label>
-      <input class="form-input" id="notice-email" type="text" placeholder="Customer email">
-    </div>
-    <div class="form-row">
-      <label class="form-label">MESSAGE</label>
-      <textarea class="form-input" id="notice-msg" rows="6" style="resize:vertical;line-height:1.6"></textarea>
-    </div>
-  </div>
-  <div class="ap-footer">
-    <button class="ap-btn cancel" onclick="closeActionPanel('panel-notice')">CANCEL</button>
-    <button class="ap-btn submit" onclick="submitNotice()">SEND NOTICE</button>
-  </div>
-</div>
-
-<!-- DISCONNECT PANEL -->
-<div class="action-panel" id="panel-disconnect">
-  <div class="ap-header">
-    <div>
-      <div class="ap-title" style="color:var(--red)">DISCONNECT SERVICE</div>
-      <div class="ap-sub" id="disc-acct-sub">—</div>
-    </div>
-    <button class="ap-close" onclick="closeActionPanel('panel-disconnect')">✕</button>
-  </div>
-  <div class="ap-body">
-    <div style="padding:16px;background:rgba(255,34,68,.06);border:1px solid rgba(255,34,68,.3);margin-bottom:20px;">
-      <div style="font-family:Orbitron,monospace;font-size:9px;color:var(--red);letter-spacing:2px;margin-bottom:6px;">⚡ THIS ACTION DISCONNECTS SERVICE</div>
-      <div style="font-size:10px;color:var(--text-mid);line-height:1.6">This will mark the account as DISCONNECTED and log the disconnection event. Service must be physically disconnected in the field separately.</div>
-    </div>
-    <div class="form-row">
-      <label class="form-label">DISCONNECT DATE</label>
-      <input class="form-input" id="disc-date" type="date">
-    </div>
-    <div class="form-row">
-      <label class="form-label">DISCONNECT REASON</label>
-      <select class="form-select" id="disc-reason">
-        <option value="NON_PAYMENT">NON-PAYMENT</option>
-        <option value="CUSTOMER_REQUEST">CUSTOMER REQUEST</option>
-        <option value="PROPERTY_SALE">PROPERTY SALE / TRANSFER</option>
-        <option value="MOVING">CUSTOMER MOVING</option>
-        <option value="OTHER">OTHER</option>
-      </select>
-    </div>
-    <div class="form-row">
-      <label class="form-label">FINAL METER READ</label>
-      <input class="form-input" id="disc-read" type="number" placeholder="Final meter reading">
-    </div>
-    <div class="form-row">
-      <label class="form-label">NOTES</label>
-      <input class="form-input" id="disc-notes" type="text" placeholder="Notes about disconnection">
-    </div>
-    <div class="form-row" style="display:flex;align-items:center;gap:10px">
-      <input type="checkbox" id="disc-send-notice" style="width:16px;height:16px;accent-color:var(--cyan)">
-      <label for="disc-send-notice" style="font-size:10px;color:var(--text-mid);cursor:pointer">Send disconnection notice to customer</label>
-    </div>
-  </div>
-  <div class="ap-footer">
-    <button class="ap-btn cancel" onclick="closeActionPanel('panel-disconnect')">CANCEL</button>
-    <button class="ap-btn danger" onclick="submitDisconnect()">CONFIRM DISCONNECT</button>
-  </div>
-</div>
-
+<script>
+const _SUPA_URL='https://bvpesxpptgdwkhsewhke.supabase.co';
+const _SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2cGVzeHBwdGdkd2toc2V3aGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNzcwNTksImV4cCI6MjA5MTk1MzA1OX0._th9UdQKqIWvqgTrxxpd5IfTlexCUeyWC5aGwRJYZj8';
+const SESSION_KEY='radeus_session';
+function getSession(){try{const s=JSON.parse(localStorage.getItem(SESSION_KEY)||'null');if(!s)return null;if(s.expires_at&&Date.now()/1000>s.expires_at){localStorage.removeItem(SESSION_KEY);return null;}return s;}catch{return null;}}
+function getStoredStaff(){try{const r=localStorage.getItem('radeus_staff');return r?JSON.parse(r):null;}catch{return null;}}
+function signOut(){const s=getSession();if(s?.access_token){fetch(`${_SUPA_URL}/auth/v1/logout`,{method:'POST',headers:{'apikey':_SUPA_KEY,'Authorization':`Bearer ${s.access_token}`}}).catch(()=>{});}localStorage.removeItem(SESSION_KEY);localStorage.removeItem('radeus_staff');window.location.href='login.html';}
+(function initAuth(){
+  const s=getSession();
+  if(!s||s.expires_at<Date.now()/1000){window.location.href='login.html';return;}
+  const staff=getStoredStaff();
+  if(!staff||!staff.org_id){window.location.href='login.html';return;}
+  ORG_ID=staff.org_id;
+  const el=document.getElementById('operatorName');
+  if(el)el.textContent=staff.name||'OPERATOR';
+})();
+</script>
 </body>
 </html>

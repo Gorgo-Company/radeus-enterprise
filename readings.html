@@ -5,201 +5,171 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RADEUS — Readings</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link href="theme.css" rel="stylesheet">
 <style>
   :root {
-    --cyan:#00f5ff;--cyan-dim:#00a8b5;--green:#00ff88;--red:#ff2244;
-    --orange:#ff8800;--yellow:#ffe600;--blue:#0088ff;--purple:#aa00ff;
-    --bg:#020c14;--bg2:#041220;--bg3:#021a0e;
-    --panel:rgba(0,255,136,.03);--border:rgba(0,255,136,.15);
-    --border-hi:rgba(0,255,136,.4);--text:#c8f0d8;--text-dim:#2a6a45;
-    --text-mid:#5a9a75;
+    --primary:#2c7ba2;--primary-soft:#d9ebf4;
+    --success:#348b67;--warning:#b8822f;--danger:#bf6157;--info:#4f8fbe;
+    --bg:#eef4f7;--bg2:#e4edf2;
+    --surface:rgba(255,255,255,0.94);--surface-strong:#ffffff;
+    --border:rgba(150,177,193,0.34);--border-strong:rgba(120,154,176,0.52);
+    --shadow:0 16px 42px rgba(49,83,105,0.10);
+    --text:#18384a;--text-soft:#5f7b8c;--text-muted:#8fa6b4;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-weight:400;overflow:hidden;height:100vh;width:100vw;}
-  body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:1000;}
+  html,body{
+    background:radial-gradient(circle at top left,rgba(124,175,205,0.20),transparent 30%),linear-gradient(180deg,#f7fbfd 0%,var(--bg) 100%);
+    color:var(--text);font-family:"Aptos","Segoe UI","Helvetica Neue",Arial,sans-serif;overflow:hidden;height:100vh;width:100vw;
+  }
 
-  /* Green field-ops tint on corners */
-  .corner{position:fixed;width:36px;height:36px;border-color:var(--green);border-style:solid;opacity:.4;z-index:999;}
-  .tl{top:6px;left:6px;border-width:2px 0 0 2px}.tr{top:6px;right:6px;border-width:2px 2px 0 0}
-  .bl{bottom:6px;left:6px;border-width:0 0 2px 2px}.br{bottom:6px;right:6px;border-width:0 2px 2px 0}
-
-  /* TOP BAR — green accent for readings */
-  .topbar{position:fixed;top:0;left:0;right:0;height:46px;background:linear-gradient(90deg,#021a0e,#020c14,#021a0e);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:100;}
-  .logo{font-family:'Orbitron',monospace;font-weight:900;font-size:20px;color:var(--green);letter-spacing:8px;text-shadow:0 0 20px var(--green),0 0 50px rgba(0,255,136,.2);text-decoration:none;}
-  .sys-select{background:rgba(0,255,136,.05);border:1px solid var(--border-hi);color:var(--green);font-family:'Share Tech Mono',monospace;font-size:11px;padding:4px 12px;letter-spacing:1px;cursor:pointer;outline:none;}
-  .sys-select option{background:#fff;color:#0d2a1a;font-family:Arial,sans-serif;}
-  .sdot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 2s infinite;}
+  /* TOPBAR */
+  .topbar{position:fixed;top:0;left:0;right:0;height:58px;background:rgba(248,251,253,0.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;box-shadow:0 8px 22px rgba(80,114,138,0.08);}
+  .logo{font-family:'Orbitron',monospace;font-weight:900;font-size:20px;color:var(--primary);letter-spacing:0.42rem;text-shadow:none;text-decoration:none;}
+  .logo a{color:inherit;text-decoration:none;}
+  .sys-select{background:rgba(255,255,255,0.90);border:1px solid var(--border-strong);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:4px 12px;letter-spacing:1px;cursor:pointer;outline:none;border-radius:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.70);}
+  .sys-select option{background:#fff;color:var(--text);}
+  .sdot{width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 0 5px rgba(52,139,103,0.16);animation:blink 2s infinite;}
   @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-  #clock{color:var(--green);font-size:13px;letter-spacing:2px;font-family:'Share Tech Mono',monospace;}
+  #clock{color:var(--text-soft);font-size:13px;letter-spacing:2px;font-family:'Share Tech Mono',monospace;}
 
   /* CYCLE CONTROL BAR */
-  .cyclebar{position:fixed;top:46px;left:0;right:0;height:56px;background:rgba(0,15,8,.98);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:20px;z-index:99;}
+  .cyclebar{position:fixed;top:58px;left:0;right:0;height:56px;background:rgba(248,251,253,0.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:20px;z-index:99;box-shadow:0 8px 22px rgba(80,114,138,0.08);}
   .cycle-group{display:flex;flex-direction:column;gap:2px;}
-  .cycle-label{font-size:8px;color:var(--text-dim);letter-spacing:2px;font-family:'Share Tech Mono',monospace;}
-  .cycle-val{font-family:'Orbitron',monospace;font-size:13px;color:var(--green);letter-spacing:1px;}
-  .cycle-input{background:rgba(0,255,136,.05);border:1px solid var(--border);color:var(--green);font-family:'Share Tech Mono',monospace;font-size:11px;padding:4px 8px;outline:none;width:130px;}
-  .cycle-input:focus{border-color:var(--border-hi);}
+  .cycle-label{font-size:8px;color:var(--text-muted);letter-spacing:2px;font-family:'Share Tech Mono',monospace;}
+  .cycle-val{font-family:'Orbitron',monospace;font-size:13px;color:var(--primary);letter-spacing:1px;}
+  .cycle-input{background:rgba(255,255,255,0.90);border:1px solid var(--border-strong);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:4px 8px;outline:none;width:130px;border-radius:12px;}
+  .cycle-input:focus{border-color:var(--primary);}
   .cycle-divider{width:1px;height:36px;background:var(--border);margin:0 4px;}
 
   /* PROGRESS BAR */
   .progress-wrap{flex:1;display:flex;flex-direction:column;gap:4px;}
-  .progress-label{display:flex;justify-content:space-between;font-size:9px;color:var(--text-mid);font-family:'Share Tech Mono',monospace;letter-spacing:1px;}
-  .progress-bar{height:6px;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.15);border-radius:1px;overflow:hidden;}
-  .progress-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--cyan));box-shadow:0 0 8px var(--green);transition:width .5s ease;}
+  .progress-label{display:flex;justify-content:space-between;font-size:9px;color:var(--text-soft);font-family:'Share Tech Mono',monospace;letter-spacing:1px;}
+  .progress-bar{height:6px;background:rgba(44,123,162,0.08);border:1px solid rgba(44,123,162,0.15);border-radius:4px;overflow:hidden;}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--success),var(--primary));transition:width .5s ease;}
 
   /* ACTION BUTTONS */
-  .cycle-btn{font-family:'Orbitron',monospace;font-size:8px;padding:7px 14px;border:1px solid;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap;}
-  .cycle-btn.primary{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.06);}
-  .cycle-btn.primary:hover{background:rgba(0,255,136,.18);}
-  .cycle-btn.secondary{border-color:var(--border);color:var(--text-mid);background:transparent;}
-  .cycle-btn.secondary:hover{border-color:var(--green);color:var(--green);}
-  .cycle-btn.danger{border-color:var(--orange);color:var(--orange);background:rgba(255,136,0,.06);}
-  .cycle-btn.danger:hover{background:rgba(255,136,0,.18);}
+  .cycle-btn{font-family:'Orbitron',monospace;font-size:8px;padding:7px 14px;border:1px solid var(--border-strong);cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap;background:rgba(255,255,255,0.88);color:var(--text-soft);border-radius:12px;}
+  .cycle-btn.primary{border-color:rgba(44,123,162,0.45);color:var(--primary);background:var(--primary-soft);}
+  .cycle-btn.primary:hover{background:rgba(44,123,162,0.20);}
+  .cycle-btn.secondary:hover{border-color:rgba(44,123,162,0.38);color:var(--primary);}
+  .cycle-btn.danger{border-color:rgba(191,97,87,0.35);color:var(--danger);background:rgba(191,97,87,0.08);}
+  .cycle-btn.danger:hover{background:rgba(191,97,87,0.15);}
 
   /* FILTER BAR */
-  .filterbar{position:fixed;top:102px;left:0;right:0;height:38px;background:rgba(2,10,6,.98);border-bottom:1px solid rgba(0,255,136,.08);display:flex;align-items:center;padding:0 18px;gap:8px;z-index:98;}
-  .fbtn{font-size:8px;padding:4px 10px;border:1px solid rgba(0,255,136,.2);color:var(--text-mid);background:transparent;cursor:pointer;font-family:'Share Tech Mono',monospace;letter-spacing:1px;transition:all .15s;}
-  .fbtn:hover,.fbtn.active{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.06);}
-  .search-input{background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.15);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:12px;padding:4px 10px;outline:none;width:240px;}
-  .search-input::placeholder{color:var(--text-dim);}
-  .search-input:focus{border-color:var(--border-hi);}
+  .filterbar{position:fixed;top:114px;left:0;right:0;height:38px;background:rgba(248,251,253,0.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:8px;z-index:98;box-shadow:0 8px 22px rgba(80,114,138,0.08);}
+  .fbtn{font-size:8px;padding:4px 10px;border:1px solid var(--border-strong);color:var(--text-soft);background:rgba(255,255,255,0.88);cursor:pointer;font-family:'Share Tech Mono',monospace;letter-spacing:1px;transition:all .15s;border-radius:12px;}
+  .fbtn:hover,.fbtn.active{border-color:rgba(44,123,162,0.45);color:var(--primary);background:var(--primary-soft);}
+  .search-input{background:rgba(255,255,255,0.90);border:1px solid var(--border-strong);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:12px;padding:4px 10px;outline:none;width:240px;border-radius:12px;}
+  .search-input::placeholder{color:var(--text-muted);}
+  .search-input:focus{border-color:var(--primary);}
   .filter-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
-  .unread-count{font-family:'Orbitron',monospace;font-size:10px;color:var(--orange);letter-spacing:1px;}
+  .unread-count{font-family:'Orbitron',monospace;font-size:10px;color:var(--warning);letter-spacing:1px;}
 
   /* MAIN TABLE AREA */
-  .main{position:fixed;top:140px;bottom:78px;left:0;right:0;overflow-y:auto;}
+  .main{position:fixed;top:152px;bottom:78px;left:0;right:0;overflow-y:auto;padding:14px;}
 
-  /* READINGS TABLE */
-  .rtable{width:100%;border-collapse:collapse;}
-  .rtable thead{position:sticky;top:0;z-index:10;}
-  .rtable th{font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1.5px;color:var(--text-dim);padding:8px 12px;border-bottom:2px solid var(--border);text-align:left;font-weight:400;background:#020c14;white-space:nowrap;}
-  .rtable td{padding:6px 12px;border-bottom:1px solid rgba(0,255,136,.04);vertical-align:middle;}
-  .rtable tr:hover td{background:rgba(0,255,136,.03);}
-  .rtable tr.read td{background:rgba(0,255,136,.02);}
-  .rtable tr.read td .td-acct{color:rgba(0,245,255,.4);}
+  /* TABLE */
+  .atable{width:100%;border-collapse:collapse;}
+  .atable thead{position:sticky;top:0;z-index:10;}
+  .atable th{font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1.5px;color:var(--text-soft);padding:8px 12px;border-bottom:1px solid var(--border);text-align:left;font-weight:400;background:rgba(243,248,251,0.98);white-space:nowrap;}
+  .atable td{padding:6px 12px;border-bottom:1px solid rgba(150,177,193,0.18);vertical-align:middle;color:var(--text);}
+  .atable tr:hover td{background:rgba(223,237,245,0.55);}
+  .atable tr.read td{background:rgba(217,235,244,0.30);}
 
   /* TABLE CELL TYPES */
-  .td-acct{color:var(--cyan);font-family:'Orbitron',monospace;font-size:9px;letter-spacing:.5px;white-space:nowrap;}
+  .td-acct{color:var(--primary);font-family:'Orbitron',monospace;font-size:9px;letter-spacing:.5px;white-space:nowrap;}
   .td-name{color:var(--text);font-size:13px;font-weight:600;white-space:nowrap;}
-  .td-addr{color:var(--text-mid);font-size:12px;}
+  .td-addr{color:var(--text-soft);font-size:12px;}
   .td-num{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;color:var(--text);text-align:right;}
   .td-usage{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;text-align:right;}
-  .td-bill{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--cyan);text-align:right;}
+  .td-bill{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--primary);text-align:right;}
 
   /* READ INPUT */
-  .read-input{background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.3);color:var(--green);font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;padding:5px 8px;outline:none;width:120px;text-align:right;transition:all .15s;}
-  .read-input:focus{border-color:var(--green);box-shadow:0 0 12px rgba(0,255,136,.2);background:rgba(0,255,136,.1);}
-  .read-input.has-value{border-color:var(--green);color:var(--green);}
-  .read-input.error{border-color:var(--red);color:var(--red);}
+  .read-input{background:rgba(255,255,255,0.90);border:1px solid var(--border-strong);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;padding:5px 8px;outline:none;width:120px;text-align:right;transition:all .15s;border-radius:12px;}
+  .read-input:focus{border-color:var(--primary);box-shadow:0 0 8px rgba(44,123,162,0.15);}
+  .read-input.has-value{border-color:var(--success);color:var(--success);}
+  .read-input.error{border-color:var(--danger);color:var(--danger);}
 
   /* NOTES INPUT */
-  .notes-input{background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.1);color:var(--text-mid);font-family:'Rajdhani',sans-serif;font-size:11px;padding:4px 8px;outline:none;width:140px;transition:all .15s;}
-  .notes-input:focus{border-color:var(--border);color:var(--text);}
+  .notes-input{background:rgba(255,255,255,0.90);border:1px solid var(--border);color:var(--text-soft);font-family:'Rajdhani',sans-serif;font-size:11px;padding:4px 8px;outline:none;width:140px;transition:all .15s;border-radius:12px;}
+  .notes-input:focus{border-color:var(--primary);color:var(--text);}
 
   /* IMAGE CELL */
   .img-cell{display:flex;align-items:center;gap:6px;}
-  .img-btn{background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.2);color:var(--text-dim);font-size:16px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
-  .img-btn:hover{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.1);}
-  .img-btn.has-img{border-color:var(--cyan);color:var(--cyan);background:rgba(0,245,255,.08);}
-  .img-thumb{width:32px;height:32px;object-fit:cover;border:1px solid var(--cyan);cursor:pointer;}
+  .img-btn{background:rgba(255,255,255,0.88);border:1px solid var(--border-strong);color:var(--text-muted);font-size:16px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;border-radius:12px;}
+  .img-btn:hover{border-color:rgba(44,123,162,0.45);color:var(--primary);}
+  .img-btn.has-img{border-color:var(--primary);color:var(--primary);background:var(--primary-soft);}
+  .img-thumb{width:32px;height:32px;object-fit:cover;border:1px solid var(--primary);cursor:pointer;border-radius:8px;}
 
   /* SAVE ROW BUTTON */
-  .save-btn{background:transparent;border:1px solid rgba(0,255,136,.3);color:var(--text-dim);font-family:'Orbitron',monospace;font-size:7px;padding:4px 8px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap;}
-  .save-btn:hover{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.08);}
-  .save-btn.saved{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.1);}
+  .save-btn{background:rgba(255,255,255,0.88);border:1px solid var(--border-strong);color:var(--text-soft);font-family:'Orbitron',monospace;font-size:7px;padding:4px 8px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap;border-radius:12px;}
+  .save-btn:hover{border-color:rgba(44,123,162,0.45);color:var(--primary);}
+  .save-btn.saved{border-color:rgba(52,139,103,0.45);color:var(--success);background:rgba(52,139,103,0.08);}
 
   /* STATUS DOT */
   .read-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-  .read-dot.done{background:var(--green);box-shadow:0 0 6px var(--green);}
-  .read-dot.pending{background:rgba(255,136,0,.4);border:1px solid var(--orange);}
-  .read-dot.estimated{background:rgba(0,136,255,.4);border:1px solid var(--blue);}
+  .read-dot.done{background:var(--success);box-shadow:0 0 0 4px rgba(52,139,103,0.12);}
+  .read-dot.pending{background:rgba(184,130,47,0.4);border:1px solid var(--warning);}
+  .read-dot.estimated{background:rgba(79,143,190,0.4);border:1px solid var(--info);}
 
   /* IMAGE MODAL */
-  .img-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:700;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
+  .img-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:700;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
   .img-modal.show{display:flex;}
-  .img-modal img{max-width:80vw;max-height:70vh;border:1px solid var(--green);box-shadow:0 0 40px rgba(0,255,136,.2);}
-  .img-modal-close{font-family:'Orbitron',monospace;font-size:10px;color:var(--red);border:1px solid var(--red);padding:8px 20px;cursor:pointer;letter-spacing:2px;background:rgba(255,34,68,.08);}
+  .img-modal img{max-width:80vw;max-height:70vh;border:1px solid var(--border-strong);box-shadow:var(--shadow);border-radius:8px;}
+  .img-modal-close{font-family:'Orbitron',monospace;font-size:10px;color:var(--danger);border:1px solid var(--danger);padding:8px 20px;cursor:pointer;letter-spacing:2px;background:rgba(191,97,87,0.08);border-radius:12px;}
 
   /* BOTTOM NAV */
-  .botnav{position:fixed;bottom:0;left:0;right:0;height:78px;background:linear-gradient(90deg,#021a0e,#020c14,#021a0e);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:6px;padding:0 16px;z-index:100;}
-  .navbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:58px;height:68px;background:rgba(0,255,136,.02);border:1px solid rgba(0,255,136,.1);color:rgba(0,255,136,.4);cursor:pointer;transition:all .2s;font-size:8px;letter-spacing:1px;text-transform:uppercase;font-family:'Share Tech Mono',monospace;position:relative;overflow:hidden;text-decoration:none;}
-  .navbtn::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--green);transform:scaleX(0);transition:transform .2s;}
+  .botnav{position:fixed;bottom:0;left:0;right:0;height:78px;background:rgba(248,251,253,0.92);backdrop-filter:blur(18px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:6px;padding:0 16px;z-index:100;box-shadow:0 -8px 22px rgba(80,114,138,0.08);}
+  .navbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:72px;height:62px;background:rgba(255,255,255,0.88);border:1px solid var(--border-strong);color:var(--text-soft);cursor:pointer;transition:all .2s;font-size:8px;letter-spacing:1px;text-transform:uppercase;font-family:'Share Tech Mono',monospace;position:relative;overflow:hidden;text-decoration:none;border-radius:12px;box-shadow:none;}
+  .navbtn::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--primary);transform:scaleX(0);transition:transform .2s;}
   .navbtn:hover::after,.navbtn.active::after{transform:scaleX(1);}
-  .navbtn:hover,.navbtn.active{color:var(--green);border-color:var(--border-hi);background:rgba(0,255,136,.06);}
+  .navbtn:hover{color:var(--primary);border-color:rgba(44,123,162,0.38);}
+  .navbtn.active{color:var(--primary);border-color:rgba(44,123,162,0.45);background:var(--primary-soft);}
   .navicon{font-size:20px;}
-  .navalert{position:absolute;top:5px;right:6px;width:13px;height:13px;background:var(--red);border-radius:50%;font-size:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Orbitron',monospace;}
 
   /* SCROLLBAR */
-  ::-webkit-scrollbar{width:3px;height:3px;}
+  ::-webkit-scrollbar{width:8px;height:8px;}
   ::-webkit-scrollbar-track{background:transparent;}
-  ::-webkit-scrollbar-thumb{background:rgba(0,255,136,.2);}
+  ::-webkit-scrollbar-thumb{background:rgba(133,161,178,0.45);border-radius:999px;}
 
   /* LOADING */
-  .loading-row td{color:var(--text-dim);font-size:10px;letter-spacing:1px;text-align:center;padding:60px;font-family:'Share Tech Mono',monospace;}
+  .loading-row td{color:var(--text-soft);font-size:10px;letter-spacing:1px;text-align:center;padding:60px;font-family:'Share Tech Mono',monospace;}
 
   /* TOAST */
-  .toast{position:fixed;bottom:80px;right:20px;background:#021a0e;border:1px solid var(--green);padding:10px 18px;font-family:'Orbitron',monospace;font-size:9px;color:var(--green);letter-spacing:2px;z-index:800;opacity:0;transition:opacity .3s;pointer-events:none;}
+  .toast{position:fixed;bottom:80px;right:20px;background:var(--surface-strong);border:1px solid var(--primary);padding:10px 18px;font-family:'Orbitron',monospace;font-size:9px;color:var(--primary);letter-spacing:2px;z-index:800;opacity:0;transition:opacity .3s;pointer-events:none;border-radius:12px;box-shadow:var(--shadow);}
   .toast.show{opacity:1;}
 </style>
 </head>
 <body>
-
-<div class="corner tl"></div><div class="corner tr"></div>
-<div class="corner bl"></div><div class="corner br"></div>
-
-<!-- TOP BAR -->
 <div class="topbar">
   <a class="logo" href="index.html">RADEUS</a>
   <div style="display:flex;align-items:center;gap:16px">
     <div class="sdot"></div>
-    <span style="font-size:9px;color:var(--text-dim);letter-spacing:2px;font-family:'Share Tech Mono',monospace">METER READINGS</span>
+    <span style="font-size:9px;color:var(--text-muted);letter-spacing:2px;font-family:'Share Tech Mono',monospace">METER READINGS</span>
     <select class="sys-select" id="sysSelect" onchange="switchSystem(this.value)">
       <option value="">⬡ LOADING...</option>
     </select>
   </div>
   <div style="display:flex;align-items:center;gap:14px">
-    <span style="font-size:9px;color:var(--text-dim);font-family:'Share Tech Mono',monospace">OPERATOR: <span style="color:var(--green)">ADMIN</span></span>
+    <span style="font-size:9px;color:var(--text-soft);font-family:'Share Tech Mono',monospace">OPERATOR: <span id="operatorName" style="color:var(--text)">—</span></span>
     <span id="clock">--:--:--</span>
   </div>
 </div>
-
-<!-- CYCLE CONTROL BAR -->
 <div class="cyclebar">
-  <div class="cycle-group">
-    <div class="cycle-label">READING CYCLE</div>
-    <div class="cycle-val" id="cycle-display">— / —</div>
-  </div>
+  <div class="cycle-group"><div class="cycle-label">READING CYCLE</div><div class="cycle-val" id="cycle-display">— / —</div></div>
   <div class="cycle-divider"></div>
-  <div class="cycle-group">
-    <div class="cycle-label">CYCLE MONTH</div>
-    <input class="cycle-input" type="month" id="cycle-month" onchange="setCycle()">
-  </div>
-  <div class="cycle-group">
-    <div class="cycle-label">PERIOD START</div>
-    <input class="cycle-input" type="date" id="period-start">
-  </div>
-  <div class="cycle-group">
-    <div class="cycle-label">PERIOD END</div>
-    <input class="cycle-input" type="date" id="period-end">
-  </div>
+  <div class="cycle-group"><div class="cycle-label">CYCLE MONTH</div><input class="cycle-input" type="month" id="cycle-month" onchange="setCycle()"></div>
+  <div class="cycle-group"><div class="cycle-label">PERIOD START</div><input class="cycle-input" type="date" id="period-start"></div>
+  <div class="cycle-group"><div class="cycle-label">PERIOD END</div><input class="cycle-input" type="date" id="period-end"></div>
   <div class="cycle-divider"></div>
   <div class="progress-wrap">
-    <div class="progress-label">
-      <span>READS COMPLETE</span>
-      <span id="progress-text">0 of 0</span>
-    </div>
-    <div class="progress-bar">
-      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
-    </div>
+    <div class="progress-label"><span>READS COMPLETE</span><span id="progress-text">0 of 0</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
   </div>
   <div class="cycle-divider"></div>
   <button class="cycle-btn primary" onclick="saveAllReads()">⬡ SAVE ALL READS</button>
   <button class="cycle-btn secondary" onclick="exportReads()">↓ EXPORT CSV</button>
   <button class="cycle-btn danger" onclick="clearUnread()">✕ CLEAR UNREAD</button>
 </div>
-
-<!-- FILTER BAR -->
 <div class="filterbar">
   <button class="fbtn active" onclick="setFilter('ALL',this)">ALL</button>
   <button class="fbtn" onclick="setFilter('UNREAD',this)">UNREAD</button>
@@ -211,33 +181,17 @@
     <button class="cycle-btn secondary" onclick="sortByRoute()" style="font-size:7px;padding:4px 10px">SORT BY ROUTE</button>
   </div>
 </div>
-
-<!-- MAIN -->
 <div class="main">
-  <table class="rtable">
-    <thead>
-      <tr>
-        <th style="width:10px">●</th>
-        <th>ACCT #</th>
-        <th>CUSTOMER</th>
-        <th>SERVICE ADDRESS</th>
-        <th style="text-align:right">PREV READ</th>
-        <th style="text-align:right;min-width:130px">CURRENT READ</th>
-        <th style="text-align:right">USAGE</th>
-        <th style="text-align:right">BILL AMT</th>
-        <th>READ DATE</th>
-        <th>NOTES</th>
-        <th>IMAGE</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody id="readTable">
-      <tr class="loading-row"><td colspan="12">LOADING ACCOUNTS...</td></tr>
-    </tbody>
+  <table class="atable">
+    <thead><tr>
+      <th style="width:10px">●</th><th>ACCT #</th><th>CUSTOMER</th><th>SERVICE ADDRESS</th>
+      <th style="text-align:right">PREV READ</th><th style="text-align:right;min-width:130px">CURRENT READ</th>
+      <th style="text-align:right">USAGE</th><th style="text-align:right">BILL AMT</th>
+      <th>READ DATE</th><th>NOTES</th><th>IMAGE</th><th></th>
+    </tr></thead>
+    <tbody id="readTable"><tr class="loading-row"><td colspan="12">LOADING ACCOUNTS...</td></tr></tbody>
   </table>
 </div>
-
-<!-- BOTTOM NAV -->
 <div class="botnav">
   <a class="navbtn" href="index.html"><span class="navicon">⬡</span>COMMAND</a>
   <a class="navbtn" href="accounts.html"><span class="navicon">👤</span>ACCOUNTS</a>
@@ -250,486 +204,157 @@
   <a class="navbtn" href="comms.html"><span class="navicon">📡</span>COMMS</a>
   <a class="navbtn" href="system.html"><span class="navicon">⚙</span>SYSTEM</a>
 </div>
-
-<!-- IMAGE MODAL -->
 <div class="img-modal" id="imgModal">
   <img id="modal-img" src="" alt="Meter Image">
-  <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-mid);letter-spacing:1px;" id="modal-caption"></div>
+  <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-muted);letter-spacing:1px;" id="modal-caption"></div>
   <button class="img-modal-close" onclick="closeImgModal()">CLOSE</button>
 </div>
-
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
-
-<!-- HIDDEN FILE INPUT -->
 <input type="file" id="imgFileInput" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
 
 <script>
-  // ── CONFIG ───────────────────────────────────────────────────
-  const SUPA_URL = 'https://bvpesxpptgdwkhsewhke.supabase.co';
-  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2cGVzeHBwdGdkd2toc2V3aGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNzcwNTksImV4cCI6MjA5MTk1MzA1OX0._th9UdQKqIWvqgTrxxpd5IfTlexCUeyWC5aGwRJYZj8';
-  const ORG_ID  = '00000000-0000-0000-0000-000000000001';
+const SUPA_URL='https://bvpesxpptgdwkhsewhke.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2cGVzeHBwdGdkd2toc2V3aGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNzcwNTksImV4cCI6MjA5MTk1MzA1OX0._th9UdQKqIWvqgTrxxpd5IfTlexCUeyWC5aGwRJYZj8';
+let ORG_ID=null;
 
-  // ── STATE ────────────────────────────────────────────────────
-  let activeSystemId   = null;
-  let activeSystemCode = null;
-  let activeSystemName = null;
-  let allAccounts      = [];
-  let existingReads    = {};   // account_id → read record
-  let pendingReads     = {};   // account_id → {current_read, notes, image_url, estimated}
-  let pendingImages    = {};   // account_id → File object
-  let currentFilter    = 'ALL';
-  let activeCycle      = { year: null, month: null };
-  let imgTargetAccount = null;
+let activeSystemId=null,activeSystemCode=null,activeSystemName=null;
+let allAccounts=[],allSystemsCache=[];
+let existingReads={},pendingReads={},pendingImages={};
+let currentFilter='ALL',activeCycle={year:null,month:null},imgTargetAccount=null;
 
-  // Base rate for bill preview calc
-  const BASE_RATE       = 40.00;
-  const ENERGY_SURCHARGE = 6.00;
-  const USAGE_RATE      = 0.004; // per gallon
+let BASE_RATE=40.00,ENERGY_SURCHARGE=6.00,USAGE_RATE=0.004;
 
-  // ── CLOCK ────────────────────────────────────────────────────
-  function tick(){document.getElementById('clock').textContent=new Date().toTimeString().slice(0,8);}
-  setInterval(tick,1000); tick();
+function tick(){document.getElementById('clock').textContent=new Date().toTimeString().slice(0,8);}
+setInterval(tick,1000);tick();
 
-  // ── SUPABASE ─────────────────────────────────────────────────
-  async function supa(table, params='', method='GET', body=null) {
-    try {
-      const opts = {
-        method,
-        headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Content-Type':'application/json','Prefer':'return=representation'}
-      };
-      if (body) opts.body = JSON.stringify(body);
-      const r = await fetch(`${SUPA_URL}/rest/v1/${table}${params}`, opts);
-      if (!r.ok) { console.error('Supa',r.status,await r.text()); return null; }
-      const txt = await r.text();
-      return txt ? JSON.parse(txt) : [];
-    } catch(e) { console.error(e); return null; }
+async function supa(table,params='',method='GET',body=null){
+  try{const opts={method,headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Content-Type':'application/json','Prefer':'return=representation'}};
+  if(body)opts.body=JSON.stringify(body);
+  const r=await fetch(`${SUPA_URL}/rest/v1/${table}${params}`,opts);
+  if(!r.ok){console.error('Supa',r.status,await r.text());return null;}
+  const txt=await r.text();return txt?JSON.parse(txt):[];}catch(e){console.error(e);return null;}}
+
+function toast(msg,duration=2500){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),duration);}
+function calcBill(usage){if(!usage||usage<=0)return BASE_RATE+ENERGY_SURCHARGE;return BASE_RATE+ENERGY_SURCHARGE+(usage*USAGE_RATE);}
+function fmtNum(n){if(n===null||n===undefined||n==='')return'—';return Number(n).toLocaleString();}
+function fmtBill(n){return`$${Number(n).toFixed(2)}`;}
+
+function applySystemRates(sys){
+  if(!sys)return;
+  if(sys.base_rate!=null)BASE_RATE=parseFloat(sys.base_rate);
+  if(sys.energy_surcharge!=null)ENERGY_SURCHARGE=parseFloat(sys.energy_surcharge);
+  if(sys.usage_rate!=null)USAGE_RATE=parseFloat(sys.usage_rate);
+}
+
+function initCycle(){const now=new Date();const year=now.getFullYear();const month=now.getMonth()+1;activeCycle={year,month};document.getElementById('cycle-month').value=`${year}-${String(month).padStart(2,'0')}`;document.getElementById('period-start').value=new Date(year,month-1,1).toISOString().split('T')[0];document.getElementById('period-end').value=new Date(year,month,0).toISOString().split('T')[0];updateCycleDisplay();}
+function setCycle(){const val=document.getElementById('cycle-month').value;if(!val)return;const[year,month]=val.split('-').map(Number);activeCycle={year,month};updateCycleDisplay();if(activeSystemId)loadReadings();}
+function updateCycleDisplay(){const months=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];document.getElementById('cycle-display').textContent=`${months[(activeCycle.month||1)-1]} ${activeCycle.year||'—'}`;}
+
+async function loadSystems(){
+  if(!ORG_ID)return;
+  const systems=await supa('water_systems',`?org_id=eq.${ORG_ID}&select=system_id,system_code,system_name,base_rate,energy_surcharge,usage_rate&order=system_name`);
+  if(!systems||!systems.length)return;
+  allSystemsCache=systems;
+  const sel=document.getElementById('sysSelect');
+  if(systems.length===1){
+    const s=systems[0];sel.innerHTML=`<option value="${s.system_id}">⬡ ${s.system_name.toUpperCase()}</option>`;
+    activeSystemId=s.system_id;activeSystemCode=s.system_code;activeSystemName=s.system_name;applySystemRates(s);
+  } else {
+    sel.innerHTML=`<option value="">⬡ ALL SYSTEMS</option>`+systems.map(s=>`<option value="${s.system_id}">⬡ ${s.system_name.toUpperCase()}</option>`).join('');
+    const first=systems[0];sel.value=first.system_id;
+    activeSystemId=first.system_id;activeSystemCode=first.system_code;activeSystemName=first.system_name;applySystemRates(first);
   }
+  loadReadings();
+}
 
-  // ── HELPERS ──────────────────────────────────────────────────
-  function toast(msg, duration=2500) {
-    const el = document.getElementById('toast');
-    el.textContent = msg;
-    el.classList.add('show');
-    setTimeout(() => el.classList.remove('show'), duration);
-  }
+function switchSystem(val){
+  if(!val)return;const sys=allSystemsCache.find(s=>s.system_id===val);if(!sys)return;
+  activeSystemId=sys.system_id;activeSystemCode=sys.system_code;activeSystemName=sys.system_name;
+  applySystemRates(sys);pendingReads={};pendingImages={};loadReadings();
+}
 
-  function calcBill(usage) {
-    if (!usage || usage <= 0) return BASE_RATE + ENERGY_SURCHARGE;
-    return BASE_RATE + ENERGY_SURCHARGE + (usage * USAGE_RATE);
-  }
+async function loadReadings(){
+  if(!activeSystemId)return;
+  document.getElementById('readTable').innerHTML='<tr class="loading-row"><td colspan="12">LOADING...</td></tr>';
+  const accounts=await supa('accounts',`?system_id=eq.${activeSystemId}&status=eq.ACTIVE&select=account_id,account_number,customers(full_name),service_addresses(street,city)`);
+  if(!accounts||!accounts.length){document.getElementById('readTable').innerHTML='<tr class="loading-row"><td colspan="12">NO ACTIVE ACCOUNTS FOR THIS SYSTEM</td></tr>';updateProgress();return;}
+  allAccounts=accounts;
+  const reads=await supa('meter_reads',`?account_id=in.(${accounts.map(a=>a.account_id).join(',')})&select=*&order=read_date.desc`);
+  existingReads={};if(reads){reads.forEach(r=>{if(!existingReads[r.account_id])existingReads[r.account_id]=r;});}
+  updateProgress();renderTable();
+}
 
-  function fmtNum(n) {
-    if (n === null || n === undefined || n === '') return '—';
-    return Number(n).toLocaleString();
-  }
+function updateProgress(){const total=allAccounts.length;const done=allAccounts.filter(a=>existingReads[a.account_id]||pendingReads[a.account_id]?.current_read).length;const pct=total>0?Math.round((done/total)*100):0;document.getElementById('progress-text').textContent=`${done} of ${total}`;document.getElementById('progress-fill').style.width=pct+'%';document.getElementById('unread-label').textContent=`${total-done} UNREAD`;}
 
-  function fmtBill(n) {
-    return `$${Number(n).toFixed(2)}`;
-  }
-
-  // ── INIT CYCLE ───────────────────────────────────────────────
-  function initCycle() {
-    const now   = new Date();
-    const year  = now.getFullYear();
-    const month = now.getMonth() + 1;
-    activeCycle = { year, month };
-
-    const monthStr = String(month).padStart(2,'0');
-    document.getElementById('cycle-month').value = `${year}-${monthStr}`;
-
-    // Period: first of month → last of month
-    const firstDay = new Date(year, month-1, 1);
-    const lastDay  = new Date(year, month, 0);
-    document.getElementById('period-start').value = firstDay.toISOString().split('T')[0];
-    document.getElementById('period-end').value   = lastDay.toISOString().split('T')[0];
-
-    updateCycleDisplay();
-  }
-
-  function setCycle() {
-    const val = document.getElementById('cycle-month').value;
-    if (!val) return;
-    const [year, month] = val.split('-').map(Number);
-    activeCycle = { year, month };
-    updateCycleDisplay();
-    if (activeSystemId) loadReadings();
-  }
-
-  function updateCycleDisplay() {
-    const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-    const m = months[(activeCycle.month||1)-1];
-    document.getElementById('cycle-display').textContent = `${m} ${activeCycle.year||'—'}`;
-  }
-
-  // ── LOAD SYSTEMS ─────────────────────────────────────────────
-  async function loadSystems() {
-    const systems = await supa('water_systems', `?org_id=eq.${ORG_ID}&select=system_id,system_code,system_name&order=system_name`);
-    if (!systems || !systems.length) return;
-    const sel = document.getElementById('sysSelect');
-    sel.innerHTML = systems.map(s =>
-      `<option value="${s.system_id}|${s.system_code}|${s.system_name}">⬡ ${s.system_name.toUpperCase()}</option>`
-    ).join('');
-    const first = systems[0];
-    activeSystemId   = first.system_id;
-    activeSystemCode = first.system_code;
-    activeSystemName = first.system_name;
-    loadReadings();
-  }
-
-  function switchSystem(val) {
-    const [id, code, name] = val.split('|');
-    activeSystemId   = id;
-    activeSystemCode = code;
-    activeSystemName = name;
-    pendingReads     = {};
-    pendingImages    = {};
-    loadReadings();
-  }
-
-  // ── LOAD ACCOUNTS + EXISTING READS ───────────────────────────
-  async function loadReadings() {
-    document.getElementById('readTable').innerHTML =
-      '<tr class="loading-row"><td colspan="12">LOADING...</td></tr>';
-
-    // Get active accounts
-    const accounts = await supa('accounts',
-      `?system_id=eq.${activeSystemId}&status=eq.ACTIVE&select=account_id,account_number,customers(full_name),service_addresses(street,city)`
-    );
-    if (!accounts) return;
-    allAccounts = accounts;
-
-    // Get existing reads for this cycle
-    const reads = await supa('meter_reads',
-      `?account_id=in.(${accounts.map(a=>a.account_id).join(',')})&select=*&order=read_date.desc`
-    );
-
-    existingReads = {};
-    if (reads) {
-      reads.forEach(r => {
-        // Only keep reads for current cycle if we can match
-        if (!existingReads[r.account_id]) existingReads[r.account_id] = r;
-      });
-    }
-
-    updateProgress();
-    renderTable();
-  }
-
-  // ── PROGRESS ─────────────────────────────────────────────────
-  function updateProgress() {
-    const total = allAccounts.length;
-    const done  = allAccounts.filter(a =>
-      existingReads[a.account_id] || pendingReads[a.account_id]?.current_read
-    ).length;
-    const pct = total > 0 ? Math.round((done/total)*100) : 0;
-    document.getElementById('progress-text').textContent = `${done} of ${total}`;
-    document.getElementById('progress-fill').style.width = pct + '%';
-    document.getElementById('unread-label').textContent = `${total-done} UNREAD`;
-  }
-
-  // ── RENDER TABLE ─────────────────────────────────────────────
-  function renderTable() {
-    const search = document.getElementById('searchInput').value.toLowerCase();
-
-    let rows = allAccounts.filter(a => {
-      const hasRead   = !!(existingReads[a.account_id] || pendingReads[a.account_id]?.current_read);
-      const isEst     = pendingReads[a.account_id]?.estimated;
-      if (currentFilter === 'READ')      return hasRead;
-      if (currentFilter === 'UNREAD')    return !hasRead;
-      if (currentFilter === 'ESTIMATED') return isEst;
-      return true;
-    }).filter(a => {
-      if (!search) return true;
-      const name = a.customers?.full_name || '';
-      return a.account_number.toLowerCase().includes(search) || name.toLowerCase().includes(search);
-    });
-
-    const tbody = document.getElementById('readTable');
-    if (!rows.length) {
-      tbody.innerHTML = `<tr class="loading-row"><td colspan="12" style="color:var(--text-dim)">NO ACCOUNTS MATCH</td></tr>`;
-      return;
-    }
-
-    tbody.innerHTML = '';
-    rows.forEach(a => {
-      const existing = existingReads[a.account_id];
-      const pending  = pendingReads[a.account_id] || {};
-      const hasImg   = pendingImages[a.account_id] || pending.image_url;
-
-      const prevRead    = existing?.current_read ?? null;
-      const currentRead = pending.current_read ?? existing?.current_read ?? '';
-      const usage       = (currentRead && prevRead !== null)
-        ? Math.max(0, Number(currentRead) - Number(prevRead)) : null;
-      const billAmt     = usage !== null ? calcBill(usage) : null;
-      const isDone      = !!(existing || pending.current_read);
-      const isEst       = pending.estimated || existing?.estimated;
-      const notes       = pending.notes ?? existing?.notes ?? '';
-      const readDate    = pending.read_date ?? new Date().toISOString().split('T')[0];
-
-      const dotClass    = isDone ? (isEst ? 'estimated' : 'done') : 'pending';
-      const name        = a.customers?.full_name || '—';
-      const addr        = `${a.service_addresses?.street||'—'}, ${a.service_addresses?.city||''}`;
-
-      // Usage color
-      const usageColor  = usage === null ? 'var(--text-dim)'
-        : usage > 10000 ? 'var(--red)'
-        : usage > 5000  ? 'var(--orange)'
-        : 'var(--green)';
-
-      const tr = document.createElement('tr');
-      if (isDone) tr.classList.add('read');
-      tr.innerHTML = `
-        <td><span class="read-dot ${dotClass}" title="${isDone?(isEst?'Estimated':'Read Complete'):'Unread'}"></span></td>
-        <td class="td-acct">${a.account_number}</td>
-        <td class="td-name">${name}</td>
-        <td class="td-addr">${addr}</td>
-        <td class="td-num">${prevRead !== null ? fmtNum(prevRead) : '<span style="color:var(--text-dim)">NO PRIOR READ</span>'}</td>
-        <td>
-          <input class="read-input ${pending.current_read?'has-value':''}"
-            type="number"
-            id="read-${a.account_id}"
-            value="${pending.current_read ?? ''}"
-            placeholder="${prevRead !== null ? fmtNum(prevRead)+'+' : 'Enter read'}"
-            onchange="onReadChange('${a.account_id}', this)"
-            oninput="onReadInput('${a.account_id}', this)">
-        </td>
-        <td class="td-usage" style="color:${usageColor}">${usage !== null ? fmtNum(usage) : '—'}</td>
-        <td class="td-bill">${billAmt !== null ? fmtBill(billAmt) : '—'}</td>
-        <td>
-          <input type="date" id="date-${a.account_id}"
-            value="${readDate}"
-            style="background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.1);color:var(--text-mid);font-family:'Rajdhani',sans-serif;font-size:11px;padding:3px 6px;outline:none;width:120px;">
-        </td>
-        <td>
-          <input class="notes-input"
-            type="text"
-            id="notes-${a.account_id}"
-            value="${notes}"
-            placeholder="Notes..."
-            onchange="onNotesChange('${a.account_id}', this)">
-        </td>
-        <td>
-          <div class="img-cell">
-            <div class="img-btn ${hasImg?'has-img':''}"
-              onclick="openImagePicker('${a.account_id}')"
-              title="${hasImg?'View/change image':'Add meter photo'}">
-              ${hasImg ? '📷' : '📷'}
-            </div>
-            ${pending.image_url ? `<img class="img-thumb" src="${pending.image_url}" onclick="viewImage('${pending.image_url}','${a.account_number}')">` : ''}
-          </div>
-        </td>
-        <td>
-          <button class="save-btn ${isDone?'saved':''}"
-            onclick="saveOneRead('${a.account_id}')"
-            id="savebtn-${a.account_id}">
-            ${isDone?'✓ SAVED':'SAVE'}
-          </button>
-        </td>`;
-      tbody.appendChild(tr);
-    });
-
-    updateProgress();
-  }
-
-  // ── READ INPUT HANDLERS ───────────────────────────────────────
-  function onReadInput(accountId, input) {
-    const prev = existingReads[accountId]?.current_read;
-    const val  = Number(input.value);
-    if (prev !== null && prev !== undefined && val < Number(prev)) {
-      input.classList.add('error');
-      input.classList.remove('has-value');
-    } else {
-      input.classList.remove('error');
-      input.classList.add('has-value');
-    }
-    // Live update usage and bill cells
-    if (!pendingReads[accountId]) pendingReads[accountId] = {};
-    pendingReads[accountId].current_read = input.value ? val : null;
-    // Update just those cells without full re-render
-    const row   = input.closest('tr');
-    if (!row) return;
-    const cells = row.querySelectorAll('td');
-    const usage = (prev !== null && prev !== undefined && input.value)
-      ? Math.max(0, val - Number(prev)) : null;
-    const bill  = usage !== null ? calcBill(usage) : null;
-    const usageColor = usage === null ? 'var(--text-dim)'
-      : usage > 10000 ? 'var(--red)' : usage > 5000 ? 'var(--orange)' : 'var(--green)';
-    cells[6].textContent = usage !== null ? fmtNum(usage) : '—';
-    cells[6].style.color = usageColor;
-    cells[7].textContent = bill !== null ? fmtBill(bill) : '—';
-  }
-
-  function onReadChange(accountId, input) {
-    if (!pendingReads[accountId]) pendingReads[accountId] = {};
-    const val = Number(input.value);
-    pendingReads[accountId].current_read = input.value ? val : null;
-    pendingReads[accountId].read_date = document.getElementById(`date-${accountId}`)?.value;
-    updateProgress();
-  }
-
-  function onNotesChange(accountId, input) {
-    if (!pendingReads[accountId]) pendingReads[accountId] = {};
-    pendingReads[accountId].notes = input.value;
-  }
-
-  // ── IMAGE HANDLING ────────────────────────────────────────────
-  function openImagePicker(accountId) {
-    imgTargetAccount = accountId;
-    document.getElementById('imgFileInput').click();
-  }
-
-  function handleImageUpload(event) {
-    const file = event.target.files[0];
-    if (!file || !imgTargetAccount) return;
-    pendingImages[imgTargetAccount] = file;
-    // Create local preview URL
-    const url = URL.createObjectURL(file);
-    if (!pendingReads[imgTargetAccount]) pendingReads[imgTargetAccount] = {};
-    pendingReads[imgTargetAccount].image_url = url;
-    renderTable();
-    toast('📷 IMAGE ATTACHED');
-    event.target.value = '';
-  }
-
-  function viewImage(url, label) {
-    document.getElementById('modal-img').src     = url;
-    document.getElementById('modal-caption').textContent = label;
-    document.getElementById('imgModal').classList.add('show');
-  }
-
-  function closeImgModal() {
-    document.getElementById('imgModal').classList.remove('show');
-  }
-
-  // ── SAVE ONE READ ─────────────────────────────────────────────
-  async function saveOneRead(accountId) {
-    const pending = pendingReads[accountId];
-    if (!pending?.current_read) {
-      toast('⚠ ENTER A READING FIRST');
-      return;
-    }
-
-    const existing  = existingReads[accountId];
-    const prevRead  = existing?.current_read ?? null;
-    const readDate  = document.getElementById(`date-${accountId}`)?.value
-      || new Date().toISOString().split('T')[0];
-
-    const readRecord = {
-      account_id:    accountId,
-      previous_read: prevRead,
-      current_read:  pending.current_read,
-      read_date:     readDate,
-      estimated:     pending.estimated || false,
-      notes:         pending.notes || null,
-      read_by:       'OPERATOR'
-    };
-
-    const res = await supa('meter_reads', '', 'POST', readRecord);
-    if (!res || !res[0]) { toast('⚠ ERROR SAVING READ'); return; }
-
-    existingReads[accountId] = res[0];
-    delete pendingReads[accountId];
-
-    const btn = document.getElementById(`savebtn-${accountId}`);
-    if (btn) { btn.textContent = '✓ SAVED'; btn.classList.add('saved'); }
-
-    toast(`✓ READ SAVED — ${pending.current_read.toLocaleString()}`);
-    updateProgress();
-  }
-
-  // ── SAVE ALL READS ────────────────────────────────────────────
-  async function saveAllReads() {
-    const toSave = Object.entries(pendingReads).filter(([,p]) => p.current_read);
-    if (!toSave.length) { toast('NO NEW READS TO SAVE'); return; }
-
-    let saved = 0;
-    for (const [accountId, pending] of toSave) {
-      const existing = existingReads[accountId];
-      const prevRead = existing?.current_read ?? null;
-      const readDate = document.getElementById(`date-${accountId}`)?.value
-        || new Date().toISOString().split('T')[0];
-
-      const res = await supa('meter_reads', '', 'POST', {
-        account_id:    accountId,
-        previous_read: prevRead,
-        current_read:  pending.current_read,
-        read_date:     readDate,
-        estimated:     pending.estimated || false,
-        notes:         pending.notes || null,
-        read_by:       'OPERATOR'
-      });
-      if (res && res[0]) {
-        existingReads[accountId] = res[0];
-        delete pendingReads[accountId];
-        saved++;
-      }
-    }
-
-    toast(`✓ ${saved} READS SAVED`);
-    renderTable();
-  }
-
-  // ── EXPORT CSV ────────────────────────────────────────────────
-  function exportReads() {
-    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-    const cycleLabel = `${months[(activeCycle.month||1)-1]} ${activeCycle.year}`;
-    let csv = `RADEUS Meter Reads — ${activeSystemName} — ${cycleLabel}\n`;
-    csv += 'Account #,Customer,Address,Previous Read,Current Read,Usage,Bill Amount,Read Date,Notes,Estimated\n';
-
-    allAccounts.forEach(a => {
-      const existing    = existingReads[a.account_id];
-      const pending     = pendingReads[a.account_id] || {};
-      const prevRead    = existing?.current_read ?? '';
-      const currentRead = pending.current_read ?? existing?.current_read ?? '';
-      const usage       = (currentRead && prevRead !== '') ? Math.max(0, Number(currentRead)-Number(prevRead)) : '';
-      const bill        = usage !== '' ? calcBill(usage).toFixed(2) : '';
-      const name        = a.customers?.full_name || '';
-      const addr        = a.service_addresses?.street || '';
-      const notes       = (pending.notes || existing?.notes || '').replace(/,/g,' ');
-      const est         = (pending.estimated || existing?.estimated) ? 'YES' : 'NO';
-      const date        = pending.read_date || existing?.read_date || '';
-      csv += `${a.account_number},"${name}","${addr}",${prevRead},${currentRead},${usage},${bill},${date},"${notes}",${est}\n`;
-    });
-
-    const blob = new Blob([csv], {type:'text/csv'});
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href     = url;
-    a.download = `radeus-reads-${activeSystemCode}-${activeCycle.year}-${String(activeCycle.month).padStart(2,'0')}.csv`;
-    a.click();
-    toast('↓ CSV EXPORTED');
-  }
-
-  // ── FILTER / SORT ─────────────────────────────────────────────
-  function setFilter(f, btn) {
-    currentFilter = f;
-    document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderTable();
-  }
-
-  function sortByRoute() {
-    allAccounts.sort((a,b) => a.account_number.localeCompare(b.account_number));
-    renderTable();
-    toast('SORTED BY ACCOUNT #');
-  }
-
-  function clearUnread() {
-    if (!confirm('Clear all unsaved reads? This cannot be undone.')) return;
-    pendingReads = {};
-    renderTable();
-    toast('UNSAVED READS CLEARED');
-  }
-
-  // ── KEYBOARD ─────────────────────────────────────────────────
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeImgModal();
+function renderTable(){
+  const search=document.getElementById('searchInput').value.toLowerCase();
+  let rows=allAccounts.filter(a=>{const hasRead=!!(existingReads[a.account_id]||pendingReads[a.account_id]?.current_read);const isEst=pendingReads[a.account_id]?.estimated;if(currentFilter==='READ')return hasRead;if(currentFilter==='UNREAD')return!hasRead;if(currentFilter==='ESTIMATED')return isEst;return true;}).filter(a=>{if(!search)return true;const name=a.customers?.full_name||'';return a.account_number.toLowerCase().includes(search)||name.toLowerCase().includes(search);});
+  const tbody=document.getElementById('readTable');
+  if(!rows.length){tbody.innerHTML='<tr class="loading-row"><td colspan="12">NO ACCOUNTS MATCH</td></tr>';return;}
+  tbody.innerHTML='';
+  rows.forEach(a=>{
+    const existing=existingReads[a.account_id];const pending=pendingReads[a.account_id]||{};const hasImg=pendingImages[a.account_id]||pending.image_url;
+    const prevRead=existing?.current_read??null;const currentRead=pending.current_read??existing?.current_read??'';
+    const usage=(currentRead&&prevRead!==null)?Math.max(0,Number(currentRead)-Number(prevRead)):null;
+    const billAmt=usage!==null?calcBill(usage):null;const isDone=!!(existing||pending.current_read);const isEst=pending.estimated||existing?.estimated;
+    const notes=pending.notes??existing?.notes??'';const readDate=pending.read_date??new Date().toISOString().split('T')[0];
+    const dotClass=isDone?(isEst?'estimated':'done'):'pending';const name=a.customers?.full_name||'—';const addr=`${a.service_addresses?.street||'—'}, ${a.service_addresses?.city||''}`;
+    const usageColor=usage===null?'var(--text-muted)':usage>10000?'var(--danger)':usage>5000?'var(--warning)':'var(--success)';
+    const tr=document.createElement('tr');if(isDone)tr.classList.add('read');
+    tr.innerHTML=`<td><span class="read-dot ${dotClass}"></span></td>
+      <td class="td-acct">${a.account_number}</td><td class="td-name">${name}</td><td class="td-addr">${addr}</td>
+      <td class="td-num">${prevRead!==null?fmtNum(prevRead):'<span style="color:var(--text-muted)">NO PRIOR READ</span>'}</td>
+      <td><input class="read-input ${pending.current_read?'has-value':''}" type="number" id="read-${a.account_id}" value="${pending.current_read??''}" placeholder="${prevRead!==null?fmtNum(prevRead)+'+':'Enter read'}" onchange="onReadChange('${a.account_id}',this)" oninput="onReadInput('${a.account_id}',this)"></td>
+      <td class="td-usage" style="color:${usageColor}">${usage!==null?fmtNum(usage):'—'}</td>
+      <td class="td-bill">${billAmt!==null?fmtBill(billAmt):'—'}</td>
+      <td><input type="date" id="date-${a.account_id}" value="${readDate}" style="background:rgba(255,255,255,0.90);border:1px solid var(--border);color:var(--text-soft);font-family:'Rajdhani',sans-serif;font-size:11px;padding:3px 6px;outline:none;width:120px;border-radius:12px;"></td>
+      <td><input class="notes-input" type="text" id="notes-${a.account_id}" value="${notes}" placeholder="Notes..." onchange="onNotesChange('${a.account_id}',this)"></td>
+      <td><div class="img-cell"><div class="img-btn ${hasImg?'has-img':''}" onclick="openImagePicker('${a.account_id}')">📷</div>${pending.image_url?`<img class="img-thumb" src="${pending.image_url}" onclick="viewImage('${pending.image_url}','${a.account_number}')">`:''}</div></td>
+      <td><button class="save-btn ${isDone?'saved':''}" onclick="saveOneRead('${a.account_id}')" id="savebtn-${a.account_id}">${isDone?'✓ SAVED':'SAVE'}</button></td>`;
+    tbody.appendChild(tr);
   });
+  updateProgress();
+}
 
-  // ── BOOT ─────────────────────────────────────────────────────
-  initCycle();
-  loadSystems();
+function onReadInput(accountId,input){const prev=existingReads[accountId]?.current_read;const val=Number(input.value);if(prev!==null&&prev!==undefined&&val<Number(prev)){input.classList.add('error');input.classList.remove('has-value');}else{input.classList.remove('error');input.classList.add('has-value');}if(!pendingReads[accountId])pendingReads[accountId]={};pendingReads[accountId].current_read=input.value?val:null;const row=input.closest('tr');if(!row)return;const cells=row.querySelectorAll('td');const usage=(prev!==null&&prev!==undefined&&input.value)?Math.max(0,val-Number(prev)):null;const bill=usage!==null?calcBill(usage):null;const usageColor=usage===null?'var(--text-muted)':usage>10000?'var(--danger)':usage>5000?'var(--warning)':'var(--success)';cells[6].textContent=usage!==null?fmtNum(usage):'—';cells[6].style.color=usageColor;cells[7].textContent=bill!==null?fmtBill(bill):'—';}
+function onReadChange(accountId,input){if(!pendingReads[accountId])pendingReads[accountId]={};pendingReads[accountId].current_read=input.value?Number(input.value):null;pendingReads[accountId].read_date=document.getElementById(`date-${accountId}`)?.value;updateProgress();}
+function onNotesChange(accountId,input){if(!pendingReads[accountId])pendingReads[accountId]={};pendingReads[accountId].notes=input.value;}
+
+function openImagePicker(accountId){imgTargetAccount=accountId;document.getElementById('imgFileInput').click();}
+function handleImageUpload(event){const file=event.target.files[0];if(!file||!imgTargetAccount)return;pendingImages[imgTargetAccount]=file;const url=URL.createObjectURL(file);if(!pendingReads[imgTargetAccount])pendingReads[imgTargetAccount]={};pendingReads[imgTargetAccount].image_url=url;renderTable();toast('📷 IMAGE ATTACHED');event.target.value='';}
+function viewImage(url,label){document.getElementById('modal-img').src=url;document.getElementById('modal-caption').textContent=label;document.getElementById('imgModal').classList.add('show');}
+function closeImgModal(){document.getElementById('imgModal').classList.remove('show');}
+
+async function saveOneRead(accountId){const pending=pendingReads[accountId];if(!pending?.current_read){toast('⚠ ENTER A READING FIRST');return;}const existing=existingReads[accountId];const prevRead=existing?.current_read??null;const readDate=document.getElementById(`date-${accountId}`)?.value||new Date().toISOString().split('T')[0];const res=await supa('meter_reads','','POST',{account_id:accountId,previous_read:prevRead,current_read:pending.current_read,read_date:readDate,estimated:pending.estimated||false,notes:pending.notes||null,read_by:'OPERATOR'});if(!res||!res[0]){toast('⚠ ERROR SAVING READ');return;}existingReads[accountId]=res[0];delete pendingReads[accountId];const btn=document.getElementById(`savebtn-${accountId}`);if(btn){btn.textContent='✓ SAVED';btn.classList.add('saved');}toast(`✓ READ SAVED — ${pending.current_read.toLocaleString()}`);updateProgress();}
+
+async function saveAllReads(){const toSave=Object.entries(pendingReads).filter(([,p])=>p.current_read);if(!toSave.length){toast('NO NEW READS TO SAVE');return;}let saved=0;for(const[accountId,pending]of toSave){const existing=existingReads[accountId];const prevRead=existing?.current_read??null;const readDate=document.getElementById(`date-${accountId}`)?.value||new Date().toISOString().split('T')[0];const res=await supa('meter_reads','','POST',{account_id:accountId,previous_read:prevRead,current_read:pending.current_read,read_date:readDate,estimated:pending.estimated||false,notes:pending.notes||null,read_by:'OPERATOR'});if(res&&res[0]){existingReads[accountId]=res[0];delete pendingReads[accountId];saved++;}}toast(`✓ ${saved} READS SAVED`);renderTable();}
+
+function exportReads(){const months=['January','February','March','April','May','June','July','August','September','October','November','December'];const cycleLabel=`${months[(activeCycle.month||1)-1]} ${activeCycle.year}`;let csv=`RADEUS Meter Reads — ${activeSystemName} — ${cycleLabel}\n`;csv+='Account #,Customer,Address,Previous Read,Current Read,Usage,Bill Amount,Read Date,Notes,Estimated\n';allAccounts.forEach(a=>{const existing=existingReads[a.account_id];const pending=pendingReads[a.account_id]||{};const prevRead=existing?.current_read??'';const currentRead=pending.current_read??existing?.current_read??'';const usage=(currentRead&&prevRead!=='')?Math.max(0,Number(currentRead)-Number(prevRead)):'';const bill=usage!==''?calcBill(usage).toFixed(2):'';const name=a.customers?.full_name||'';const addr=a.service_addresses?.street||'';const notes=(pending.notes||existing?.notes||'').replace(/,/g,' ');const est=(pending.estimated||existing?.estimated)?'YES':'NO';const date=pending.read_date||existing?.read_date||'';csv+=`${a.account_number},"${name}","${addr}",${prevRead},${currentRead},${usage},${bill},${date},"${notes}",${est}\n`;});const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`radeus-reads-${activeSystemCode}-${activeCycle.year}-${String(activeCycle.month).padStart(2,'0')}.csv`;a.click();toast('↓ CSV EXPORTED');}
+
+function setFilter(f,btn){currentFilter=f;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderTable();}
+function sortByRoute(){allAccounts.sort((a,b)=>a.account_number.localeCompare(b.account_number));renderTable();toast('SORTED BY ACCOUNT #');}
+function clearUnread(){if(!confirm('Clear all unsaved reads? This cannot be undone.'))return;pendingReads={};renderTable();toast('UNSAVED READS CLEARED');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeImgModal();});
+
+initCycle();
+loadSystems();
+</script>
+<script>
+const _SUPA_URL='https://bvpesxpptgdwkhsewhke.supabase.co';
+const _SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2cGVzeHBwdGdkd2toc2V3aGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNzcwNTksImV4cCI6MjA5MTk1MzA1OX0._th9UdQKqIWvqgTrxxpd5IfTlexCUeyWC5aGwRJYZj8';
+const SESSION_KEY='radeus_session';
+function getSession(){try{const s=JSON.parse(localStorage.getItem(SESSION_KEY)||'null');if(!s)return null;if(s.expires_at&&Date.now()/1000>s.expires_at){localStorage.removeItem(SESSION_KEY);return null;}return s;}catch{return null;}}
+function getStoredStaff(){try{const r=localStorage.getItem('radeus_staff');return r?JSON.parse(r):null;}catch{return null;}}
+function signOut(){const s=getSession();if(s?.access_token){fetch(`${_SUPA_URL}/auth/v1/logout`,{method:'POST',headers:{'apikey':_SUPA_KEY,'Authorization':`Bearer ${s.access_token}`}}).catch(()=>{});}localStorage.removeItem(SESSION_KEY);localStorage.removeItem('radeus_staff');window.location.href='login.html';}
+(function initAuth(){
+  const s=getSession();
+  if(!s||s.expires_at<Date.now()/1000){window.location.href='login.html';return;}
+  const staff=getStoredStaff();
+  if(!staff||!staff.org_id){window.location.href='login.html';return;}
+  ORG_ID=staff.org_id;
+  const el=document.getElementById('operatorName');
+  if(el)el.textContent=staff.name||'OPERATOR';
+})();
 </script>
 </body>
 </html>

@@ -81,8 +81,8 @@
   .mini-gauge.alert{border-color:rgba(191,97,87,.4);animation:miniAlert 2s ease-in-out infinite;}
   @keyframes miniAlert{0%,100%{background:rgba(191,97,87,.04)}50%{background:rgba(191,97,87,.10)}}
   .mini-svg{overflow:visible;}
-  .mini-arc-bg{fill:none;stroke:var(--border);stroke-width:8;stroke-linecap:round;}
-  .mini-arc{fill:none;stroke-width:7;stroke-linecap:round;transition:stroke-dasharray .8s ease;}
+  .mini-arc-bg{fill:none;stroke:var(--border);stroke-width:6;stroke-linecap:round;}
+  .mini-arc{fill:none;stroke-width:5;stroke-linecap:round;transition:stroke-dasharray .8s ease;}
   .mini-label{font-family:'Orbitron',monospace;font-size:7px;color:var(--text-soft);letter-spacing:1.5px;text-align:center;}
   .mini-val{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;text-align:center;}
   .mini-sub{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-muted);letter-spacing:1px;text-align:center;}
@@ -328,19 +328,19 @@
       <div class="lp-title">◎ CATEGORY STATUS</div>
       <div class="mini-grid">
         <div class="mini-gauge" id="mini-bwn">
-          <svg class="mini-svg" width="70" height="52" viewBox="0 0 70 52"><path class="mini-arc-bg" d="M 7,44 A 28,28 0 0,1 63,44" stroke-linecap="round"/><path class="mini-arc" id="arc-bwn" d="M 7,44 A 28,28 0 0,1 63,44" stroke="var(--danger)" stroke-linecap="round" fill="none" stroke-width="7"/><text x="35" y="38" text-anchor="middle" font-family="'Rajdhani',sans-serif" font-weight="700" font-size="16" fill="var(--danger)" id="val-bwn">0</text></svg>
+          <svg class="mini-svg" width="70" height="56" viewBox="0 0 70 56"><path class="mini-arc-bg" d="M 7,44 A 28,28 0 0,1 63,44" stroke-linecap="round"/><path class="mini-arc" id="arc-bwn" d="M 7,44 A 28,28 0 0,1 63,44" stroke="var(--danger)" stroke-linecap="round" fill="none" stroke-width="5"/><text x="35" y="42" text-anchor="middle" font-family="'Rajdhani',sans-serif" font-weight="700" font-size="13" fill="var(--danger)" id="val-bwn">0</text></svg>
           <div class="mini-label">BOIL WATER</div><div class="mini-sub" id="sub-bwn">ACTIVE</div>
         </div>
         <div class="mini-gauge" id="mini-tcr">
-          <svg class="mini-svg" width="70" height="52" viewBox="0 0 70 52"><path class="mini-arc-bg" d="M 7,44 A 28,28 0 0,1 63,44" stroke-linecap="round"/><path class="mini-arc" id="arc-tcr" d="M 7,44 A 28,28 0 0,1 63,44" stroke="var(--success)" stroke-linecap="round" fill="none" stroke-width="7" stroke-dasharray="0 88"/><text x="35" y="38" text-anchor="middle" font-family="'Rajdhani',sans-serif" font-weight="700" font-size="16" fill="var(--success)" id="val-tcr">—</text></svg>
+          <svg class="mini-svg" width="70" height="56" viewBox="0 0 70 56"><path class="mini-arc-bg" d="M 7,44 A 28,28 0 0,1 63,44" stroke-linecap="round"/><path class="mini-arc" id="arc-tcr" d="M 7,44 A 28,28 0 0,1 63,44" stroke="var(--success)" stroke-linecap="round" fill="none" stroke-width="5" stroke-dasharray="0 88"/><text x="35" y="42" text-anchor="middle" font-family="'Rajdhani',sans-serif" font-weight="700" font-size="13" fill="var(--success)" id="val-tcr">—</text></svg>
           <div class="mini-label">SAMPLING</div><div class="mini-sub" id="sub-tcr">TCR / LCR / DBP</div>
         </div>
         <div class="mini-gauge" id="mini-rep">
-          <svg class="mini-svg" width="70" height="52" viewBox="0 0 70 52"><path class="mini-arc-bg" d="M 7,44 A 28,28 0 0,1 63,44" stroke-linecap="round"/><path class="mini-arc" id="arc-rep" d="M 7,44 A 28,28 0 0,1 63,44" stroke="var(--warning)" stroke-linecap="round" fill="none" stroke-width="7" stroke-dasharray="0 88"/><text x="35" y="38" text-anchor="middle" font-family="'Rajdhani',sans-serif" font-weight="700" font-size="16" fill="var(--warning)" id="val-rep">—</text></svg>
+          <svg class="mini-svg" width="70" height="56" viewBox="0 0 70 56"><path class="mini-arc-bg" d="M 7,44 A 28,28 0 0,1 63,44" stroke-linecap="round"/><path class="mini-arc" id="arc-rep" d="M 7,44 A 28,28 0 0,1 63,44" stroke="var(--warning)" stroke-linecap="round" fill="none" stroke-width="5" stroke-dasharray="0 88"/><text x="35" y="42" text-anchor="middle" font-family="'Rajdhani',sans-serif" font-weight="700" font-size="13" fill="var(--warning)" id="val-rep">—</text></svg>
           <div class="mini-label">REPORTING</div><div class="mini-sub" id="sub-rep">CCR / MOR / LSLI</div>
         </div>
         <div class="mini-gauge" id="mini-survey">
-          <svg class="mini-svg" width="70" height="52" viewBox="0 0 70 52"><path class="mini-arc-bg" d="M 7,44 A 28,28 0 0,1 63,44" stroke-linecap="round"/><path class="mini-arc" id="arc-survey" d="M 7,44 A 28,28 0 0,1 63,44" stroke="var(--primary)" stroke-linecap="round" fill="none" stroke-width="7" stroke-dasharray="88 88"/><text x="35" y="38" text-anchor="middle" font-family="'Rajdhani',sans-serif" font-weight="700" font-size="16" fill="var(--primary)" id="val-survey">—</text></svg>
+          <svg class="mini-svg" width="70" height="56" viewBox="0 0 70 56"><path class="mini-arc-bg" d="M 7,44 A 28,28 0 0,1 63,44" stroke-linecap="round"/><path class="mini-arc" id="arc-survey" d="M 7,44 A 28,28 0 0,1 63,44" stroke="var(--primary)" stroke-linecap="round" fill="none" stroke-width="5" stroke-dasharray="88 88"/><text x="35" y="42" text-anchor="middle" font-family="'Rajdhani',sans-serif" font-weight="700" font-size="13" fill="var(--primary)" id="val-survey">—</text></svg>
           <div class="mini-label">SURVEYS / ERP</div><div class="mini-sub" id="sub-survey">SANITARY / PLANS</div>
         </div>
       </div>
@@ -543,19 +543,22 @@ async function loadSystems() {
   const sel = document.getElementById('sysSelect');
   if(systems.length===1){
     sel.innerHTML=`<option value="${systems[0].system_id}">⬡ ${systems[0].system_name.toUpperCase()}</option>`;
+    activeSystemId = systems[0].system_id;
   } else {
-    sel.innerHTML = systems.map(s=>`<option value="${s.system_id}">⬡ ${s.system_name.toUpperCase()}</option>`).join('');
+    sel.innerHTML = '<option value="ALL">⬡ ALL SYSTEMS</option>'+systems.map(s=>`<option value="${s.system_id}">⬡ ${s.system_name.toUpperCase()}</option>`).join('');
+    sel.value='ALL';
+    activeSystemId = null;
   }
-  activeSystemId = systems[0].system_id;
   renderNodeGrid();
   loadEvents();
 }
 
-function switchSystem(id) { activeSystemId = id; loadEvents(); }
+function switchSystem(id) { activeSystemId=(id==='ALL')?null:id; loadEvents(); }
 
 async function loadEvents() {
   document.getElementById('complyTable').innerHTML='<tr class="loading-row"><td colspan="9">LOADING COMPLIANCE DATA...</td></tr>';
-  const data = await supa('compliance_events',`?system_id=eq.${activeSystemId}&order=priority.asc,due_date.asc&select=*`);
+  const sf=activeSystemId?`system_id=eq.${activeSystemId}`:`system_id=in.(${allSystems.map(s=>s.system_id).join(',')})`;
+  const data = await supa('compliance_events',`?${sf}&order=priority.asc,due_date.asc&select=*`);
   allEvents = (data||[]).map(ev => ({...ev, _status: computeStatus(ev)}));
   updateStats(); updateAlertBar(); updateGauge(); updateMiniGauges(); applyFilter();
 }
@@ -641,7 +644,7 @@ function openDetail(ev) {
   document.getElementById('dp-sub').textContent=ev.regulation||ev.event_type||'—';
   document.getElementById('dp-body').innerHTML=`<div class="dp-section"><div class="dp-section-title">EVENT DETAIL</div><div class="dp-row"><div class="dp-label">DESCRIPTION</div><div class="dp-val">${ev.description||'—'}</div></div><div class="dp-row"><div class="dp-label">CATEGORY</div><div class="dp-val">${catBadge(ev.category)} ${statusPill(ev._status)}</div></div><div class="dp-row"><div class="dp-label">PRIORITY</div><div class="dp-val">${prioDot(ev.priority)} ${ev.priority||'—'}</div></div><div class="dp-row"><div class="dp-label">REGULATION</div><div class="dp-val">${ev.regulation||'—'}</div></div><div class="dp-row"><div class="dp-label">AGENCY</div><div class="dp-val">${ev.agency||'—'}</div></div><div class="dp-row"><div class="dp-label">FREQUENCY</div><div class="dp-val">${ev.frequency||'—'}</div></div></div><div class="dp-section"><div class="dp-section-title">DATES</div><div class="dp-row"><div class="dp-label">EVENT DATE</div><div class="dp-val">${fmtDate(ev.event_date)}</div></div><div class="dp-row"><div class="dp-label">DUE DATE</div><div class="dp-val">${fmtDate(ev.due_date)}</div></div><div class="dp-row"><div class="dp-label">DAYS REMAINING</div><div class="dp-val" style="${ev.due_date&&daysUntil(ev.due_date)<0?'color:var(--danger)':''}">${ev.due_date?(daysUntil(ev.due_date)<0?'OVERDUE BY '+Math.abs(daysUntil(ev.due_date))+' DAYS':daysUntil(ev.due_date)+' DAYS'):'—'}</div></div>${ev.resolved_date?`<div class="dp-row"><div class="dp-label">RESOLVED</div><div class="dp-val" style="color:var(--success)">${fmtDate(ev.resolved_date)}</div></div>`:''}</div>${ev.notes?`<div class="dp-section"><div class="dp-section-title">NOTES</div><div class="dp-notes">${ev.notes}</div></div>`:''}`;
   const isActive=ev._status==='ACTIVE';
-  document.getElementById('dp-footer').innerHTML=`${isActive?`<button class="dp-btn dp-btn-g" onclick="markResolved('${ev.event_id}')">✓ MARK RESOLVED</button>`:''}<button class="dp-btn dp-btn-or" onclick="editStatus('${ev.event_id}','RESOLVED')">CLOSE ITEM</button><button class="dp-btn dp-btn-ghost" onclick="closeDetail()">✕ CLOSE</button>`;
+  document.getElementById('dp-footer').innerHTML=`${isActive?`<button class="dp-btn dp-btn-g" onclick="markResolved('${ev.event_id}')">✓ MARK RESOLVED</button>`:''}<button class="dp-btn dp-btn-or" onclick="openCompEdit('${ev.event_id}')">✏️ EDIT</button><button class="dp-btn dp-btn-or" onclick="editStatus('${ev.event_id}','RESOLVED')">CLOSE ITEM</button><button class="dp-btn dp-btn-ghost" onclick="closeDetail()">✕ CLOSE</button>`;
   document.getElementById('detailPanel').classList.add('open');
 }
 
@@ -659,10 +662,93 @@ async function submitAdd() {
   const result=await supa('compliance_events','','POST',body);if(result){toast('COMPLIANCE ITEM ADDED','ok');closeModal();loadEvents();}else{toast('ERROR ADDING ITEM','err');}
 }
 
-document.addEventListener('keydown', e => { if(e.key==='Escape') closeDetail(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape'){closeDetail();closeCompEdit();} });
+
+function openCompEdit(eventId){
+  const ev=allEvents.find(e=>e.event_id===eventId);if(!ev)return;
+  document.getElementById('compEditModal').classList.add('show');
+  document.getElementById('ce-title-val').textContent=(ev.category||'EVENT')+' — '+(ev.event_type||ev.description||'').substring(0,40);
+  document.getElementById('ce-desc').value=ev.description||'';
+  document.getElementById('ce-cat').value=ev.category||'MONITORING';
+  document.getElementById('ce-priority').value=ev.priority||'ROUTINE';
+  document.getElementById('ce-status').value=ev.status||'UPCOMING';
+  document.getElementById('ce-agency').value=ev.agency||'';
+  document.getElementById('ce-reg').value=ev.regulation||'';
+  document.getElementById('ce-freq').value=ev.frequency||'ANNUAL';
+  document.getElementById('ce-due').value=ev.due_date||'';
+  document.getElementById('ce-notes').value=ev.notes||'';
+  document.getElementById('ce-eventId').value=eventId;
+}
+function closeCompEdit(){document.getElementById('compEditModal').classList.remove('show');}
+async function saveCompEdit(){
+  const eventId=document.getElementById('ce-eventId').value;if(!eventId)return;
+  const body={
+    description:document.getElementById('ce-desc').value.trim(),
+    category:document.getElementById('ce-cat').value,
+    event_type:document.getElementById('ce-cat').value,
+    priority:document.getElementById('ce-priority').value,
+    status:document.getElementById('ce-status').value,
+    agency:document.getElementById('ce-agency').value.trim()||null,
+    regulation:document.getElementById('ce-reg').value.trim()||null,
+    frequency:document.getElementById('ce-freq').value,
+    due_date:document.getElementById('ce-due').value||null,
+    notes:document.getElementById('ce-notes').value.trim()||null
+  };
+  if(body.status==='RESOLVED')body.resolved_date=today();
+  const r=await supa('compliance_events',`?event_id=eq.${eventId}`,'PATCH',body);
+  if(r!==null){toast('✓ COMPLIANCE ITEM UPDATED','ok');closeCompEdit();closeDetail();loadEvents();}
+  else toast('ERROR UPDATING','err');
+}
+
 window.addEventListener('DOMContentLoaded', loadSystems);
 </script>
-</script>
+
+<!-- COMPLIANCE EDIT MODAL -->
+<div id="compEditModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:600;align-items:center;justify-content:center;">
+  <div style="background:var(--surface-strong);border:1px solid var(--border-strong);width:480px;max-width:94vw;border-radius:16px;overflow:hidden;box-shadow:var(--shadow)">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(216,235,244,0.65),rgba(255,255,255,0.72));display:flex;justify-content:space-between;align-items:center;">
+      <div><div style="font-family:'Orbitron',monospace;font-size:11px;color:var(--primary);letter-spacing:3px">EDIT COMPLIANCE ITEM</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-soft);margin-top:2px" id="ce-title-val">—</div></div>
+      <button onclick="closeCompEdit()" style="background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer">✕</button>
+    </div>
+    <input type="hidden" id="ce-eventId">
+    <div style="padding:20px;display:flex;flex-direction:column;gap:14px">
+      <div><div style="font-family:'Orbitron',monospace;font-size:7px;color:var(--text-muted);letter-spacing:2px;margin-bottom:5px">DESCRIPTION</div>
+        <input type="text" id="ce-desc" style="width:100%;background:rgba(255,255,255,0.90);border:1px solid var(--border-strong);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px;padding:8px 10px;outline:none;border-radius:12px"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div><div style="font-family:'Orbitron',monospace;font-size:7px;color:var(--text-muted);letter-spacing:2px;margin-bottom:5px">CATEGORY</div>
+          <select id="ce-cat" style="width:100%;background:rgba(255,255,255,0.90);border:1px solid var(--border-strong);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:10px;padding:8px 6px;outline:none;border-radius:12px">
+            <option value="MONITORING">MONITORING</option><option value="TESTING">TESTING</option><option value="REPORTING">REPORTING</option><option value="BWN">BWN</option><option value="INSPECTION">INSPECTION</option><option value="AUDIT">AUDIT</option><option value="TRAINING">TRAINING</option></select></div>
+        <div><div style="font-family:'Orbitron',monospace;font-size:7px;color:var(--text-muted);letter-spacing:2px;margin-bottom:5px">PRIORITY</div>
+          <select id="ce-priority" style="width:100%;background:rgba(255,255,255,0.90);border:1px solid var(--border-strong);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:10px;padding:8px 6px;outline:none;border-radius:12px">
+            <option value="ROUTINE">ROUTINE</option><option value="HIGH">HIGH</option><option value="CRITICAL">CRITICAL</option></select></div>
+        <div><div style="font-family:'Orbitron',monospace;font-size:7px;color:var(--text-muted);letter-spacing:2px;margin-bottom:5px">STATUS</div>
+          <select id="ce-status" style="width:100%;background:rgba(255,255,255,0.90);border:1px solid var(--border-strong);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:10px;padding:8px 6px;outline:none;border-radius:12px">
+            <option value="UPCOMING">UPCOMING</option><option value="DUE_SOON">DUE SOON</option><option value="ACTIVE">ACTIVE</option><option value="OVERDUE">OVERDUE</option><option value="COMPLIANT">COMPLIANT</option><option value="RESOLVED">RESOLVED</option></select></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><div style="font-family:'Orbitron',monospace;font-size:7px;color:var(--text-muted);letter-spacing:2px;margin-bottom:5px">AGENCY</div>
+          <input type="text" id="ce-agency" placeholder="e.g. TCEQ" style="width:100%;background:rgba(255,255,255,0.90);border:1px solid var(--border-strong);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:8px 10px;outline:none;border-radius:12px"></div>
+        <div><div style="font-family:'Orbitron',monospace;font-size:7px;color:var(--text-muted);letter-spacing:2px;margin-bottom:5px">REGULATION</div>
+          <input type="text" id="ce-reg" placeholder="e.g. 30 TAC 290" style="width:100%;background:rgba(255,255,255,0.90);border:1px solid var(--border-strong);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:8px 10px;outline:none;border-radius:12px"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><div style="font-family:'Orbitron',monospace;font-size:7px;color:var(--text-muted);letter-spacing:2px;margin-bottom:5px">FREQUENCY</div>
+          <select id="ce-freq" style="width:100%;background:rgba(255,255,255,0.90);border:1px solid var(--border-strong);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:10px;padding:8px 6px;outline:none;border-radius:12px">
+            <option value="MONTHLY">MONTHLY</option><option value="QUARTERLY">QUARTERLY</option><option value="ANNUAL">ANNUAL</option><option value="AS_NEEDED">AS NEEDED</option><option value="ONE_TIME">ONE TIME</option></select></div>
+        <div><div style="font-family:'Orbitron',monospace;font-size:7px;color:var(--text-muted);letter-spacing:2px;margin-bottom:5px">DUE DATE</div>
+          <input type="date" id="ce-due" style="width:100%;background:rgba(255,255,255,0.90);border:1px solid var(--border-strong);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:8px 10px;outline:none;border-radius:12px"></div>
+      </div>
+      <div><div style="font-family:'Orbitron',monospace;font-size:7px;color:var(--text-muted);letter-spacing:2px;margin-bottom:5px">NOTES</div>
+        <textarea id="ce-notes" rows="3" style="width:100%;background:rgba(255,255,255,0.90);border:1px solid var(--border-strong);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:12px;padding:8px 10px;outline:none;border-radius:12px;resize:vertical"></textarea></div>
+    </div>
+    <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px">
+      <button onclick="closeCompEdit()" style="flex:1;padding:10px;font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;border:1px solid var(--border-strong);background:rgba(255,255,255,0.88);color:var(--text-muted);border-radius:12px">CANCEL</button>
+      <button onclick="saveCompEdit()" style="flex:1;padding:10px;font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;border:1px solid rgba(44,123,162,0.45);background:var(--primary-soft);color:var(--primary);border-radius:12px">SAVE CHANGES</button>
+    </div>
+  </div>
+</div>
+<style>#compEditModal.show{display:flex!important;}</style>
 
 <!-- AUTH BOOTSTRAP -->
 <script>

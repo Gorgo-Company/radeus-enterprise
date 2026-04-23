@@ -212,6 +212,45 @@
 <div class="toast" id="toast"></div>
 <input type="file" id="imgFileInput" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
 
+<!-- READ EDIT POPOUT -->
+<div class="img-modal" id="readEditModal" style="z-index:600">
+  <div style="background:var(--surface-strong);border:1px solid var(--border-strong);width:480px;max-width:94vw;border-radius:16px;overflow:hidden;box-shadow:var(--shadow)">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(216,235,244,0.65),rgba(255,255,255,0.72));display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-family:'Orbitron',monospace;font-size:11px;color:var(--primary);letter-spacing:3px" id="re-title">EDIT READING</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-soft);letter-spacing:1px;margin-top:2px" id="re-sub">—</div>
+      </div>
+      <button onclick="closeReadEdit()" style="background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer">✕</button>
+    </div>
+    <div style="padding:20px;display:flex;flex-direction:column;gap:14px" id="re-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div><div style="font-family:'Orbitron',monospace;font-size:7px;color:var(--text-muted);letter-spacing:2px;margin-bottom:5px">PREVIOUS READ</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--text)" id="re-prev">—</div></div>
+        <div><div style="font-family:'Orbitron',monospace;font-size:7px;color:var(--text-muted);letter-spacing:2px;margin-bottom:5px">CURRENT READ</div>
+          <input type="number" id="re-current" style="width:100%;background:rgba(255,255,255,0.90);border:1px solid var(--border-strong);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;padding:6px 10px;outline:none;border-radius:12px" oninput="reCalcUsage()"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div><div style="font-family:'Orbitron',monospace;font-size:7px;color:var(--text-muted);letter-spacing:2px;margin-bottom:5px">USAGE (GAL)</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700" id="re-usage">—</div></div>
+        <div><div style="font-family:'Orbitron',monospace;font-size:7px;color:var(--text-muted);letter-spacing:2px;margin-bottom:5px">EST. BILL</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--primary)" id="re-bill">—</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div><div style="font-family:'Orbitron',monospace;font-size:7px;color:var(--text-muted);letter-spacing:2px;margin-bottom:5px">READ DATE</div>
+          <input type="date" id="re-date" style="width:100%;background:rgba(255,255,255,0.90);border:1px solid var(--border-strong);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;padding:8px 10px;outline:none;border-radius:12px"></div>
+        <div><div style="font-family:'Orbitron',monospace;font-size:7px;color:var(--text-muted);letter-spacing:2px;margin-bottom:5px">ESTIMATED?</div>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-soft)"><input type="checkbox" id="re-estimated" style="width:16px;height:16px;accent-color:var(--primary)"> Mark as estimated</label></div>
+      </div>
+      <div><div style="font-family:'Orbitron',monospace;font-size:7px;color:var(--text-muted);letter-spacing:2px;margin-bottom:5px">NOTES</div>
+        <input type="text" id="re-notes" placeholder="Notes..." style="width:100%;background:rgba(255,255,255,0.90);border:1px solid var(--border-strong);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:12px;padding:8px 10px;outline:none;border-radius:12px"></div>
+    </div>
+    <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px">
+      <button onclick="closeReadEdit()" style="flex:1;padding:10px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;border:1px solid var(--border-strong);background:rgba(255,255,255,0.88);color:var(--text-muted);border-radius:12px">CANCEL</button>
+      <button onclick="saveReadEdit()" style="flex:1;padding:10px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;border:1px solid rgba(52,139,103,0.45);background:rgba(52,139,103,0.08);color:var(--success);border-radius:12px">SAVE READING</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const SUPA_URL='https://bvpesxpptgdwkhsewhke.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2cGVzeHBwdGdkd2toc2V3aGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNzcwNTksImV4cCI6MjA5MTk1MzA1OX0._th9UdQKqIWvqgTrxxpd5IfTlexCUeyWC5aGwRJYZj8';
@@ -236,7 +275,7 @@ async function supa(table,params='',method='GET',body=null){
 
 function toast(msg,duration=2500){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),duration);}
 function calcBill(usage){if(!usage||usage<=0)return BASE_RATE+ENERGY_SURCHARGE;return BASE_RATE+ENERGY_SURCHARGE+(usage*USAGE_RATE);}
-function fmtNum(n){if(n===null||n===undefined||n==='')return'—';return Number(n).toLocaleString();}
+function fmtNum(n){if(n===null||n===undefined||n==='')return'—';return String(Number(n));}
 function fmtBill(n){return`$${Number(n).toFixed(2)}`;}
 
 function applySystemRates(sys){
@@ -307,7 +346,7 @@ function renderTable(){
     const usageColor=usage===null?'var(--text-muted)':usage>10000?'var(--danger)':usage>5000?'var(--warning)':'var(--success)';
     const tr=document.createElement('tr');if(isDone)tr.classList.add('read');
     tr.innerHTML=`<td><span class="read-dot ${dotClass}"></span></td>
-      <td class="td-acct">${a.account_number}</td><td class="td-name">${name}</td><td class="td-addr">${addr}</td>
+      <td class="td-acct" style="cursor:pointer" onclick="openReadEdit('${a.account_id}')">${a.account_number}</td><td class="td-name" style="cursor:pointer" onclick="openReadEdit('${a.account_id}')">${name}</td><td class="td-addr">${addr}</td>
       <td class="td-num">${prevRead!==null?fmtNum(prevRead):'<span style="color:var(--text-muted)">NO PRIOR READ</span>'}</td>
       <td><input class="read-input ${pending.current_read?'has-value':''}" type="number" id="read-${a.account_id}" value="${pending.current_read??''}" placeholder="${prevRead!==null?fmtNum(prevRead)+'+':'Enter read'}" onchange="onReadChange('${a.account_id}',this)" oninput="onReadInput('${a.account_id}',this)"></td>
       <td class="td-usage" style="color:${usageColor}">${usage!==null?fmtNum(usage):'—'}</td>
@@ -330,16 +369,59 @@ function handleImageUpload(event){const file=event.target.files[0];if(!file||!im
 function viewImage(url,label){document.getElementById('modal-img').src=url;document.getElementById('modal-caption').textContent=label;document.getElementById('imgModal').classList.add('show');}
 function closeImgModal(){document.getElementById('imgModal').classList.remove('show');}
 
-async function saveOneRead(accountId){const pending=pendingReads[accountId];if(!pending?.current_read){toast('⚠ ENTER A READING FIRST');return;}const existing=existingReads[accountId];const prevRead=existing?.current_read??null;const readDate=document.getElementById(`date-${accountId}`)?.value||new Date().toISOString().split('T')[0];const res=await supa('meter_reads','','POST',{account_id:accountId,previous_read:prevRead,current_read:pending.current_read,read_date:readDate,estimated:pending.estimated||false,notes:pending.notes||null,read_by:'OPERATOR'});if(!res||!res[0]){toast('⚠ ERROR SAVING READ');return;}existingReads[accountId]=res[0];delete pendingReads[accountId];const btn=document.getElementById(`savebtn-${accountId}`);if(btn){btn.textContent='✓ SAVED';btn.classList.add('saved');}toast(`✓ READ SAVED — ${pending.current_read.toLocaleString()}`);updateProgress();}
+async function saveOneRead(accountId){const pending=pendingReads[accountId];if(!pending?.current_read){toast('⚠ ENTER A READING FIRST');return;}const existing=existingReads[accountId];const prevRead=existing?.current_read??null;const readDate=document.getElementById(`date-${accountId}`)?.value||new Date().toISOString().split('T')[0];const res=await supa('meter_reads','','POST',{account_id:accountId,previous_read:prevRead,current_read:pending.current_read,read_date:readDate,estimated:pending.estimated||false,notes:pending.notes||null,read_by:'OPERATOR'});if(!res||!res[0]){toast('⚠ ERROR SAVING READ');return;}existingReads[accountId]=res[0];delete pendingReads[accountId];const btn=document.getElementById(`savebtn-${accountId}`);if(btn){btn.textContent='✓ SAVED';btn.classList.add('saved');}toast(`✓ READ SAVED — ${pending.current_read}`);updateProgress();}
 
 async function saveAllReads(){const toSave=Object.entries(pendingReads).filter(([,p])=>p.current_read);if(!toSave.length){toast('NO NEW READS TO SAVE');return;}let saved=0;for(const[accountId,pending]of toSave){const existing=existingReads[accountId];const prevRead=existing?.current_read??null;const readDate=document.getElementById(`date-${accountId}`)?.value||new Date().toISOString().split('T')[0];const res=await supa('meter_reads','','POST',{account_id:accountId,previous_read:prevRead,current_read:pending.current_read,read_date:readDate,estimated:pending.estimated||false,notes:pending.notes||null,read_by:'OPERATOR'});if(res&&res[0]){existingReads[accountId]=res[0];delete pendingReads[accountId];saved++;}}toast(`✓ ${saved} READS SAVED`);renderTable();}
 
 function exportReads(){const months=['January','February','March','April','May','June','July','August','September','October','November','December'];const cycleLabel=`${months[(activeCycle.month||1)-1]} ${activeCycle.year}`;let csv=`RADEUS Meter Reads — ${activeSystemName} — ${cycleLabel}\n`;csv+='Account #,Customer,Address,Previous Read,Current Read,Usage,Bill Amount,Read Date,Notes,Estimated\n';allAccounts.forEach(a=>{const existing=existingReads[a.account_id];const pending=pendingReads[a.account_id]||{};const prevRead=existing?.current_read??'';const currentRead=pending.current_read??existing?.current_read??'';const usage=(currentRead&&prevRead!=='')?Math.max(0,Number(currentRead)-Number(prevRead)):'';const bill=usage!==''?calcBill(usage).toFixed(2):'';const name=a.customers?.full_name||'';const addr=a.service_addresses?.street||'';const notes=(pending.notes||existing?.notes||'').replace(/,/g,' ');const est=(pending.estimated||existing?.estimated)?'YES':'NO';const date=pending.read_date||existing?.read_date||'';csv+=`${a.account_number},"${name}","${addr}",${prevRead},${currentRead},${usage},${bill},${date},"${notes}",${est}\n`;});const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`radeus-reads-${activeSystemCode}-${activeCycle.year}-${String(activeCycle.month).padStart(2,'0')}.csv`;a.click();toast('↓ CSV EXPORTED');}
 
+let editAccountId=null;
+function openReadEdit(accountId){
+  editAccountId=accountId;
+  const a=allAccounts.find(x=>x.account_id===accountId);if(!a)return;
+  const existing=existingReads[accountId];const pending=pendingReads[accountId]||{};
+  const prevRead=existing?.current_read??null;
+  document.getElementById('re-title').textContent=a.account_number;
+  document.getElementById('re-sub').textContent=(a.customers?.full_name||'—')+' — '+(a.service_addresses?.street||'—');
+  document.getElementById('re-prev').textContent=prevRead!==null?fmtNum(prevRead):'NO PRIOR';
+  document.getElementById('re-current').value=pending.current_read??existing?.current_read??'';
+  document.getElementById('re-date').value=pending.read_date||document.getElementById(`date-${accountId}`)?.value||new Date().toISOString().split('T')[0];
+  document.getElementById('re-estimated').checked=!!(pending.estimated||existing?.estimated);
+  document.getElementById('re-notes').value=pending.notes??existing?.notes??'';
+  reCalcUsage();
+  document.getElementById('readEditModal').classList.add('show');
+}
+function closeReadEdit(){document.getElementById('readEditModal').classList.remove('show');editAccountId=null;}
+function reCalcUsage(){
+  const existing=existingReads[editAccountId];
+  const prevRead=existing?.current_read??null;
+  const val=Number(document.getElementById('re-current').value);
+  const usage=(prevRead!==null&&val)?Math.max(0,val-Number(prevRead)):null;
+  const bill=usage!==null?calcBill(usage):null;
+  const usageEl=document.getElementById('re-usage');
+  usageEl.textContent=usage!==null?fmtNum(usage):'—';
+  usageEl.style.color=usage===null?'var(--text-muted)':usage>10000?'var(--danger)':usage>5000?'var(--warning)':'var(--success)';
+  document.getElementById('re-bill').textContent=bill!==null?fmtBill(bill):'—';
+}
+async function saveReadEdit(){
+  if(!editAccountId)return;
+  const currentRead=Number(document.getElementById('re-current').value);
+  if(!currentRead){toast('⚠ ENTER A READING');return;}
+  const readDate=document.getElementById('re-date').value||new Date().toISOString().split('T')[0];
+  const estimated=document.getElementById('re-estimated').checked;
+  const notes=document.getElementById('re-notes').value.trim();
+  const existing=existingReads[editAccountId];
+  const prevRead=existing?.current_read??null;
+  const res=await supa('meter_reads','','POST',{account_id:editAccountId,previous_read:prevRead,current_read:currentRead,read_date:readDate,estimated:estimated,notes:notes||null,read_by:'OPERATOR'});
+  if(!res||!res[0]){toast('⚠ ERROR SAVING READ');return;}
+  existingReads[editAccountId]=res[0];delete pendingReads[editAccountId];
+  closeReadEdit();toast(`✓ READ SAVED — ${currentRead}`);renderTable();
+}
+
 function setFilter(f,btn){currentFilter=f;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderTable();}
 function sortByRoute(){allAccounts.sort((a,b)=>a.account_number.localeCompare(b.account_number));renderTable();toast('SORTED BY ACCOUNT #');}
 function clearUnread(){if(!confirm('Clear all unsaved reads? This cannot be undone.'))return;pendingReads={};renderTable();toast('UNSAVED READS CLEARED');}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeImgModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeImgModal();closeReadEdit();}});
 
 // boot is called from auth bootstrap below
 </script>

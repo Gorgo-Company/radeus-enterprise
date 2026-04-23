@@ -36,7 +36,7 @@
   .cycle-select option{background:#fff;color:var(--text);}
   .cbar-divider{width:1px;height:32px;background:var(--border);flex-shrink:0;margin:0 2px;}
   .abtn{font-family:'Orbitron',monospace;font-size:8px;padding:7px 13px;border:1px solid var(--border-strong);cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap;background:rgba(255,255,255,0.88);flex-shrink:0;color:var(--text-soft);border-radius:12px;}
-  .abtn:disabled{opacity:.28;cursor:not-allowed;pointer-events:none;}
+  .abtn:disabled{opacity:.45;cursor:not-allowed;pointer-events:none;}
   .abtn-primary{border-color:rgba(44,123,162,0.45);color:var(--primary);}
   .abtn-primary:hover{background:var(--primary-soft);}
   .abtn-success{border-color:rgba(52,139,103,0.45);color:var(--success);}
@@ -52,8 +52,8 @@
   .statsbar{position:fixed;top:110px;left:0;right:0;height:56px;background:rgba(248,251,253,0.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);display:flex;align-items:stretch;z-index:98;box-shadow:0 8px 22px rgba(80,114,138,0.08);}
   .stat-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 20px;border-right:1px solid var(--border);flex:1;min-width:0;overflow:hidden;background:rgba(248,251,253,0.82);}
   .stat-cell:last-child{border-right:none;}
-  .stat-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-muted);letter-spacing:2px;white-space:nowrap;}
-  .stat-val{font-family:'Orbitron',monospace;font-size:18px;letter-spacing:1px;white-space:nowrap;color:var(--text);text-shadow:none;}
+  .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-soft);letter-spacing:1.5px;white-space:nowrap;}
+  .stat-val{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:22px;letter-spacing:0;white-space:nowrap;color:var(--text);text-shadow:none;}
   .sv-yellow{color:var(--warning);}.sv-green{color:var(--success);}.sv-red{color:var(--danger);}.sv-cyan{color:var(--primary);}.sv-dim{color:var(--text-muted);}
   .status-badge{font-family:'Orbitron',monospace;font-size:9px;padding:4px 12px;border:1px solid;letter-spacing:2px;border-radius:999px;}
   .sb-open{border-color:rgba(52,139,103,0.45);color:var(--success);background:rgba(52,139,103,0.08);}
@@ -81,11 +81,11 @@
   .atable tr:hover td{background:rgba(223,237,245,0.55);}
   .atable tr.row-paid td{opacity:.6;}
 
-  .td-acct{color:var(--primary);font-family:'Orbitron',monospace;font-size:9px;letter-spacing:.5px;white-space:nowrap;}
-  .td-name{color:var(--text);font-size:13px;font-weight:600;white-space:nowrap;}
+  .td-acct{color:var(--primary);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.5px;white-space:nowrap;}
+  .td-name{color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;white-space:nowrap;}
   .td-num{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;text-align:right;white-space:nowrap;color:var(--text);}
   .td-money{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--primary);text-align:right;white-space:nowrap;}
-  .td-total{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;color:var(--primary);text-align:right;white-space:nowrap;}
+  .td-total{font-family:'Share Tech Mono',monospace;font-size:12px;font-weight:600;color:var(--primary);text-align:right;white-space:nowrap;}
   .td-dim{color:var(--text-muted);text-align:right;}
 
   /* PILLS */
@@ -102,21 +102,21 @@
   .pay-quick:hover{border-color:rgba(52,139,103,0.6);background:rgba(52,139,103,0.08);}
 
   /* GALLERY */
-  .gallery{padding:18px;}
-  .gallery-header{font-family:'Orbitron',monospace;font-size:9px;color:var(--text-soft);letter-spacing:3px;margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:10px;}
-  .cycle-card{display:flex;align-items:center;gap:24px;padding:14px 20px;border:1px solid var(--border);background:var(--surface);margin-bottom:6px;cursor:pointer;transition:all .2s;border-radius:12px;box-shadow:var(--shadow);}
+  .gallery{padding:4px 18px 10px;}
+  .gallery-header{font-family:'Orbitron',monospace;font-size:9px;color:var(--text-soft);letter-spacing:3px;margin-bottom:8px;border-bottom:1px solid var(--border);padding-bottom:6px;}
+  .cycle-card{display:flex;align-items:center;gap:16px;padding:8px 14px;border:1px solid var(--border);background:var(--surface);margin-bottom:4px;cursor:pointer;transition:all .2s;border-radius:10px;box-shadow:0 1px 4px rgba(49,83,105,0.05);}
   .cycle-card:hover{border-color:var(--border-strong);background:rgba(223,237,245,0.55);}
   .cycle-card.is-open{border-color:rgba(52,139,103,0.4);background:rgba(52,139,103,0.04);}
   .cycle-card.is-open:hover{background:rgba(52,139,103,0.08);}
-  .cc-month{font-family:'Orbitron',monospace;font-size:20px;color:var(--primary);letter-spacing:2px;min-width:130px;}
+  .cc-month{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--primary);letter-spacing:1px;min-width:110px;}
   .cc-month.open-text{color:var(--success);}
-  .cc-meta{display:flex;flex-direction:column;gap:3px;flex:1;}
-  .cc-dates{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-muted);letter-spacing:1px;}
-  .cc-stat-group{display:flex;gap:24px;margin-left:auto;}
-  .cc-stat{display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
-  .cc-stat-label{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-muted);letter-spacing:2px;}
-  .cc-stat-val{font-family:'Orbitron',monospace;font-size:13px;color:var(--text);}
-  .cc-arrow{color:var(--text-muted);font-size:18px;margin-left:10px;}
+  .cc-meta{display:flex;flex-direction:column;gap:2px;flex:1;}
+  .cc-dates{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-muted);letter-spacing:.5px;}
+  .cc-stat-group{display:flex;gap:18px;margin-left:auto;}
+  .cc-stat{display:flex;flex-direction:column;align-items:flex-end;gap:1px;}
+  .cc-stat-label{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-muted);letter-spacing:1.5px;}
+  .cc-stat-val{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;color:var(--text);}
+  .cc-arrow{color:var(--text-muted);font-size:16px;margin-left:6px;}
 
   /* EMPTY STATE */
   .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:14px;}
@@ -208,7 +208,7 @@
 <!-- CYCLE ACTION BAR -->
 <div class="cyclebar">
   <select class="cycle-select" id="cycleSelect" onchange="selectCycleById(this.value)">
-    <option value="">— NO CYCLES —</option>
+    <option value="">⬡ ALL CYCLES</option>
   </select>
   <div class="cbar-divider"></div>
   <button class="abtn abtn-primary" id="btnNewCycle" onclick="openModal('newCycleModal')">+ NEW CYCLE</button>
@@ -216,7 +216,7 @@
   <button class="abtn abtn-danger" id="btnCloseCycle" onclick="openModal('closeModal')" disabled>⬛ CLOSE CYCLE</button>
   <button class="abtn abtn-cyan" id="btnEmailBills" onclick="emailBillsStub()" disabled>✉ EMAIL BILLS</button>
   <div class="cbar-divider"></div>
-  <button class="abtn abtn-dim" id="btnPostPay" onclick="openPayModal(null)">$ POST PAYMENT</button>
+  <button class="abtn abtn-success" id="btnPostPay" onclick="openPayModal(null)" style="font-weight:600">$ POST PAYMENT</button>
 </div>
 
 <!-- STATS BAR -->
@@ -330,7 +330,7 @@
         <div><div class="flabel">METHOD</div>
           <select class="finput" id="pay-method">
             <option value="CHECK">CHECK</option><option value="CASH">CASH</option>
-            <option value="SQUARE">SQUARE</option><option value="MONEY ORDER">MONEY ORDER</option>
+            <option value="ONLINE">ONLINE</option><option value="MONEY_ORDER">MONEY ORDER</option>
             <option value="ACH">ACH</option><option value="OTHER">OTHER</option>
           </select>
         </div>
@@ -422,7 +422,7 @@ function fmtMoney(n) {
   if (n === null || n === undefined) return '—';
   return '$' + Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
-function fmtNum(n) { if (n===null||n===undefined||n==='') return '—'; return Number(n).toLocaleString(); }
+function fmtNum(n) { if (n===null||n===undefined||n==='') return '—'; return String(Number(n)); }
 function monthLabel(yr, mo) { return `${MONTHS[(mo||1)-1]} ${yr}`; }
 function today() { return new Date().toISOString().split('T')[0]; }
 
@@ -445,17 +445,16 @@ function computeStatus(acctId) {
   const bill = cycleBills[acctId];
   const bal  = accountBalances[acctId];
   if (!read) return 'UNREAD';
-  if (!bill) return 'PENDING';
+  if (!bill) return 'UNBILLED';
   const amtDue = parseFloat(bal?.current_balance || 0);
   if (amtDue < -0.005) return 'CREDIT';
   if (amtDue <= 0.005) return 'PAID';
-  if (activeCycle?.late_date && today() > activeCycle.late_date) return 'OVERDUE';
-  if (bill.bill_emailed) return 'BILLED';
-  return 'UNBILLED';
+  if (activeCycle?.due_date && today() > activeCycle.due_date) return 'OVERDUE';
+  return 'UNPAID';
 }
 
 function pillHtml(status) {
-  const map = {UNREAD:['pill-unread','UNREAD'],PENDING:['pill-pending','PENDING'],UNBILLED:['pill-unbilled','UNBILLED'],BILLED:['pill-billed','BILLED'],PAID:['pill-paid','PAID'],OVERDUE:['pill-overdue','OVERDUE'],CREDIT:['pill-credit','CREDIT']};
+  const map = {UNREAD:['pill-unread','UNREAD'],UNBILLED:['pill-unbilled','UNBILLED'],UNPAID:['pill-billed','UNPAID'],PAID:['pill-paid','PAID'],OVERDUE:['pill-overdue','OVERDUE'],CREDIT:['pill-credit','CREDIT']};
   const [cls, label] = map[status] || ['pill-unbilled', status];
   return `<span class="pill ${cls}">${label}</span>`;
 }
@@ -469,7 +468,7 @@ async function loadSystems() {
   if(systems.length===1){
     sel.innerHTML=`<option value="${systems[0].system_id}">⬡ ${systems[0].system_name.toUpperCase()}</option>`;
   } else {
-    sel.innerHTML = systems.map(s=>`<option value="${s.system_id}">⬡ ${s.system_name.toUpperCase()}</option>`).join('');
+    sel.innerHTML='<option value="ALL">⬡ ALL SYSTEMS</option>'+systems.map(s=>`<option value="${s.system_id}">⬡ ${s.system_name.toUpperCase()}</option>`).join('');
   }
   activeSystemId = systems[0].system_id;
   systemConfig   = systems[0];
@@ -477,8 +476,11 @@ async function loadSystems() {
 }
 
 function switchSystem(id) {
-  activeSystemId = id;
-  systemConfig   = allSystems.find(s => s.system_id === id) || {};
+  if(id==='ALL'){
+    activeSystemId=null;systemConfig={};
+  } else {
+    activeSystemId=id;systemConfig=allSystems.find(s=>s.system_id===id)||{};
+  }
   allCycles=[]; cycleBills={}; cycleReads={}; accountBalances={};
   allAccounts=[]; activeCycle=null;
   resetStats();
@@ -486,11 +488,12 @@ function switchSystem(id) {
 }
 
 async function loadCycles() {
-  const cycles = await supa('billing_cycles',`?system_id=eq.${activeSystemId}&order=cycle_year.desc,cycle_month.desc&select=*`);
+  const sf=activeSystemId?`system_id=eq.${activeSystemId}`:`system_id=in.(${allSystems.map(s=>s.system_id).join(',')})`;
+  const cycles = await supa('billing_cycles',`?${sf}&order=cycle_year.desc,cycle_month.desc&select=*`);
   allCycles = cycles || [];
   const sel = document.getElementById('cycleSelect');
-  if (!allCycles.length) { sel.innerHTML='<option value="">— NO CYCLES —</option>'; setActionBtns(false,false); showGallery(); return; }
-  sel.innerHTML = allCycles.map(c=>{const label=monthLabel(c.cycle_year,c.cycle_month)+(c.status==='OPEN'?'  ▸ OPEN':'  ▸ CLOSED');return`<option value="${c.cycle_id}">${label}</option>`;}).join('');
+  if (!allCycles.length) { sel.innerHTML='<option value="">⬡ NO CYCLES</option>'; setActionBtns(false,false); showGallery(); return; }
+  sel.innerHTML = '<option value="">⬡ ALL CYCLES</option>'+allCycles.map(c=>{const label=monthLabel(c.cycle_year,c.cycle_month)+(c.status==='OPEN'?'  ▸ OPEN':'  ▸ CLOSED');return`<option value="${c.cycle_id}">${label}</option>`;}).join('');
   const open = allCycles.find(c => c.status === 'OPEN');
   if (open) { sel.value=open.cycle_id; await loadCycleRegister(open); } else { sel.value=''; showGallery(); }
 }
@@ -507,15 +510,24 @@ async function loadCycleRegister(cycle) {
   document.getElementById('mainArea').innerHTML='<table class="atable"><tbody><tr class="loading-row"><td colspan="9">LOADING BILL REGISTER...</td></tr></tbody></table>';
   setActionBtns(cycle.status==='OPEN', cycle.status==='OPEN');
   updateStatusBadge(cycle.status);
-  const [bills, accounts, reads, balances] = await Promise.all([
-    supa('bills',`?cycle_id=eq.${cycle.cycle_id}&select=*`),
-    supa('accounts',`?system_id=eq.${activeSystemId}&status=eq.ACTIVE&select=account_id,account_number,customers(full_name)&order=account_number`),
-    supa('meter_reads',`?system_id=eq.${activeSystemId}&cycle_year=eq.${cycle.cycle_year}&cycle_month=eq.${cycle.cycle_month}&select=read_id,account_id,current_read,previous_read,usage_gallons,read_date,cycle_year,cycle_month`),
-    supa('account_balances',`?system_id=eq.${activeSystemId}&select=*`)
+  const sf=activeSystemId?`system_id=eq.${activeSystemId}`:`system_id=in.(${allSystems.map(s=>s.system_id).join(',')})`;
+  let billQ;
+  if(activeSystemId){billQ=supa('bills',`?cycle_id=eq.${cycle.cycle_id}&select=*`);}
+  else{const cids=allCycles.filter(c=>c.cycle_year===cycle.cycle_year&&c.cycle_month===cycle.cycle_month).map(c=>c.cycle_id).join(',');billQ=supa('bills',`?cycle_id=in.(${cids})&select=*`);}
+  const [bills, accounts, balances] = await Promise.all([
+    billQ,
+    supa('accounts',`?${sf}&status=eq.ACTIVE&select=account_id,account_number,account_type,customers(full_name,phone_primary),service_addresses(street,city,state,zip)&order=account_number`),
+    supa('account_balances',`?${sf}&select=*`)
   ]);
   cycleBills={}; (bills||[]).forEach(b=>{cycleBills[b.account_id]=b;});
   allAccounts=accounts||[];
-  cycleReads={}; (reads||[]).forEach(r=>{cycleReads[r.account_id]=r;});
+  // Load reads by account_ids (meter_reads has no system_id)
+  cycleReads={};
+  if(allAccounts.length){
+    const acctIds=allAccounts.map(a=>a.account_id).join(',');
+    const reads=await supa('meter_reads',`?account_id=in.(${acctIds})&cycle_year=eq.${cycle.cycle_year}&cycle_month=eq.${cycle.cycle_month}&select=read_id,account_id,current_read,previous_read,usage_gallons,read_date,estimated,cycle_year,cycle_month`);
+    (reads||[]).forEach(r=>{cycleReads[r.account_id]=r;});
+  }
   accountBalances={}; (balances||[]).forEach(b=>{accountBalances[b.account_id]=b;});
   populateAcctList();
   updateStats();
@@ -541,12 +553,12 @@ function renderRegister() {
   const area=document.getElementById('mainArea');
   const search=(document.getElementById('searchInput')?.value||'').toLowerCase();
   let rows=allAccounts.map(a=>{const bill=cycleBills[a.account_id];const read=cycleReads[a.account_id];const bal=accountBalances[a.account_id];const status=computeStatus(a.account_id);return{a,bill,read,bal,status};});
-  rows=rows.filter(r=>{if(currentFilter==='UNPAID') return['UNBILLED','BILLED','OVERDUE','PENDING'].includes(r.status);if(currentFilter==='PAID') return r.status==='PAID';if(currentFilter==='OVERDUE') return r.status==='OVERDUE';if(currentFilter==='CREDIT') return r.status==='CREDIT';if(currentFilter==='UNREAD') return r.status==='UNREAD';return true;});
+  rows=rows.filter(r=>{if(currentFilter==='UNPAID') return['UNBILLED','UNPAID','OVERDUE'].includes(r.status);if(currentFilter==='PAID') return r.status==='PAID';if(currentFilter==='OVERDUE') return r.status==='OVERDUE';if(currentFilter==='CREDIT') return r.status==='CREDIT';if(currentFilter==='UNREAD') return r.status==='UNREAD';return true;});
   if(search) rows=rows.filter(r=>{const name=r.a.customers?.full_name||'';return r.a.account_number.toLowerCase().includes(search)||name.toLowerCase().includes(search);});
   document.getElementById('rowCount').textContent=rows.length+' ROWS';
   if(!rows.length){area.innerHTML='<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-msg">NO ROWS MATCH</div><div class="empty-sub">ADJUST FILTER OR SEARCH</div></div>';return;}
   let html=`<table class="atable"><thead><tr><th>ACCT #</th><th>NAME</th><th class="r">PREV BAL</th><th class="r">READ</th><th class="r">USAGE (GAL)</th><th class="r">PERIOD TOTAL</th><th class="r">AMOUNT DUE</th><th>STATUS</th><th></th></tr></thead><tbody>`;
-  rows.forEach(({a,bill,read,bal,status})=>{const name=a.customers?.full_name||'—';const prevBal=bal?.current_balance!==undefined?parseFloat(bal.current_balance):null;const gallons=read?parseFloat(read.usage_gallons||0):null;const curRead=read?fmtNum(read.current_read):'—';const periodTot=bill?parseFloat(bill.period_total||0):null;const amtDue=bal?parseFloat(bal.current_balance||0):null;let amtClass='';if(amtDue!==null){if(amtDue<0)amtClass='style="color:#7d8eb6"';else if(amtDue===0)amtClass='style="color:var(--success)"';else if(status==='OVERDUE')amtClass='style="color:var(--danger)"';}const rowClass=status==='PAID'?'row-paid':'';const canPay=['UNBILLED','BILLED','OVERDUE','PENDING'].includes(status);html+=`<tr class="${rowClass}"><td class="td-acct">${a.account_number}</td><td class="td-name">${name}</td><td class="td-num" style="${prevBal!==null&&prevBal>0?'color:var(--warning)':''}">${prevBal!==null?fmtMoney(prevBal):'—'}</td><td class="td-num">${curRead}</td><td class="td-num">${gallons!==null?fmtNum(gallons):'<span style="color:var(--text-muted)">—</span>'}</td><td class="td-money">${periodTot!==null?fmtMoney(periodTot):'<span style="color:var(--text-muted)">—</span>'}</td><td class="td-total" ${amtClass}>${amtDue!==null?fmtMoney(amtDue):'—'}</td><td>${pillHtml(status)}</td><td>${canPay?`<button class="pay-quick" onclick="openPayModal('${a.account_number}')">PAY</button>`:''}</td></tr>`;});
+  rows.forEach(({a,bill,read,bal,status})=>{const name=a.customers?.full_name||'—';const prevBal=bal?.current_balance!==undefined?parseFloat(bal.current_balance):null;const gallons=read?parseFloat(read.usage_gallons||0):null;const curRead=read?fmtNum(read.current_read):'—';const periodTot=bill?parseFloat(bill.period_total||0):null;const amtDue=bal?parseFloat(bal.current_balance||0):null;let amtClass='';if(amtDue!==null){if(amtDue<0)amtClass='style="color:#7d8eb6"';else if(amtDue===0)amtClass='style="color:var(--success)"';else if(status==='OVERDUE')amtClass='style="color:var(--danger)"';}const rowClass=status==='PAID'?'row-paid':'';const canPay=['UNBILLED','UNPAID','OVERDUE'].includes(status);html+=`<tr class="${rowClass}" style="cursor:pointer" onclick="openBillDetail('${a.account_id}')"><td class="td-acct">${a.account_number}</td><td class="td-name">${name}</td><td class="td-num" style="${prevBal!==null&&prevBal>0?'color:var(--warning)':''}">${prevBal!==null?fmtMoney(prevBal):'—'}</td><td class="td-num">${curRead}</td><td class="td-num">${gallons!==null?fmtNum(gallons):'<span style="color:var(--text-muted)">—</span>'}</td><td class="td-money">${periodTot!==null?fmtMoney(periodTot):'<span style="color:var(--text-muted)">—</span>'}</td><td class="td-total" ${amtClass}>${amtDue!==null?fmtMoney(amtDue):'—'}</td><td>${pillHtml(status)}</td><td>${canPay?`<button class="pay-quick" onclick="event.stopPropagation();openPayModal('${a.account_number}')">PAY</button>`:''}</td></tr>`;});
   html+='</tbody></table>';
   area.innerHTML=html;
 }
@@ -567,7 +579,7 @@ function showEmptyState(msg,sub){document.getElementById('mainArea').innerHTML=`
 
 function openModal(id){document.getElementById(id).classList.add('show');if(id==='newCycleModal')prefillNewCycle();if(id==='closeModal')prefillCloseConfirm();}
 function closeModal(id){document.getElementById(id).classList.remove('show');}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.show').forEach(m=>m.classList.remove('show'));});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.querySelectorAll('.modal-overlay.show').forEach(m=>m.classList.remove('show'));closeBillDetail();}});
 
 function prefillNewCycle(){const now=new Date();const yr=now.getFullYear();const mo=now.getMonth()+1;document.getElementById('nc-year').value=yr;document.getElementById('nc-month').value=mo;const stmtDay=parseInt(systemConfig.statement_day||15);const dueDay=parseInt(systemConfig.due_day||25);const lateDay=parseInt(systemConfig.late_day||28);document.getElementById('nc-stmt-date').value=new Date(yr,mo-1,stmtDay).toISOString().split('T')[0];document.getElementById('nc-due-date').value=new Date(yr,mo-1,dueDay).toISOString().split('T')[0];document.getElementById('nc-late-date').value=new Date(yr,mo-1,lateDay).toISOString().split('T')[0];document.getElementById('nc-read-start').value=new Date(yr,mo-1,1).toISOString().split('T')[0];document.getElementById('nc-read-end').value=new Date(yr,mo,0).toISOString().split('T')[0];}
 
@@ -591,9 +603,167 @@ function onPayAcctInput(val){const acct=allAccounts.find(a=>a.account_number===v
 
 async function submitPayment(){const acctNum=document.getElementById('pay-acct').value.trim();const date=document.getElementById('pay-date').value;const amount=parseFloat(document.getElementById('pay-amount').value);const method=document.getElementById('pay-method').value;const ref=document.getElementById('pay-ref').value.trim();const notes=document.getElementById('pay-notes').value.trim();if(!acctNum||!date||!amount||isNaN(amount)||amount<=0){toast('ACCOUNT, DATE, AND AMOUNT REQUIRED','err');return;}const acct=allAccounts.find(a=>a.account_number===acctNum);if(!acct){toast('ACCOUNT NOT FOUND: '+acctNum,'err');return;}const sourceId=`${acctNum}-PAY-${date}-${Date.now()}`;const result=await supa('payments','','POST',{account_id:acct.account_id,system_id:activeSystemId,payment_date:date,amount,payment_method:method,reference_number:ref||null,notes:notes||null,deposited:false,returned:false,in_closed_cycle:activeCycle?.status==='CLOSED',source_id:sourceId,posted_by:'ADMIN'});if(result){toast(`PAYMENT POSTED — ${acctNum} — ${fmtMoney(amount)}`,'ok',3500);closeModal('payModal');const fresh=await supa('account_balances',`?system_id=eq.${activeSystemId}&select=*`);if(fresh){accountBalances={};fresh.forEach(b=>accountBalances[b.account_id]=b);}updateStats();renderRegister();}else{toast('ERROR POSTING PAYMENT — CHECK CONSOLE','err');}}
 
+function openBillDetail(accountId){
+  const acct=allAccounts.find(a=>a.account_id===accountId);if(!acct)return;
+  const bill=cycleBills[accountId];const read=cycleReads[accountId];const bal=accountBalances[accountId];
+  const name=acct.customers?.full_name||'—';const status=computeStatus(accountId);
+  const curBal=bal?parseFloat(bal.current_balance||0):null;
+  const addr=acct.service_addresses?.street||'—';
+  const city=(acct.service_addresses?.city||'')+(acct.service_addresses?.state?', '+acct.service_addresses.state:'');
+  const sysName=systemConfig?.system_name||(allSystems.find(s=>bill&&s.system_id===bill.system_id)?.system_name)||'Water System';
+  const billCycle=bill?allCycles.find(c=>c.cycle_id===bill.cycle_id)||activeCycle:activeCycle;
+  const m=document.getElementById('billDetailModal');
+  document.getElementById('bd-title').textContent=sysName+' — Utility Bill';
+  document.getElementById('bd-status').textContent=status;
+  document.getElementById('bd-status').style.color=status==='PAID'?'var(--success)':status==='OVERDUE'?'var(--danger)':'var(--primary)';
+  const lbl='font-family:Share Tech Mono,monospace;font-size:7px;color:var(--text-muted);letter-spacing:1px;margin-bottom:1px';
+  const val='font-family:Share Tech Mono,monospace;font-size:11px;color:var(--text)';
+  const valB='font-family:Rajdhani,sans-serif;font-size:14px;font-weight:700;color:var(--text)';
+  const cRow=(l,v,s)=>`<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border);font-size:11px"><span style="color:var(--text-muted);font-family:Share Tech Mono,monospace;font-size:9px">${l}</span><span style="${s||''}font-family:Share Tech Mono,monospace;font-size:10px">${v}</span></div>`;
+  let html='';
+  if(!bill){
+    html+=`<div style="padding:8px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><div><div style="${lbl}">CUSTOMER</div><div style="${valB}">${name}</div></div><div><div style="${lbl}">ACCOUNT</div><div style="${val};color:var(--primary)">${acct.account_number}</div></div><div><div style="${lbl}">ADDRESS</div><div style="font-size:11px">${addr}, ${city}</div></div><div><div style="${lbl}">TYPE</div><div style="${val}">${acct.account_type||'RESIDENTIAL'}</div></div></div><div style="text-align:center;padding:20px;color:var(--text-muted);font-size:10px;letter-spacing:1px">NO BILL GENERATED FOR THIS CYCLE</div></div>`;
+  } else {
+    html+=`<div style="padding:8px 12px">`;
+    // ROW 1: Account + Balance side by side
+    html+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px">`;
+    html+=`<div><div style="${lbl}">CUSTOMER</div><div style="${valB}">${name}</div><div style="${lbl};margin-top:3px">ADDRESS</div><div style="font-size:10px;color:var(--text-soft)">${addr}${city?', '+city:''}</div></div>`;
+    html+=`<div><div style="${lbl}">ACCOUNT</div><div style="${val};color:var(--primary)">${acct.account_number} · ${acct.account_type||'RES'}</div><div style="display:flex;gap:6px;margin-top:4px"><div style="flex:1;background:rgba(44,123,162,.03);border:1px solid var(--border);border-radius:8px;padding:5px;text-align:center"><div style="font-size:7px;color:var(--text-muted);font-family:Share Tech Mono,monospace;letter-spacing:.5px">AMOUNT DUE</div><div style="font-family:Rajdhani,sans-serif;font-size:18px;font-weight:800;color:${curBal>0?'var(--danger)':'var(--success)'}">${fmtMoney(curBal||0)}</div></div><div style="flex:1;background:rgba(52,139,103,.03);border:1px solid var(--border);border-radius:8px;padding:5px;text-align:center"><div style="font-size:7px;color:var(--text-muted);font-family:Share Tech Mono,monospace;letter-spacing:.5px">LAST PMT</div><div style="font-family:Rajdhani,sans-serif;font-size:14px;font-weight:700;color:var(--success)">${bal?.last_payment_date?fmtMoney(bal.last_payment_amount):'—'}</div></div></div></div>`;
+    html+=`</div>`;
+    // ROW 2: Billing Period (2-col grid) + Meter Readings (3 boxes) combined
+    html+=`<div style="font-family:Orbitron,monospace;font-size:7px;color:var(--primary);letter-spacing:2px;padding:4px 0 3px;border-bottom:1px solid var(--border);margin-bottom:4px">BILLING PERIOD & READINGS</div>`;
+    html+=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-bottom:4px">`;
+    html+=`<div style="text-align:center;padding:4px;background:rgba(255,255,255,.5);border:1px solid var(--border);border-radius:6px"><div style="font-size:6px;color:var(--text-muted);font-family:Share Tech Mono,monospace;letter-spacing:.5px">PREVIOUS</div><div style="font-family:Rajdhani,sans-serif;font-size:16px;font-weight:700">${read?fmtNum(read.previous_read):'—'}</div><div style="font-size:7px;color:var(--text-muted);font-family:Share Tech Mono,monospace">${billCycle?.read_start||'—'}</div></div>`;
+    html+=`<div style="text-align:center;padding:4px;background:rgba(255,255,255,.5);border:1px solid var(--border);border-radius:6px"><div style="font-size:6px;color:var(--text-muted);font-family:Share Tech Mono,monospace;letter-spacing:.5px">CURRENT</div><div style="font-family:Rajdhani,sans-serif;font-size:16px;font-weight:700">${read?fmtNum(read.current_read):'—'}</div><div style="font-size:7px;color:var(--text-muted);font-family:Share Tech Mono,monospace">${billCycle?.read_end||'—'}</div></div>`;
+    html+=`<div style="text-align:center;padding:4px;background:rgba(44,123,162,.03);border:1px solid var(--border);border-radius:6px"><div style="font-size:6px;color:var(--text-muted);font-family:Share Tech Mono,monospace;letter-spacing:.5px">USAGE (GAL)</div><div style="font-family:Rajdhani,sans-serif;font-size:16px;font-weight:700;color:var(--primary)">${fmtNum(bill.usage_gallons)}</div><div style="font-size:7px;color:var(--text-muted);font-family:Share Tech Mono,monospace">${read?.estimated?'ESTIMATED':'ACTUAL'}</div></div>`;
+    html+=`</div>`;
+    html+=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;font-size:9px;margin-bottom:6px">`;
+    html+=`<div style="padding:2px 0;color:var(--text-muted);font-family:Share Tech Mono,monospace;font-size:8px">STMT: ${bill.statement_date||'—'}</div>`;
+    html+=`<div style="padding:2px 0;color:var(--text-muted);font-family:Share Tech Mono,monospace;font-size:8px;text-align:center">DUE: ${bill.due_date||'—'}</div>`;
+    html+=`<div style="padding:2px 0;color:var(--text-muted);font-family:Share Tech Mono,monospace;font-size:8px;text-align:right">PMT PLAN: NO</div>`;
+    html+=`</div>`;
+    // ROW 3: Charges (compact)
+    html+=`<div style="font-family:Orbitron,monospace;font-size:7px;color:var(--primary);letter-spacing:2px;padding:4px 0 3px;border-bottom:1px solid var(--border);margin-bottom:2px">CHARGES</div>`;
+    const prevBal=parseFloat(bill.previous_balance||0);
+    if(prevBal!==0)html+=cRow('PREV BALANCE',fmtMoney(prevBal),prevBal>0?'color:var(--warning);':'');
+    html+=cRow('BASE RATE',fmtMoney(bill.base_rate||0));
+    if(bill.usage_gallons>0)html+=cRow('USAGE ('+fmtNum(bill.usage_gallons)+' GAL)',fmtMoney(bill.usage_charge||0));
+    if(bill.surcharge_1_amount)html+=cRow(bill.surcharge_1_label||'SURCHARGE',fmtMoney(bill.surcharge_1_amount));
+    html+=cRow('STATE TAX',fmtMoney(bill.state_tax||0));
+    if(bill.late_fee>0)html+=cRow('LATE FEE',fmtMoney(bill.late_fee),'color:var(--danger);');
+    html+=`<div style="display:flex;justify-content:space-between;padding:5px 0;font-weight:700;border-top:2px solid var(--primary);margin-top:2px"><span style="color:var(--primary);font-family:Orbitron,monospace;font-size:9px;letter-spacing:1px">PERIOD TOTAL</span><span style="color:var(--primary);font-family:Rajdhani,sans-serif;font-size:16px">${fmtMoney(bill.period_total||0)}</span></div>`;
+    html+=`</div>`;
+  }
+  document.getElementById('bd-body').innerHTML=html;
+  document.getElementById('bd-pay-btn').onclick=()=>{closeBillDetail();openPayModal(acct.account_number);};
+  const invBtn=document.getElementById('bd-invoice-btn');
+  if(bill){invBtn.style.display='';invBtn.onclick=()=>{closeBillDetail();openInvoice(accountId);};}
+  else{invBtn.style.display='none';}
+  m.classList.add('show');
+}
+function closeBillDetail(){document.getElementById('billDetailModal').classList.remove('show');}
+
+function openInvoice(accountId){
+  const acct=allAccounts.find(a=>a.account_id===accountId);if(!acct)return;
+  const bill=cycleBills[accountId];const bal=accountBalances[accountId];if(!bill)return;
+  const name=acct.customers?.full_name||'—';
+  const addr=acct.service_addresses?.street||'—';
+  const city=(acct.service_addresses?.city||'')+(acct.service_addresses?.state?' '+acct.service_addresses.state:'');
+  const sys=systemConfig;const sysName=sys?.system_name||(allSystems.find(s=>s.system_id===bill.system_id)?.system_name)||'Water System';
+  const cycleLabel=monthLabel(bill.cycle_year,bill.cycle_month);
+  const stmtDate=bill.statement_date?new Date(bill.statement_date+'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):'—';
+  const dueDate=bill.due_date?new Date(bill.due_date+'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):'—';
+  const prevBal=parseFloat(bill.previous_balance||0);
+  const baseRate=parseFloat(bill.base_rate||0);
+  const usage=parseFloat(bill.usage_gallons||0);
+  const usageCharge=parseFloat(bill.usage_charge||0);
+  const surcharge=parseFloat(bill.surcharge_1_amount||0);
+  const surchLabel=bill.surcharge_1_label||'Energy Surcharge';
+  const tax=parseFloat(bill.state_tax||0);
+  const lateFee=parseFloat(bill.late_fee||0);
+  const periodTotal=parseFloat(bill.period_total||bill.total_amount||0);
+  const totalDue=parseFloat(bal?.current_balance||periodTotal);
+  const w=window.open('','_blank','width=700,height=900');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Invoice — ${acct.account_number}</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;color:#18384a;padding:40px;max-width:700px;margin:0 auto;font-size:13px;}
+.inv-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #2c7ba2;padding-bottom:20px;margin-bottom:24px;}
+.inv-logo{font-family:Arial,sans-serif;font-weight:900;font-size:28px;color:#2c7ba2;letter-spacing:4px;}
+.inv-sys{font-size:12px;color:#5f7b8c;margin-top:4px;}
+.inv-title{font-size:22px;font-weight:700;color:#2c7ba2;text-align:right;}
+.inv-meta{text-align:right;font-size:11px;color:#5f7b8c;margin-top:4px;line-height:1.6;}
+.inv-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;}
+.inv-box{background:#f5f9fb;border:1px solid #d9e8f0;border-radius:8px;padding:14px;}
+.inv-box-label{font-size:10px;color:#5f7b8c;letter-spacing:2px;margin-bottom:6px;text-transform:uppercase;}
+.inv-box-val{font-size:14px;font-weight:600;}
+.inv-table{width:100%;border-collapse:collapse;margin-bottom:20px;}
+.inv-table th{background:#f0f6f9;padding:10px 14px;text-align:left;font-size:10px;color:#5f7b8c;letter-spacing:1.5px;border-bottom:2px solid #d9e8f0;font-weight:600;}
+.inv-table td{padding:10px 14px;border-bottom:1px solid #e8f0f4;font-size:13px;}
+.inv-table .r{text-align:right;}
+.inv-total-row td{font-weight:700;font-size:15px;border-top:2px solid #2c7ba2;background:#f0f6f9;}
+.inv-footer{border-top:2px solid #d9e8f0;padding-top:16px;margin-top:20px;text-align:center;font-size:10px;color:#8fa6b4;line-height:1.6;}
+.inv-due-box{background:#fff3f3;border:1px solid #e8c0c0;border-radius:8px;padding:16px;text-align:center;margin-bottom:20px;}
+.inv-due-label{font-size:10px;color:#bf6157;letter-spacing:2px;margin-bottom:4px;}
+.inv-due-val{font-size:28px;font-weight:800;color:#bf6157;}
+.inv-due-date{font-size:11px;color:#5f7b8c;margin-top:4px;}
+@media print{body{padding:20px;} .no-print{display:none!important;}}
+</style></head><body>
+<div class="inv-header">
+  <div><div class="inv-logo">RADEUS</div><div class="inv-sys">${sysName}</div></div>
+  <div><div class="inv-title">WATER UTILITY STATEMENT</div><div class="inv-meta">Statement Date: ${stmtDate}<br>Account: ${acct.account_number}<br>Cycle: ${cycleLabel}</div></div>
+</div>
+<div class="inv-grid">
+  <div class="inv-box"><div class="inv-box-label">SERVICE ADDRESS</div><div class="inv-box-val">${name}<br>${addr}<br>${city}</div></div>
+  <div class="inv-box"><div class="inv-box-label">ACCOUNT DETAILS</div><div class="inv-box-val">Account #: ${acct.account_number}<br>Type: ${acct.account_type||'RESIDENTIAL'}<br>Meter: ${acct.meters?.meter_number||acct.meter_id||'—'}</div></div>
+</div>
+${totalDue>0?`<div class="inv-due-box"><div class="inv-due-label">TOTAL AMOUNT DUE</div><div class="inv-due-val">$${totalDue.toFixed(2)}</div><div class="inv-due-date">Due by ${dueDate}</div></div>`:''}
+<table class="inv-table">
+  <thead><tr><th>DESCRIPTION</th><th>DETAILS</th><th class="r">AMOUNT</th></tr></thead>
+  <tbody>
+    ${prevBal!==0?`<tr><td>Previous Balance</td><td>Carried forward</td><td class="r">$${prevBal.toFixed(2)}</td></tr>`:''}
+    <tr><td>Base Water Rate</td><td>Monthly service charge</td><td class="r">$${baseRate.toFixed(2)}</td></tr>
+    ${usage>0?`<tr><td>Water Usage</td><td>${String(Math.round(usage))} gallons</td><td class="r">$${usageCharge.toFixed(2)}</td></tr>`:''}
+    ${surcharge>0?`<tr><td>${surchLabel}</td><td>Flat surcharge</td><td class="r">$${surcharge.toFixed(2)}</td></tr>`:''}
+    ${tax>0?`<tr><td>State Tax</td><td>Regulatory assessment</td><td class="r">$${tax.toFixed(2)}</td></tr>`:''}
+    ${lateFee>0?`<tr><td style="color:#bf6157">Late Fee</td><td>Past due penalty</td><td class="r" style="color:#bf6157">$${lateFee.toFixed(2)}</td></tr>`:''}
+    <tr class="inv-total-row"><td>Period Total</td><td>${cycleLabel}</td><td class="r">$${periodTotal.toFixed(2)}</td></tr>
+  </tbody>
+</table>
+<div class="inv-footer">
+  ${sysName} · Powered by RADEUS<br>
+  This statement was generated electronically. Please retain for your records.<br>
+  Questions? Contact your water system operator.
+</div>
+<div class="no-print" style="text-align:center;margin-top:24px">
+  <button onclick="window.print()" style="padding:12px 30px;background:#2c7ba2;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;letter-spacing:1px">⎙ PRINT INVOICE</button>
+  <button onclick="window.close()" style="padding:12px 30px;background:#f0f6f9;color:#5f7b8c;border:1px solid #d9e8f0;border-radius:8px;font-size:14px;cursor:pointer;letter-spacing:1px;margin-left:10px">CLOSE</button>
+</div>
+</body></html>`);
+  w.document.close();
+}
+
 window.addEventListener('DOMContentLoaded', loadSystems);
 </script>
-</script>
+
+<!-- BILL DETAIL POPOUT -->
+<div class="modal-overlay" id="billDetailModal">
+  <div class="modal" style="width:560px;max-height:82vh;display:flex;flex-direction:column">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="bd-title">BILL DETAIL</div>
+        <div id="bd-status" style="font-family:'Orbitron',monospace;font-size:8px;letter-spacing:1px;margin-top:2px">—</div>
+      </div>
+      <button class="modal-x" onclick="closeBillDetail()">✕</button>
+    </div>
+    <div class="modal-body" id="bd-body" style="flex:1;overflow-y:auto;padding:0"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeBillDetail()">CLOSE</button>
+      <button class="btn btn-y" id="bd-invoice-btn" style="display:none">⎙ VIEW INVOICE</button>
+      <button class="btn btn-g" id="bd-pay-btn">POST PAYMENT</button>
+    </div>
+  </div>
+</div>
 
 <!-- AUTH BOOTSTRAP -->
 <script>

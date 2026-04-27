@@ -544,6 +544,26 @@ function showGallery() {
   html+='</div>';
   area.innerHTML=html;
   loadGalleryTotals();
+  loadGalleryStats();
+}
+
+async function loadGalleryStats(){
+  // Aggregate totals across all cycles for the current system filter
+  const sf=activeSystemId?`system_id=eq.${activeSystemId}`:`system_id=in.(${allSystems.map(s=>s.system_id).join(',')})`;
+  const [bills, accts, bals] = await Promise.all([
+    supa('bills',`?${sf}&select=period_total,total_amount`),
+    supa('accounts',`?${sf}&status=eq.ACTIVE&select=account_id`),
+    supa('account_balances',`?${sf}&select=current_balance`)
+  ]);
+  const totalBilled=(bills||[]).reduce((s,b)=>s+parseFloat(b.period_total||0),0);
+  const outstanding=(bals||[]).reduce((s,b)=>{const v=parseFloat(b.current_balance||0);return s+(v>0?v:0);},0);
+  const collected=Math.max(0,totalBilled-outstanding);
+  document.getElementById('stat-accounts').textContent=(accts||[]).length||'—';
+  document.getElementById('stat-billed').textContent=totalBilled>0?fmtMoney(totalBilled):'$0.00';
+  document.getElementById('stat-collected').textContent=fmtMoney(collected);
+  document.getElementById('stat-outstanding').textContent=outstanding>0?fmtMoney(outstanding):'$0.00';
+  document.getElementById('stat-unread').textContent='—';
+  updateStatusBadge(allCycles.some(c=>c.status==='OPEN')?'OPEN':'CLOSED');
 }
 
 async function loadGalleryTotals(){for(const c of allCycles){const bills=await supa('bills',`?cycle_id=eq.${c.cycle_id}&select=total_amount`);const el=document.getElementById(`gc-billed-${c.cycle_id}`);if(el&&bills){const total=bills.reduce((s,b)=>s+parseFloat(b.total_amount||0),0);el.textContent=total>0?fmtMoney(total):'—';}}}
@@ -867,20 +887,4 @@ window.addEventListener('DOMContentLoaded', loadSystems);
 <!-- AUTH BOOTSTRAP -->
 <script>
 const _SUPA_URL='https://bvpesxpptgdwkhsewhke.supabase.co';
-const _SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2cGVzeHBwdGdkd2toc2V3aGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNzcwNTksImV4cCI6MjA5MTk1MzA1OX0._th9UdQKqIWvqgTrxxpd5IfTlexCUeyWC5aGwRJYZj8';
-const SESSION_KEY='radeus_session';
-function getSession(){try{const s=JSON.parse(localStorage.getItem(SESSION_KEY)||'null');if(!s)return null;if(s.expires_at&&Date.now()/1000>s.expires_at){localStorage.removeItem(SESSION_KEY);return null;}return s;}catch{return null;}}
-function getStoredStaff(){try{const r=localStorage.getItem('radeus_staff');return r?JSON.parse(r):null;}catch{return null;}}
-function signOut(){const s=getSession();if(s?.access_token){fetch(`${_SUPA_URL}/auth/v1/logout`,{method:'POST',headers:{'apikey':_SUPA_KEY,'Authorization':`Bearer ${s.access_token}`}}).catch(()=>{});}localStorage.removeItem(SESSION_KEY);localStorage.removeItem('radeus_staff');window.location.href='login.html';}
-(function initAuth(){
-  const s=getSession();
-  if(!s||s.expires_at<Date.now()/1000){window.location.href='login.html';return;}
-  const staff=getStoredStaff();
-  if(!staff||!staff.org_id){window.location.href='login.html';return;}
-  ORG_ID=staff.org_id;
-  const el=document.getElementById('operatorName');
-  if(el)el.textContent=staff.name||'OPERATOR';
-})();
-</script>
-</body>
-</html>
+const _SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI

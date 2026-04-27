@@ -544,6 +544,26 @@ function showGallery() {
   html+='</div>';
   area.innerHTML=html;
   loadGalleryTotals();
+  loadGalleryStats();
+}
+
+async function loadGalleryStats(){
+  // Aggregate totals across all cycles for the current system filter
+  const sf=activeSystemId?`system_id=eq.${activeSystemId}`:`system_id=in.(${allSystems.map(s=>s.system_id).join(',')})`;
+  const [bills, accts, bals] = await Promise.all([
+    supa('bills',`?${sf}&select=period_total,total_amount`),
+    supa('accounts',`?${sf}&status=eq.ACTIVE&select=account_id`),
+    supa('account_balances',`?${sf}&select=current_balance`)
+  ]);
+  const totalBilled=(bills||[]).reduce((s,b)=>s+parseFloat(b.period_total||0),0);
+  const outstanding=(bals||[]).reduce((s,b)=>{const v=parseFloat(b.current_balance||0);return s+(v>0?v:0);},0);
+  const collected=Math.max(0,totalBilled-outstanding);
+  document.getElementById('stat-accounts').textContent=(accts||[]).length||'—';
+  document.getElementById('stat-billed').textContent=totalBilled>0?fmtMoney(totalBilled):'$0.00';
+  document.getElementById('stat-collected').textContent=fmtMoney(collected);
+  document.getElementById('stat-outstanding').textContent=outstanding>0?fmtMoney(outstanding):'$0.00';
+  document.getElementById('stat-unread').textContent='—';
+  updateStatusBadge(allCycles.some(c=>c.status==='OPEN')?'OPEN':'CLOSED');
 }
 
 async function loadGalleryTotals(){for(const c of allCycles){const bills=await supa('bills',`?cycle_id=eq.${c.cycle_id}&select=total_amount`);const el=document.getElementById(`gc-billed-${c.cycle_id}`);if(el&&bills){const total=bills.reduce((s,b)=>s+parseFloat(b.total_amount||0),0);el.textContent=total>0?fmtMoney(total):'—';}}}
